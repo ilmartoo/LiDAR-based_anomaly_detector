@@ -1,8 +1,12 @@
-# User defined
-sample/*
-diagrams/*
-.vscode/*
-sdk_core/*
+# User defined exclusions
+sample/
+schemas/
+.vscode/
+bin/
+
+# CMake files
+CMakeFiles/
+CMakeCache.txt
 
 # Prerequisites
 *.d
