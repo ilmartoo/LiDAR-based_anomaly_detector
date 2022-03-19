@@ -24,7 +24,7 @@ class ModelManager {
     static std::list<Model> listModels();
 
    private:
-    static std::list<Model> modelos = new std::list<Model>();
+    static std::list<Model> modelos;
 };
 
 #endif  //__MODELMANAGER_CLASS_H

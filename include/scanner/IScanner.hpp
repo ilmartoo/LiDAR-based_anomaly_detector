@@ -8,8 +8,10 @@
 
 class IScanner {
    public:
-    IScanner() = default;
-    ~IScanner() = default;
+    /**
+     * Destructor
+     */
+    virtual ~IScanner(){};
 
     /**
      * Inicialización del escaner
