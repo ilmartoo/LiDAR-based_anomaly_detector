@@ -1,7 +1,16 @@
+/**
+ * @file ScannerFile.cpp
+ * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
+ * @brief Implementación del objeto ScannerFile
+ * @date 19/03/2022
+ *
+ *
+ */
 
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 #include <functional>
 
 #include "scanner/ScannerFile.hpp"
@@ -26,11 +35,38 @@ bool ScannerFile::initScanner() {
 // Comienza la obtención de puntos
 bool ScannerFile::startScanner() {
     if (infile.is_open()) {
-        std::string line;  // Buffer de linea
+        std::string strLine;      // Buffer de linea
+        std::string strCells[4];  // Buffer de celdas
 
-        for (std::string line; std::getline(infile, line);) {
-            // Proceso de lectura de puntos
-            std::cout << line << std::endl;
+        // Proceso de lectura de puntos
+        std::getline(infile, strLine);  // Linea de cabecera
+
+        for (std::string line; std::getline(infile, strLine);) {
+            std::istringstream streamLine(strLine);  // Stream de la linea
+            int i;
+
+            // Datos no necesarios
+            for (i = 0; i < 7; ++i) {
+                getline(streamLine, strCells[3], ',');
+            }
+            // Timestamp
+            getline(streamLine, strCells[0], ',');
+            // Datos no necesarios
+            for (i = 0; i < 5; ++i) {
+                getline(streamLine, strCells[3], ',');
+            }
+            // X, Y, Z
+            for (i = 1; i < 4; ++i) {
+                getline(streamLine, strCells[i], ',');
+            }
+
+            // Creación del punto
+            Point p(static_cast<uint32_t>(std::stoull(strCells[0])),
+                    static_cast<uint32_t>(std::stoul(strCells[1])),
+                    static_cast<uint32_t>(std::stoul(strCells[2])),
+                    static_cast<uint32_t>(std::stoul(strCells[3])));
+
+            std::cout << p << std::endl;
 
             // Fallo en la lectura
             if (infile.fail()) {
