@@ -51,6 +51,7 @@ bool ScannerFile::startScanner() {
 // se escanee un nuevo punto
 bool ScannerFile::setCallback(std::function<void(Point)> func) {
     callback = func;
+    return ((bool)callback);
 }
 
 // Finaliza el escaner

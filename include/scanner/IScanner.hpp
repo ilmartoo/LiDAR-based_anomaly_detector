@@ -8,6 +8,9 @@
 
 class IScanner {
    public:
+    IScanner() = default;
+    ~IScanner() = default;
+
     /**
      * Inicialización del escaner
      * @return Se devolverá true si se ha establecido el escaner correctamente
