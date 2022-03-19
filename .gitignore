@@ -3,6 +3,8 @@ sample/
 schemas/
 .vscode/
 bin/
+build/
+lib/
 
 # CMake files
 CMakeFiles/
