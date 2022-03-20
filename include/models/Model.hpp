@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include "CharacteristicsVector.hpp"
+#include "models/CharacteristicsVector.hpp"
 
 /**
  * Modelo de un objeto

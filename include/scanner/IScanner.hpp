@@ -13,7 +13,7 @@
 #include <string>
 #include <functional>
 
-#include "Point.hpp"
+#include "models/Point.hpp"
 
 /**
  * Interfaz de un escaner de puntos

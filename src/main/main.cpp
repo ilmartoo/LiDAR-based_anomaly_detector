@@ -1,26 +1,48 @@
 /**
  * @file main.cpp
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
- * @brief Función main del programa
  * @date 19/03/2022
+ *
+ * Función main del programa
  *
  */
 
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include "scanner/IScanner.hpp"
 #include "scanner/ScannerFile.hpp"
+#include "models/Point.hpp"
+#include "app/App.hpp"
+#include "app/InputParser.hpp"
 
+// Main function
 int main(int argc, char* argv[]) {
-    IScanner* scanner = new ScannerFile("data/puntos_test.csv");
-
-    scanner->initScanner();
-
-    scanner->startScanner();
-
-    scanner->closeScanner();
-
-    delete scanner;
+    // Vector de argumentos
+    //...
 
     return 0;
 }
+
+// Funcionality test
+// void callback(Point p);
+// int main(int argc, char* argv[]) {
+//     IScanner* scanner = new ScannerFile("data/puntos_test.csv");
+
+//     scanner->initScanner();
+
+//     scanner->setCallback(callback);
+
+//     scanner->startScanner();
+
+//     scanner->closeScanner();
+
+//     delete scanner;
+
+//     return 0;
+// }
+
+// void callback(Point p) {
+//     std::cout << p << std::endl;
+// }

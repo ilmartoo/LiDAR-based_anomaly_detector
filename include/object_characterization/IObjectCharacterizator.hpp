@@ -1,8 +1,8 @@
 #ifndef __OBJECTCARACTERIZATOR_INTERFACE_H
 #define __OBJECTCARACTERIZATOR_INTERFACE_H
 
-#include "Point.hpp"
-#include "CharacteristicsVector.hpp"
+#include "models/Point.hpp"
+#include "models/CharacteristicsVector.hpp"
 
 class IObjectCharacterizator {
    public:

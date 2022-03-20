@@ -1,9 +1,9 @@
 /**
  * @file ScannerFile.cpp
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
- * @brief Implementación del objeto ScannerFile
  * @date 19/03/2022
  *
+ * Implementación del objeto ScannerFile
  *
  */
 
@@ -14,7 +14,7 @@
 #include <functional>
 
 #include "scanner/ScannerFile.hpp"
-#include "Point.hpp"
+#include "models/Point.hpp"
 
 // Constructor
 ScannerFile::ScannerFile(std::string filename) {
@@ -66,7 +66,10 @@ bool ScannerFile::startScanner() {
                     static_cast<uint32_t>(std::stoul(strCells[2])),
                     static_cast<uint32_t>(std::stoul(strCells[3])));
 
-            std::cout << p << std::endl;
+            // Llamada al callback
+            if (callback) {
+                callback(p);
+            }
 
             // Fallo en la lectura
             if (infile.fail()) {

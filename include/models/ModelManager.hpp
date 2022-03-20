@@ -13,8 +13,8 @@
 #include <string>
 #include <list>
 
-#include "Model.hpp"
-#include "CharacteristicsVector.hpp"
+#include "models/Model.hpp"
+#include "models/CharacteristicsVector.hpp"
 
 /**
  * Manager de modelos de objetos

@@ -16,7 +16,7 @@
 #include <functional>
 
 #include "scanner/IScanner.hpp"
-#include "Point.hpp"
+#include "models/Point.hpp"
 
 /**
  * Implementación de la interfaz IScanner para la lectura de puntos de archivos CSV obtenidos del
