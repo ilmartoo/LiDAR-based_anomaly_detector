@@ -6,6 +6,10 @@ bin/
 build/
 lib/
 
+# Stop tracking library files
+sdk_core/
+googletest/
+
 # CMake files
 CMakeFiles/
 CMakeCache.txt
