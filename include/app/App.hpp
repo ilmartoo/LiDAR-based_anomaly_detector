@@ -46,7 +46,7 @@ class App {
      * @param timerMode Tipo de mediciones de tiempo a tomar
      * @param id Id del lidar
      */
-    App(TimerMode timerMode, const std::string &id);
+    // App(TimerMode timerMode, const std::string &id);
 
     /**
      * Destructor de la app
@@ -75,9 +75,9 @@ class App {
 
     uint32_t endTime;  ///< Tiempo total de ejecución de la aplicación
 
-    IScanner &scanner;           ///< Escaner de puntos
-    IObjectCharacterizator &oc;  ///< Caracterizador de objetos
-    IAnomalyDetector &ad;        ///< Detector de anomalías
+    // IScanner &scanner;           ///< Escaner de puntos
+    // IObjectCharacterizator &oc;  ///< Caracterizador de objetos
+    // IAnomalyDetector &ad;        ///< Detector de anomalías
 };
 
 #endif  //__APP_CLASS_H

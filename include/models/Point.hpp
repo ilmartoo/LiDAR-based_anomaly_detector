@@ -11,6 +11,7 @@
 #define __POINT_CLASS_H
 
 #include <stdint.h>
+#include <ostream>
 
 /**
  * Representación de un punto de una nube de datos 3D
