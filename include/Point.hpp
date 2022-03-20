@@ -62,4 +62,9 @@ class Point {
     int32_t z;           ///< Localización en el eje <x> del punto
 };
 
+// Imprime la información del punto p
+// std::ostream &operator<<(std::ostream &strm, const Point &p) {
+//     return strm << "[" << p.timestamp << "] " << p.x << ", " << p.y << ", " << p.z;
+// }
+
 #endif  //__POINT_CLASS_H
