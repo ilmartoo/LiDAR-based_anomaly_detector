@@ -18,31 +18,31 @@
 #include "app/InputParser.hpp"
 
 // Main function
-int main(int argc, char* argv[]) {
-    // Vector de argumentos
-    //...
-
-    return 0;
-}
-
-// Funcionality test
-// void callback(Point p);
 // int main(int argc, char* argv[]) {
-//     IScanner* scanner = new ScannerFile("data/puntos_test.csv");
-
-//     scanner->initScanner();
-
-//     scanner->setCallback(callback);
-
-//     scanner->startScanner();
-
-//     scanner->closeScanner();
-
-//     delete scanner;
+//     // Vector de argumentos
+//     //...
 
 //     return 0;
 // }
 
-// void callback(Point p) {
-//     std::cout << p << std::endl;
-// }
+// Funcionality test
+void callback(Point p);
+int main(int argc, char* argv[]) {
+    IScanner* scanner = new ScannerFile("data/puntos_test.csv");
+
+    scanner->initScanner();
+
+    scanner->setCallback(callback);
+
+    scanner->startScanner();
+
+    scanner->closeScanner();
+
+    delete scanner;
+
+    return 0;
+}
+
+void callback(Point p) {
+    std::cout << p << std::endl;
+}
