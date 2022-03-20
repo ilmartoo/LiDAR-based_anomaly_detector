@@ -1,3 +1,12 @@
+/**
+ * @file Model.hpp
+ * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
+ * @date 20/03/2022
+ * 
+ * Definición del objeto Model
+ * 
+ */
+
 #ifndef __MODEL_CLASS_H
 #define __MODEL_CLASS_H
 
@@ -5,6 +14,9 @@
 
 #include "CharacteristicsVector.hpp"
 
+/**
+ * Modelo de un objeto
+ */
 class Model {
    public:
     Model(std::string name, CharacteristicsVector cv);

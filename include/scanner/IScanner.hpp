@@ -15,6 +15,9 @@
 
 #include "Point.hpp"
 
+/**
+ * Interfaz de un escaner de puntos
+ */
 class IScanner {
    public:
     /**

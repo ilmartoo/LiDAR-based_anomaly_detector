@@ -4,7 +4,7 @@
 #include "Point.hpp"
 #include "CharacteristicsVector.hpp"
 
-class IObjectCaracterizator {
+class IObjectCharacterizator {
    public:
     /**
      * Callback a donde se recebirán los puntos escaneados

@@ -18,8 +18,10 @@
 #include "scanner/IScanner.hpp"
 #include "Point.hpp"
 
-// Implementación de la interfaz IScanner para la lectura de puntos de archivos CSV obtenidos del
-// programa propietario Livox Viewer
+/**
+ * Implementación de la interfaz IScanner para la lectura de puntos de archivos CSV obtenidos del
+ * programa propietario Livox Viewer
+ */
 class ScannerFile : public IScanner {
    public:
     // Constructor

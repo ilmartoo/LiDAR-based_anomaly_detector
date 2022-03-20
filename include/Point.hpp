@@ -1,9 +1,9 @@
 /**
  * @file Point.hpp
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
- * @brief Definición del objeto Point
  * @date 19/03/2022
  *
+ * Definición e implementación del objeto Point
  *
  */
 
@@ -12,14 +12,19 @@
 
 #include <stdint.h>
 
+/**
+ * Representación de un punto de una nube de datos 3D
+ */
 class Point {
    public:
-    Point(uint64_t timestamp, int32_t x, int32_t y, int32_t z) {
-        this->timestamp = timestamp;
-        this->x = x;
-        this->y = y;
-        this->z = z;
-    }
+    /**
+     * Constructor del objeto Punto
+     * @param timestamp Timestamp del punto
+     * @param x Posición en x del punto
+     * @param y Posición en y del punto
+     * @param z Posición en z del punto
+     */
+    Point(uint64_t timestamp, int32_t x, int32_t y, int32_t z) : timestamp(timestamp), x(x), y(y), z(z) {}
 
     /**
      * Devuelve el timestamp del punto
@@ -46,7 +51,8 @@ class Point {
     inline int32_t getZ() { return this->z; };
 
    private:
-    friend std::ostream &operator<<(std::ostream &strm, const Point &p) {
+    // Imprime la información del punto p
+    inline friend std::ostream &operator<<(std::ostream &strm, const Point &p) {
         return strm << "[" << p.timestamp << "] " << p.x << ", " << p.y << ", " << p.z;
     }
 
@@ -55,10 +61,5 @@ class Point {
     int32_t y;           ///< Localización en el eje y del punto
     int32_t z;           ///< Localización en el eje <x> del punto
 };
-
-// Imprime la información del punto p
-// std::ostream &operator<<(std::ostream &strm, const Point &p) {
-//     return strm << "[" << p.timestamp << "] " << p.x << ", " << p.y << ", " << p.z;
-// }
 
 #endif  //__POINT_CLASS_H
