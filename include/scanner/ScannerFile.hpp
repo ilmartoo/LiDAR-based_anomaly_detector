@@ -24,10 +24,15 @@
  */
 class ScannerFile : public IScanner {
    public:
-    // Constructor
-    ScannerFile(std::string filename);
+    /**
+     * Constructor del objeto ScannerFile
+     * @param filename Archivo contenedor de datos
+     */
+    ScannerFile(const std::string &filename) : filename(filename) {}
 
-    // Destructor
+    /**
+     * Destructor del scanner
+     */
     ~ScannerFile();
 
     /**
@@ -49,7 +54,7 @@ class ScannerFile : public IScanner {
      * @param func Función de callback a ser llamada por el sensor
      * @return Se devolverá true si se ha establecido el callback correctamente
      */
-    bool setCallback(std::function<void(Point)> func);
+    bool setCallback(const std::function<void(Point)> func);
 
     /**
      * Finaliza el escaner
@@ -57,10 +62,10 @@ class ScannerFile : public IScanner {
     void closeScanner();
 
    private:
-    std::string filename;  // Nombre del archivo de datos
-    std::ifstream infile;  // Stream del archivo de datos
+    const std::string &filename;  ///< Nombre del archivo de datos
+    std::ifstream infile;         ///< Stream del archivo de datos
 
-    std::function<void(Point)> callback;  // Función de callback
+    std::function<void(Point)> callback;  ///< Función de callback
 };
 
 #endif  //__SCANNERFILE_H

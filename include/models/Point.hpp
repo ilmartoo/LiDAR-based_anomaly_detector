@@ -30,25 +30,25 @@ class Point {
      * Devuelve el timestamp del punto
      * @return Timestamp del punto
      */
-    inline uint64_t getTimestamp() { return this->timestamp; };
+    inline const uint64_t getTimestamp() { return this->timestamp; };
 
     /**
      * Devuelve la localización en el eje x del punto
      * @return Posición en x del punto
      */
-    inline int32_t getX() { return this->x; };
+    inline const int32_t getX() { return this->x; };
 
     /**
      * Devuelve la localización en el eje y del punto
      * @return Posición en y del punto
      */
-    inline int32_t getY() { return this->y; };
+    inline const int32_t getY() { return this->y; };
 
     /**
      * Devuelve la localización en el eje z del punto
      * @return Posición en z del punto
      */
-    inline int32_t getZ() { return this->z; };
+    inline const int32_t getZ() { return this->z; };
 
    private:
     // Imprime la información del punto p
@@ -61,10 +61,5 @@ class Point {
     int32_t y;           ///< Localización en el eje y del punto
     int32_t z;           ///< Localización en el eje <x> del punto
 };
-
-// Imprime la información del punto p
-// std::ostream &operator<<(std::ostream &strm, const Point &p) {
-//     return strm << "[" << p.timestamp << "] " << p.x << ", " << p.y << ", " << p.z;
-// }
 
 #endif  //__POINT_CLASS_H

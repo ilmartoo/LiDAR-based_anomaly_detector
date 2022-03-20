@@ -2,9 +2,9 @@
  * @file ModelManager.hpp
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 20/03/2022
- * 
+ *
  * Definición del objeto ModelManager
- * 
+ *
  */
 
 #ifndef __MODELMANAGER_CLASS_H
@@ -33,7 +33,7 @@ class ModelManager {
      * Obtiene la lista de modelos actualmente disponibles
      * @return Lista de modelos
      */
-    static std::list<Model> listModels();
+    static const std::list<Model> &getModels() { return modelos; }
 
    private:
     static std::list<Model> modelos;

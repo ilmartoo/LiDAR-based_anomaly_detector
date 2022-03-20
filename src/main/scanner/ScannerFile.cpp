@@ -16,11 +16,6 @@
 #include "scanner/ScannerFile.hpp"
 #include "models/Point.hpp"
 
-// Constructor
-ScannerFile::ScannerFile(std::string filename) {
-    this->filename = filename;
-}
-
 // Destructor
 ScannerFile::~ScannerFile() {
     infile.close();
@@ -88,7 +83,7 @@ bool ScannerFile::startScanner() {
 
 // Establece la función especificada como función de callback a la que se llamará cada vez que
 // se escanee un nuevo punto
-bool ScannerFile::setCallback(std::function<void(Point)> func) {
+bool ScannerFile::setCallback(const std::function<void(Point)> func) {
     callback = func;
     return ((bool)callback);
 }

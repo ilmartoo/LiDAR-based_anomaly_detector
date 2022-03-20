@@ -21,7 +21,7 @@
 class IScanner {
    public:
     /**
-     * Destructor
+     * Destructor virtual
      */
     virtual ~IScanner(){};
 
