@@ -8,13 +8,14 @@ TARGET		:= anomaly_detection
 # Directorios de includes, codigo fuente, objetos y destino
 SRCDIR		:= src
 INCDIR		:= include
+LIBDIR		:= lib
 OBJDIR		:= bin
 TARGETDIR	:= build
 
 # Flags, librerias e includes
-FLAGS		:= -Wall -g3
-LIB			:= 
+LIBS		:= -pthread -llivox_sdk_static -lgtest -lgmock
 INC			:= -I $(INCDIR)
+FLAGS		:= -Wall -g3 $(INC) $(LIBS)
 
 #----------------------------------------------------------------
 # REGLAS - NO EDITAR
@@ -44,7 +45,7 @@ remake_app: clean app
 
 # Enlazado del programa
 app_$(TARGET): $(NODIR_OBJS_APP)
-	$(CC) $(FLAGS) -o $(TARGETDIR)/$(TARGET).out $(INC) $^ $(LIB)
+	$(CC) $(FLAGS) -o $(TARGETDIR)/$(TARGET).out $^
 	@echo "\e[1;34m[$@] Codigo del programa enlazado\e[0m"
 
 # Compilación
@@ -64,7 +65,7 @@ remake_test: clean test
 
 # Enlazado del programa
 test_$(TARGET): $(NODIR_OBJS_TEST)
-	$(CC) $(FLAGS) -o $(TARGETDIR)/$(TARGET)_test.out $(INC) $^ $(LIB)
+	$(CC) $(FLAGS) -o $(TARGETDIR)/$(TARGET)_test.out $^
 	@echo "\e[1;34m[$@] Tests del programa enlazados\e[0m"
 
 # Compilación
@@ -76,7 +77,7 @@ $(OBJS_TEST): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 #
 # Compilación de código
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CC) $(FLAGS) $(INC) -o $(OBJDIR)/$(notdir $@) -c $<
+	$(CC) $(FLAGS) -o $(OBJDIR)/$(notdir $@) -c $<
 	@echo "\e[1;34m[$@] Archivo $< compilado \e[0m"
 
 #
@@ -84,15 +85,38 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 #
 # Creacion de directorios
 directories:
-	@mkdir -p $(OBJDIR) $(TARGETDIR)
+	@mkdir -p $(OBJDIR) $(TARGETDIR) $(LIBDIR)
 	@echo "\e[1;34m[$@] Directorios creados\e[0m"
+
+#
+# LIBRARY RULES
+#
+# Crea las librerías
+libraries: sdk_core googletest
+	@echo "\e[1;34m[$@] Librerías creadas\e[0m"
+
+# Crea la librería sdk_core
+skd_core:
+	cd sdk_core/ && mkdir -p build
+	cd build && cmake ..
+	make &&	make install
+	cd ../../
+	@echo "\e[1;34m[$@] Librería $@ creada\e[0m"
+
+# Crea la librería googletest
+googletest:
+	cd googletest/ && mkdir -p build
+	cd build && cmake ..
+	make &&	make install
+	cd ../../
+	@echo "\e[1;34m[$@] Librería $@ creada\e[0m"
 
 #
 # CLEAN RULES
 #
 # Limpiado de archivos ejecutables y objeto
-clean: cleanobj
-	$(RM) -r $(TARGETDIR)
+clean: clean_obj
+	$(RM) -r $(TARGETDIR) skd_core/build googletest/build
 	@echo "\e[1;34m[$@] Borrado total completado\e[0m"
 	
 # Limpiado de archivos objeto
