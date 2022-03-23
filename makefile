@@ -15,6 +15,7 @@ TARGETDIR	:= build
 # Flags, librerias e includes
 LIBS		:= -pthread -llivox_sdk_static -lgtest -lgmock
 INC			:= -I $(INCDIR)
+DEBUG_FLAG	:= -DDEBUG_LBAD
 FLAGS		:= -Wall -g3 $(INC) $(LIBS)
 
 #----------------------------------------------------------------
@@ -36,15 +37,20 @@ NODIR_OBJS_TEST	:= $(patsubst %,$(OBJDIR)/%,$(notdir $(OBJS_TEST)))
 # APP RULES
 #
 # Creación de la app (Opcion por defecto)
-app: directories app_$(TARGET)
+app: directories app$(TARGET)
 	@echo "\e[1;32m[$@] Programa compilado y enlazado\e[0m"
 
+# Opción de DEBUG
+debug: FLAGS += $(DEBUG_FLAG)
+debug: TARGET := $(TARGET)_debug
+debug: app
+
 # Limpieza + opcion por defecto
-remake_app: clean app
+remakeApp: clean app
 	@echo "\e[1;34m[$@] Remake del programa completado\e[0m"
 
 # Enlazado del programa
-app_$(TARGET): $(NODIR_OBJS_APP)
+app$(TARGET): $(NODIR_OBJS_APP)
 	$(CC) $(FLAGS) -o $(TARGETDIR)/$(TARGET).out $^
 	@echo "\e[1;34m[$@] Codigo del programa enlazado\e[0m"
 
@@ -56,16 +62,17 @@ $(OBJS_APP): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 # TEST RULES
 #
 # Creación de los tests
-test: directories test_$(TARGET)
+test: TARGET := $(TARGET)_test
+test: directories test$(TARGET)
 	@echo "\e[1;32m[$@] Tests compilados y enlazados\e[0m"
 
 # Limpieza + opcion por defecto
-remake_test: clean test
+remakeTest: clean test
 	@echo "\e[1;34m[$@] Remake de los tests completado\e[0m"
 
 # Enlazado del programa
-test_$(TARGET): $(NODIR_OBJS_TEST)
-	$(CC) $(FLAGS) -o $(TARGETDIR)/$(TARGET)_test.out $^
+test$(TARGET): $(NODIR_OBJS_TEST)
+	$(CC) $(FLAGS) -o $(TARGETDIR)/$(TARGET).out $^
 	@echo "\e[1;34m[$@] Tests del programa enlazados\e[0m"
 
 # Compilación

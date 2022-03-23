@@ -10,7 +10,7 @@ library() {
 	fi
 
 	# Crea la librería googletest
-	if [ ! -r /usr/local/lib/libgmock.a ] && [! -r /usr/local/lib/libgtest.a ]; then
+	if [ ! -r /usr/local/lib/libgmock.a ] && [ ! -r /usr/local/lib/libgtest.a ]; then
 		cd googletest/ && mkdir -p build
 		cd build && cmake ..
 		make && sudo make install
@@ -23,13 +23,18 @@ if [ $# -eq 1 ]; then
 	case $1 in
 	test)
 
-		make remake_test                   # Compilación y enlazado de tests
+		make test                   	   # Compilación y enlazado de tests
 		./build/anomaly_detection_test.out # Ejecución de tests
+		;;
+
+	debug)
+
+		make debug # Compilación y enlazado de la aplicación con las opciones de debug
 		;;
 
 	app)
 
-		make remake_app # Compilación y enlazado de la aplicación
+		make app # Compilación y enlazado de la aplicación
 		;;
 
 	libraries)
