@@ -51,12 +51,12 @@ class Point {
      */
     inline int32_t getZ() { return this->z; };
 
-   private:
     // Imprime la información del punto p
     friend std::ostream &operator<<(std::ostream &strm, const Point &p) {
         return strm << "[" << p.timestamp << "] " << p.x << ", " << p.y << ", " << p.z;
     }
 
+   private:
     uint64_t timestamp;  ///< Timestamp del punto
     int32_t x;           ///< Localización en el eje x del punto
     int32_t y;           ///< Localización en el eje y del punto
