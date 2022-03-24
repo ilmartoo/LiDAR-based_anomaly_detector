@@ -4,11 +4,12 @@
  * @brief Definición del objeto ScannerFile, implementador de la interfaz IScanner
  * @date 19/03/2022
  *
+ * Definicion del objeto ScannerFile
  *
  */
 
-#ifndef __SCANNERFILE_H
-#define __SCANNERFILE_H
+#ifndef __SCANNERFILE_CLASS_H
+#define __SCANNERFILE_CLASS_H
 
 #include <iostream>
 #include <string>
@@ -68,4 +69,4 @@ class ScannerFile : public IScanner {
     std::function<void(Point)> callback;  ///< Función de callback
 };
 
-#endif  //__SCANNERFILE_H
+#endif  //__SCANNERFILE_CLASS_H
