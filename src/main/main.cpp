@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <stdlib.h>
 
 #include "scanner/IScanner.hpp"
 #include "scanner/ScannerFile.hpp"
@@ -40,7 +41,7 @@ int main(int argc, char* argv[]) {
 
     delete scanner;
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 void callback(Point p) {
