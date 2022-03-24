@@ -78,7 +78,8 @@ void ScannerLidar::onLidarErrorStatusCallback(livox_status status, uint8_t handl
 
 // Se ejecuta con el comienzo del escaneo de puntos
 void ScannerLidar::onSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data) {
-    printDebug("Comienzo del escaneo: " + status + "statue" + response + "response");  // debug
+    printDebug("Comienzo del escaneo: " + std::to_string(status) + "statue" + std::to_string(response) +
+               "response");  // debug
 
     if (status == kStatusSuccess) {
         if (response != 0) {
@@ -92,7 +93,8 @@ void ScannerLidar::onSampleCallback(livox_status status, uint8_t handle, uint8_t
 
 // Se ejecuta con la finalización del escaneo de puntos
 void ScannerLidar::onStopSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data) {
-    printDebug("Finalización del escaneo: " + status + "statue" + response + "response");  // debug
+    printDebug("Finalización del escaneo: " + std::to_string(status) + "statue" + std::to_string(response) +
+               "response");  // debug
 
     this->lidar.device_state = kDeviceStateDisconnect;
 }
@@ -180,7 +182,8 @@ bool ScannerLidar::initScanner() {
 // Comienza la obtención de puntos
 bool ScannerLidar::startScanner() {
     if (this->lidar.info.state == kLidarStateNormal &&
-        kStatusSuccess == LidarStartSampling(handle, (CommonCommandCallback)&ScannerLidar::onSampleCallback, NULL)) {
+        kStatusSuccess ==
+            LidarStartSampling(this->lidar.handle, (CommonCommandCallback)&ScannerLidar::onSampleCallback, NULL)) {
         this->lidar.device_state = kDeviceStateSampling;
 
         return true;
