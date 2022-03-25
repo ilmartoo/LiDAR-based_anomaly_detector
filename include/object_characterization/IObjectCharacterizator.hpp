@@ -1,3 +1,12 @@
+/**
+ * @file IObjectCharacterizator.hpp
+ * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
+ * @date 25/03/2022
+ *
+ * Interfaz IObjectCharacterizator
+ *
+ */
+
 #ifndef __OBJECTCARACTERIZATOR_INTERFACE_H
 #define __OBJECTCARACTERIZATOR_INTERFACE_H
 
@@ -18,6 +27,11 @@ enum CharacterizatorState {
  */
 class IObjectCharacterizator {
    public:
+    /**
+     * Destructor virtual
+     */
+    virtual ~IObjectCharacterizator() {}
+
     /**
      * Callback a donde se recebirán los puntos escaneados
      * @param p Punto escaneado
@@ -42,9 +56,10 @@ class IObjectCharacterizator {
     // virtual CharacteristicsVector extractCharacteristics() = 0;
 
     /**
-     * Comienza la definición de objetos, definiendo el background durante los segundos especificados para despues
-     * definir los objetos
-     * @param backgroundDefinitionTime Segundos durante los que todos los puntos recogidos formarán parte del background
+     * Comienza la definición de objetos, definiendo el background durante los segundos
+     * especificados para despues definir los objetos
+     * @param backgroundDefinitionTime Segundos durante los que todos los puntos recogidos formarán
+     * parte del background
      */
     void start(uint16_t backgroundDefinitionTime) {
         defineBackground(backgroundDefinitionTime);
