@@ -1,7 +1,6 @@
 /**
  * @file ScannerFile.hpp
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
- * @brief Definición del objeto ScannerFile, implementador de la interfaz IScanner
  * @date 19/03/2022
  *
  * Definicion del objeto ScannerFile

@@ -1,9 +1,9 @@
 /**
  * @file IScanner.hpp
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
- * @brief Interfaz IScanner
  * @date 19/03/2022
  *
+ * Interfaz IScanner
  *
  */
 
