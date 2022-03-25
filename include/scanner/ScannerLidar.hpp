@@ -33,15 +33,14 @@ typedef enum {
 /**
  * Datos del sensor LiDAR
  */
-typedef struct {
+struct DeviceItem {
     uint8_t handle;            ///< Handler
     DeviceState device_state;  ///< Estado del sensor
     DeviceInfo info;           ///< Propiedades del sensor
-} DeviceItem;
+};
 
 /**
- * Implementación de la interfaz IScanner para la lectura de puntos de archivos CSV obtenidos del
- * programa propietario Livox Viewer
+ * Implementación de la interfaz IScanner para la lectura de puntos del modelo de LiDAR Livox Horizon
  */
 class ScannerLidar : public IScanner {
    public:
