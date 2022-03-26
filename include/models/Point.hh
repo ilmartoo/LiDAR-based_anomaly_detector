@@ -1,5 +1,5 @@
 /**
- * @file Point.hpp
+ * @file Point.hh
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 19/03/2022
  *
@@ -28,19 +28,6 @@ class Point {
      */
     Point(uint64_t timestamp, uint8_t reflectivity, int32_t x, int32_t y, int32_t z)
         : timestamp(timestamp), reflectivity(reflectivity), x(x), y(y), z(z) {
-        this->timestamp_counter = 0;  // Solo se ejecuta la primera vez
-    }
-
-    /**
-     * Constructor del objeto Punto
-     * @param reflectivity Reflectividad del punto
-     * @param x Posición en x del punto
-     * @param y Posición en y del punto
-     * @param z Posición en z del punto
-     */
-    Point(uint8_t reflectivity, int32_t x, int32_t y, int32_t z) : reflectivity(reflectivity), x(x), y(y), z(z) {
-        this->timestamp_counter = 0;  // Solo se ejecuta la primera vez
-        this->timestamp = timestamp_counter++;
     }
 
     /**
@@ -73,11 +60,17 @@ class Point {
      */
     inline int32_t getZ() { return this->z; };
 
-    // Imprime la información del punto p
-    friend std::ostream &operator<<(std::ostream &strm, const Point &p) {
-        return strm << "[Time: " << p.timestamp << "] [Ref: " << p.reflectivity << "] " << p.x << ", " << p.y << ", "
-                    << p.z;
+    /**
+     * Obtiene un string con los datos del punto
+     * @return String con los datos del punto
+     */
+    inline const std::string string() {
+        return "[Time: " + std::to_string(this->timestamp) + "] [Ref: " + std::to_string(this->reflectivity) + "] " +
+               std::to_string(this->x) + ", " + std::to_string(this->y) + ", " + std::to_string(this->z);
     }
+
+    // Imprime la información del punto p
+    friend std::ostream &operator<<(std::ostream &strm, Point &p) { return strm << p.string(); }
 
    private:
     static uint64_t timestamp_counter;  ///< Contador del timestamp del punto

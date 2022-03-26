@@ -1,5 +1,5 @@
 /**
- * @file ScannerFile.hpp
+ * @file ScannerFile.hh
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 19/03/2022
  *
@@ -15,8 +15,8 @@
 #include <fstream>
 #include <functional>
 
-#include "scanner/IScanner.hpp"
-#include "models/Point.hpp"
+#include "scanner/IScanner.hh"
+#include "models/Point.hh"
 
 /**
  * Implementación de la interfaz IScanner para la lectura de puntos de archivos CSV obtenidos del

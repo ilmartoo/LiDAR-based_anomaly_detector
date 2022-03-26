@@ -9,8 +9,8 @@
 
 #include <stdint.h>
 
-#include "app/App.hpp"
-#include "app/InputParser.hpp"
+#include "app/App.hh"
+#include "app/InputParser.hh"
 
 App::App(TimerMode timerMode, const std::string &filename) : timerMode(timerMode) {
     // scanner = ScannerFile(filename);

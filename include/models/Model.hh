@@ -1,5 +1,5 @@
 /**
- * @file Model.hpp
+ * @file Model.hh
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 20/03/2022
  *
@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include "models/CharacteristicsVector.hpp"
+#include "models/CharacteristicsVector.hh"
 
 /**
  * Modelo de un objeto

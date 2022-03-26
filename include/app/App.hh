@@ -1,5 +1,5 @@
 /**
- * @file App.hpp
+ * @file App.hh
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 20/03/2022
  *
@@ -13,10 +13,10 @@
 #include <stdint.h>
 #include <string>
 
-#include "scanner/IScanner.hpp"
-#include "scanner/ScannerFile.hpp"
-#include "object_characterization/IObjectCharacterizator.hpp"
-#include "anomaly_detection/IAnomalyDetector.hpp"
+#include "scanner/IScanner.hh"
+#include "scanner/ScannerFile.hh"
+#include "object_characterization/IObjectCharacterizator.hh"
+#include "anomaly_detection/IAnomalyDetector.hh"
 
 /** Tipos de input de datos */
 enum InputType {

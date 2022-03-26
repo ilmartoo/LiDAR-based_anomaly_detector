@@ -1,5 +1,5 @@
 /**
- * @file InputParser.hpp
+ * @file InputParser.hh
  * @author iain (https://stackoverflow.com/users/85381/iain)
  * @date 20/03/2022
  *

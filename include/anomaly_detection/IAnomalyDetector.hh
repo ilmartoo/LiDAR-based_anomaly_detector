@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "models/CharacteristicsVector.hpp"
-#include "models/Model.hpp"
+#include "models/CharacteristicsVector.hh"
+#include "models/Model.hh"
 
 class IAnomalyDetector {
    public:

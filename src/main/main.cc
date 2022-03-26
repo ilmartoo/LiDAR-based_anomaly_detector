@@ -12,11 +12,11 @@
 #include <vector>
 #include <stdlib.h>
 
-#include "scanner/IScanner.hpp"
-#include "scanner/ScannerFile.hpp"
-#include "models/Point.hpp"
-#include "app/App.hpp"
-#include "app/InputParser.hpp"
+#include "scanner/IScanner.hh"
+#include "scanner/ScannerFile.hh"
+#include "models/Point.hh"
+#include "app/App.hh"
+#include "app/InputParser.hh"
 
 // Main function
 // int main(int argc, char* argv[]) {

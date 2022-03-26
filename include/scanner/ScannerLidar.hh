@@ -1,5 +1,5 @@
 /**
- * @file ScannerLidar.hpp
+ * @file ScannerLidar.hh
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 23/03/2022
  *
@@ -18,8 +18,8 @@
 
 #include "livox_sdk.h"
 
-#include "scanner/IScanner.hpp"
-#include "models/Point.hpp"
+#include "scanner/IScanner.hh"
+#include "models/Point.hh"
 
 /**
  * Estados en los que puede estar el escaner LiDAR
