@@ -8,15 +8,18 @@ TARGET		:= anomaly_detection
 # Directorios de includes, codigo fuente, objetos y destino
 SRCDIR		:= src
 INCDIR		:= include
-LIBDIR		:= lib
 OBJDIR		:= bin
 TARGETDIR	:= build
 
 # Flags, librerias e includes
-LIBS		:= -pthread -llivox_sdk_static -lgtest -lgmock
-INC			:= -I $(INCDIR)
+LIBPATH		:= /usr/local/lib
+LIBS		:= -L$(LIBPATH) -lpthread -llivox_sdk_static -lgtest -lgmock
+
+INCPATH		:= /usr/local/include
+INC			:= -I$(INCDIR) -I$(INCPATH)
+
 DEBUG_FLAG	:= -DDEBUG_LBAD
-FLAGS		:= -Wall -g3 $(INC) $(LIBS)
+FLAGS		:= -Wall -g3
 
 #----------------------------------------------------------------
 # REGLAS - NO EDITAR
@@ -24,13 +27,13 @@ FLAGS		:= -Wall -g3 $(INC) $(LIBS)
 # Funcion recursiva de inclusión de archivos
 rwildcard	= $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
-SOURCES  	:= $(call rwildcard,$(SRCDIR)/main/,*.cpp)
-TEST		:= $(filter-out $(SRCDIR)/main/main.cpp,$(call rwildcard,$(SRCDIR)/test/,*.cpp)) $(SRCDIR)/test/test.cpp
-INCLUDES	:= $(call rwildcard,$(INCDIR)/,*.hpp)
+SOURCES  	:= $(call rwildcard,$(SRCDIR)/main/,*.cc)
+TEST		:= $(filter-out $(SRCDIR)/main/main.cc,$(call rwildcard,$(SRCDIR)/test/,*.cc)) $(SRCDIR)/test/test.cc
+INCLUDES	:= $(call rwildcard,$(INCDIR)/,*.hh)
 
-OBJS_APP		:= $(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SOURCES:.cpp=.o))
+OBJS_APP		:= $(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SOURCES:.cc=.o))
 NODIR_OBJS_APP	:= $(patsubst %,$(OBJDIR)/%,$(notdir $(OBJS_APP)))
-OBJS_TEST		:= $(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(TEST:.cpp=.o))
+OBJS_TEST		:= $(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(TEST:.cc=.o))
 NODIR_OBJS_TEST	:= $(patsubst %,$(OBJDIR)/%,$(notdir $(OBJS_TEST)))
 
 #
@@ -51,12 +54,12 @@ remakeApp: clean app
 
 # Enlazado del programa
 app$(TARGET): $(NODIR_OBJS_APP)
-	$(CC) $(FLAGS) -o $(TARGETDIR)/$(TARGET).out $^
+	$(CC) $(FLAGS) -o $(TARGETDIR)/$(TARGET).out $^ $(INC) $(LIBS)
 	@echo "\e[1;34m[$@] Codigo del programa enlazado\e[0m"
 
 # Compilación
 $(NODIR_OBJS_APP): $(OBJS_APP)
-$(OBJS_APP): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+$(OBJS_APP): $(OBJDIR)/%.o: $(SRCDIR)/%.cc
 
 # 
 # TEST RULES
@@ -72,19 +75,19 @@ remakeTest: clean test
 
 # Enlazado del programa
 test$(TARGET): $(NODIR_OBJS_TEST)
-	$(CC) $(FLAGS) -o $(TARGETDIR)/$(TARGET).out $^
+	$(CC) $(FLAGS) -o $(TARGETDIR)/$(TARGET).out $^ $(INC) $(LIBS)
 	@echo "\e[1;34m[$@] Tests del programa enlazados\e[0m"
 
 # Compilación
 $(NODIR_OBJS_TEST): $(OBJS_TEST)
-$(OBJS_TEST): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+$(OBJS_TEST): $(OBJDIR)/%.o: $(SRCDIR)/%.cc
 
 #
 # COMPILATION RULE
 #
 # Compilación de código
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CC) $(FLAGS) -o $(OBJDIR)/$(notdir $@) -c $<
+$(OBJDIR)/%.o: $(SRCDIR)/%.cc
+	$(CC) $(FLAGS) -o $(OBJDIR)/$(notdir $@) -c $< $(INC)
 	@echo "\e[1;34m[$@] Archivo $< compilado \e[0m"
 
 #
