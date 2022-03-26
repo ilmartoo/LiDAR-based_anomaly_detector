@@ -13,9 +13,9 @@
 #include <sstream>
 #include <functional>
 
-#include "scanner/ScannerFile.hpp"
-#include "models/Point.hpp"
-#include "debug_lbad.hpp"
+#include "scanner/ScannerFile.hh"
+#include "models/Point.hh"
+#include "debug_lbad.hh"
 
 // Destructor
 ScannerFile::~ScannerFile() {
@@ -46,7 +46,7 @@ bool ScannerFile::startScanner() {
 
     if (this->infile.is_open()) {
         std::string line;     // String de la linea
-        std::string data[4];  // Strings de las celdas
+        std::string data[5];  // Strings de las celdas
 
         // Proceso de lectura de puntos
         std::getline(infile, line);  // Linea de cabecera
@@ -61,14 +61,24 @@ bool ScannerFile::startScanner() {
             i = 0;       // Indice del string
 
             // Datos no necesarios
-            for (; commas < 11; ++i) {
+            for (; commas < 7; ++i) {
+                if (line[i] == ',') {
+                    ++commas;
+                }
+            }
+
+            // Timestamp
+            data[0] = line.substr(i, line.substr(i).find_first_of(','));
+
+            // Datos no necesarios
+            for (commas = 0; commas < 3; ++i) {
                 if (line[i] == ',') {
                     ++commas;
                 }
             }
 
             // Reflectividad
-            data[0] = line.substr(i, line.substr(i).find_first_of(','));
+            data[1] = line.substr(i, line.substr(i).find_first_of(','));
 
             // Datos no necesarios
             for (commas = 0; commas < 1; ++i) {
@@ -78,15 +88,16 @@ bool ScannerFile::startScanner() {
             }
 
             // X, Y, Z
-            data[1] = line.substr(i, line.substr(i).find_first_of(','));
-            i += data[1].length();
             data[2] = line.substr(i, line.substr(i).find_first_of(','));
             i += data[2].length();
             data[3] = line.substr(i, line.substr(i).find_first_of(','));
+            i += data[3].length();
+            data[4] = line.substr(i, line.substr(i).find_first_of(','));
 
             // Creación del punto
-            Point p(static_cast<uint8_t>(std::stoull(data[0])), static_cast<uint32_t>(std::stoul(data[1])),
-                    static_cast<uint32_t>(std::stoul(data[2])), static_cast<uint32_t>(std::stoul(data[3])));
+            Point p(static_cast<uint64_t>(std::stoull(data[0])), static_cast<uint8_t>(std::stoull(data[1])),
+                    static_cast<uint32_t>(std::stoul(data[2])), static_cast<uint32_t>(std::stoul(data[3])),
+                    static_cast<uint32_t>(std::stoul(data[4])));
 
             // Llamada al callback
             if (this->callback) {
@@ -115,7 +126,9 @@ bool ScannerFile::setCallback(const std::function<void(Point)> func) {
 
 // Finaliza el escaner
 inline void ScannerFile::closeScanner() {
-    printDebug("Cerrado el archivo.");
+    printDebug("Finalizando el escaneo de puntos.");
 
     this->infile.close();
+
+    printDebug("Finalizado el escaneo de puntos.");
 }
