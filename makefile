@@ -68,6 +68,8 @@ $(OBJS_APP): $(OBJDIR)/%.o: $(SRCDIR)/%.cc
 test: TARGET := $(TARGET)_test
 test: directories test$(TARGET)
 	@echo "\e[1;32m[$@] Tests compilados y enlazados\e[0m"
+	./build/$(TARGET).out
+	@echo "\e[1;32m[$@] Tests ejecutados\e[0m"
 
 # Limpieza + opcion por defecto
 remakeTest: clean test
