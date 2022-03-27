@@ -35,6 +35,9 @@ class InputParser {
     const std::string &getOption(const std::string &option) const {
         std::vector<std::string>::const_iterator itr;
         itr = std::find(this->tokens.begin(), this->tokens.end(), option);
+
+        while (itr != this->tokens.end() && ++itr != this->tokens.end() && *itr != " ") {}
+
         if (itr != this->tokens.end() && ++itr != this->tokens.end()) {
             return *itr;
         }

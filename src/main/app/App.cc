@@ -12,18 +12,6 @@
 #include "app/App.hh"
 #include "app/InputParser.hh"
 
-App::App(TimerMode timerMode, const std::string &filename) : timerMode(timerMode) {
-    // scanner = ScannerFile(filename);
-    // oc = ...
-    // ad = ...
-}
-
-// App::App(TimerMode timerMode, const std::string &id) : timerMode(timerMode) {
-//     // scanner = ...
-//     // oc = ...
-//     // ad = ...
-// }
-
 void App::start() {}
 
 void App::start(uint32_t seconds) {}

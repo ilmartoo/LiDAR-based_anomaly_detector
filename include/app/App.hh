@@ -15,7 +15,9 @@
 
 #include "scanner/IScanner.hh"
 #include "scanner/ScannerFile.hh"
+#include "scanner/ScannerLidar.hh"
 #include "object_characterization/IObjectCharacterizator.hh"
+#include "object_characterization/ObjectCharacterizator.hh"
 #include "anomaly_detection/IAnomalyDetector.hh"
 
 /** Tipos de input de datos */
@@ -28,7 +30,7 @@ enum InputType {
 enum TimerMode {
     kUntimed = 0,                   ///< Ejecución sin medida de tiempo
     kTimedCharacterization = 0b01,  ///< Ejecución con medida de tiempo en la caracterización de objetos
-    kTimedAnomalyDetector = 0b10,   ///< Ejecución con medida de tiempo en la detección de anomalías
+    kTimedAnomalyDetection = 0b10,   ///< Ejecución con medida de tiempo en la detección de anomalías
     kTimed = 0b11,                  ///< Ejecución con medida de tiempo en todo el programa
 };
 
@@ -38,9 +40,11 @@ class App {
      * Constructor de la app para input de archivo
      * @param filename Nombre de la ruta completa o relativa al archivo de datos
      * @param timerMode Tipo de mediciones de tiempo a tomar
+     * @param frameDuration Milisegundos que debe durar un frame en el caracterizador de objetos
      */
-    App(const std::string &filename, TimerMode timerMode) : timerMode(timerMode) {
-        
+    App(const std::string &filename, TimerMode timerMode, uint32_t frameDuration) : timerMode(timerMode) {
+        scanner = new ScannerFile(filename);
+        oc = new ObjectCharacterizator(frameDuration);
     }
 
     /**
@@ -48,7 +52,10 @@ class App {
      * @param filename Nombre de la ruta completa o relativa al archivo de datos
      * @param timerMode Tipo de mediciones de tiempo a tomar
      */
-    App(const char *broadcast_code, TimerMode timerMode) : timerMode(timerMode) {}
+    App(const char *broadcast_code, TimerMode timerMode, uint32_t frameDuration) : timerMode(timerMode) {
+        scanner = new ScannerLidar(broadcast_code);
+        oc = new ObjectCharacterizator(frameDuration);
+    }
 
     /**
      * Constructor de la app para input de lidar
@@ -84,8 +91,8 @@ class App {
 
     uint32_t endTime;  ///< Tiempo total de ejecución de la aplicación
 
-    // IScanner &scanner;           ///< Escaner de puntos
-    // IObjectCharacterizator &oc;  ///< Caracterizador de objetos
+    IScanner *scanner;           ///< Escaner de puntos
+    IObjectCharacterizator *oc;  ///< Caracterizador de objetos
     // IAnomalyDetector &ad;        ///< Detector de anomalías
 };
 
