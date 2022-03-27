@@ -48,7 +48,7 @@ class ScannerLidar : public IScanner {
      *
      * @param broadcast_code
      */
-    ScannerLidar(char broadcast_code[kBroadcastCodeSize]) {
+    ScannerLidar(const char broadcast_code[kBroadcastCodeSize]) {
         memcpy(this->lidar.info.broadcast_code, broadcast_code, kBroadcastCodeSize);
     }
 
