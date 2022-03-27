@@ -20,26 +20,35 @@
 
 /** Tipos de input de datos */
 enum InputType {
-    fileInput = 0,   ///< Lectura de puntos de un archivo especificado
-    lidarInput = 1,  ///< Lectura de puntos del sensor lidar especificado
+    kInputFile = 0,   ///< Lectura de puntos de un archivo especificado
+    kInputLidar = 1,  ///< Lectura de puntos del sensor lidar especificado
 };
 
 /** Tipos de mediciones de tiempo a tomar */
 enum TimerMode {
-    untimed = 0,                   ///< Ejecución sin medida de tiempo
-    timedCharacterization = 0b01,  ///< Ejecución con medida de tiempo en la caracterización de objetos
-    timedAnomalyDetector = 0b10,   ///< Ejecución con medida de tiempo en la detección de anomalías
-    timed = 0b11,                  ///< Ejecución con medida de tiempo en todo el programa
+    kUntimed = 0,                   ///< Ejecución sin medida de tiempo
+    kTimedCharacterization = 0b01,  ///< Ejecución con medida de tiempo en la caracterización de objetos
+    kTimedAnomalyDetector = 0b10,   ///< Ejecución con medida de tiempo en la detección de anomalías
+    kTimed = 0b11,                  ///< Ejecución con medida de tiempo en todo el programa
 };
 
 class App {
    public:
     /**
      * Constructor de la app para input de archivo
-     * @param timerMode Tipo de mediciones de tiempo a tomar
      * @param filename Nombre de la ruta completa o relativa al archivo de datos
+     * @param timerMode Tipo de mediciones de tiempo a tomar
      */
-    App(TimerMode timerMode, const std::string &filename);
+    App(const std::string &filename, TimerMode timerMode) : timerMode(timerMode) {
+        
+    }
+
+    /**
+     * Constructor de la app para input de sensor lidar
+     * @param filename Nombre de la ruta completa o relativa al archivo de datos
+     * @param timerMode Tipo de mediciones de tiempo a tomar
+     */
+    App(const char *broadcast_code, TimerMode timerMode) : timerMode(timerMode) {}
 
     /**
      * Constructor de la app para input de lidar
