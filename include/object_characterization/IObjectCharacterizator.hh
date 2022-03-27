@@ -1,5 +1,5 @@
 /**
- * @file IObjectCharacterizator.hpp
+ * @file IObjectCharacterizator.hh
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 25/03/2022
  *
@@ -10,8 +10,8 @@
 #ifndef __OBJECTCARACTERIZATOR_INTERFACE_H
 #define __OBJECTCARACTERIZATOR_INTERFACE_H
 
-#include "models/Point.hpp"
-#include "models/CharacteristicsVector.hpp"
+#include "models/Point.hh"
+#include "models/CharacteristicsVector.hh"
 
 /**
  * Estados en los que se puede encontrar un caracterizador de objetos
@@ -36,18 +36,7 @@ class IObjectCharacterizator {
      * Callback a donde se recebirán los puntos escaneados
      * @param p Punto escaneado
      */
-    virtual void newPoint(Point p) = 0;
-
-    /**
-     * Descarta el background guardado y empieza a guardar uno nuevo
-     * @param seconds Segundos durante los que se definirá el background
-     */
-    virtual void defineBackground(uint16_t seconds) = 0;
-
-    /**
-     * Comienza la definición de puntos
-     */
-    virtual void defineObjects() = 0;
+    virtual void newPoint(Point &p) = 0;
 
     /**
      * Callback a donde se recebirán los puntos escaneados
@@ -56,15 +45,12 @@ class IObjectCharacterizator {
     // virtual CharacteristicsVector extractCharacteristics() = 0;
 
     /**
-     * Comienza la definición de objetos, definiendo el background durante los segundos
+     * Comienza la definición de objetos, definiendo el background durante los milisegundos
      * especificados para despues definir los objetos
-     * @param backgroundDefinitionTime Segundos durante los que todos los puntos recogidos formarán
+     * @param backgroundTime Milisegundos durante los que todos los puntos recogidos formarán
      * parte del background
      */
-    void start(uint16_t backgroundDefinitionTime) {
-        defineBackground(backgroundDefinitionTime);
-        defineObjects();
-    };
+    virtual void start(uint16_t backgroundTime) = 0;
 
     /**
      * Para la caracterización de objetos
