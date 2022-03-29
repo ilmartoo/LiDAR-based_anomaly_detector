@@ -55,7 +55,7 @@ class ScannerLidar : public IScanner {
     /**
      * Destructor del scanner
      */
-    ~ScannerLidar();
+    ~ScannerLidar() {}
 
     /**
      * Inicialización del escaner
