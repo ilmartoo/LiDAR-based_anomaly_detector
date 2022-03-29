@@ -30,11 +30,7 @@ void ObjectCharacterizator::newPoint(Point &p) {
         case defObject:
             printDebug("Punto añadido al objeto:\n" + p.string());  // debug
 
-            mutexMaps.lock();  // Bloqueamos el mutex
-
-            object.map->push(p);  // Guardamos punto
-
-            mutexMaps.unlock();  // Desbloqueamos el mutex
+            object->push(p);  // Guardamos punto
 
             break;
 
@@ -74,17 +70,13 @@ void ObjectCharacterizator::stop() {
 // Elimina los puntos del objeto cullo tiempo de vida sea mayor que el máximo establecido
 void ObjectCharacterizator::removeOldObjectPoints() {
     while (true) {
-        if (!object.map->empty()) {
-            Point &p = object.map->front();
+        if (!object->empty()) {
+            Point &p = object->front();
 
-            if (p.getTimestamp() + frameDuration < object.lastTimestamp) {
+            if (p.getTimestamp() + frameDuration < *object->getLastTimestamp()) {
                 printDebug("Punto eliminado:\n" + p.string());  // debug
 
-                mutexMaps.lock();  // Bloqueamos el mutex
-
-                object.map->pop();  // Eliminamos punto
-
-                mutexMaps.unlock();  // Desbloqueamos el mutex
+                object->pop();  // Eliminamos punto
             }
         }
     }
