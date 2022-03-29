@@ -15,9 +15,10 @@
 
 #include "livox_sdk.h"
 
-#include "debug_lbad.hh"
 #include "scanner/ScannerLidar.hh"
 #include "models/Point.hh"
+#include "models/Timestamp.hh"
+#include "debug_lbad.hh"
 
 // Obtiene los datos del punto enviado por el sensor
 void ScannerLidar::getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void *client_data) {
@@ -26,7 +27,7 @@ void ScannerLidar::getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t d
         LivoxExtendRawPoint *p_data = (LivoxExtendRawPoint *)data->data;
 
         if (callback) {
-            callback(Point((uint64_t)data->timestamp, p_data->reflectivity, p_data->x, p_data->y, p_data->z));
+            callback(Point(Timestamp(data->timestamp), p_data->reflectivity, p_data->x, p_data->y, p_data->z));
         }
     }
 }
