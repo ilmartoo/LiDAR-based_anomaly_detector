@@ -13,7 +13,8 @@ TARGETDIR	:= build
 
 # Flags, librerias e includes
 LIBPATH		:= /usr/local/lib
-LIBS		:= -L$(LIBPATH) -lpthread -llivox_sdk_static -lgtest -lgmock
+LIBS		:= -L$(LIBPATH) -lpthread -llivox_sdk_static 
+TEST_LIBS	:= -lgtest -lgmock
 
 INCPATH		:= /usr/local/include
 INC			:= -I$(INCDIR) -I$(INCPATH)
@@ -66,6 +67,7 @@ $(OBJS_APP): $(OBJDIR)/%.o: $(SRCDIR)/%.cc
 #
 # Creación de los tests
 test: TARGET := $(TARGET)_test
+test: LIBS := $(TEST_LIBS)
 test: directories test$(TARGET)
 	@echo "\e[1;32m[$@] Tests compilados y enlazados\e[0m"
 	./build/$(TARGET).out
