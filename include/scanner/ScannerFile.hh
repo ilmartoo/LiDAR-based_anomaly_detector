@@ -14,6 +14,7 @@
 #include <string>
 #include <fstream>
 #include <functional>
+#include <thread>
 
 #include "scanner/IScanner.hh"
 #include "models/Point.hh"
@@ -33,7 +34,11 @@ class ScannerFile : public IScanner {
     /**
      * Destructor del scanner
      */
-    ~ScannerFile();
+    ~ScannerFile() {
+        if (this->infile.is_open()) {
+            this->infile.close();
+        }
+    };
 
     /**
      * Inicialización del escaner
@@ -66,6 +71,13 @@ class ScannerFile : public IScanner {
     std::ifstream infile;         ///< Stream del archivo de datos
 
     std::function<void(Point)> callback;  ///< Función de callback
+
+    std::thread fileReader;  ///< Hilo lector del archivo
+
+    /**
+     * Lee los puntos del archivo de input
+     */
+    void pointReader();
 };
 
 #endif  //__SCANNERFILE_CLASS_H
