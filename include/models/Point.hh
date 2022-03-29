@@ -13,6 +13,8 @@
 #include <stdint.h>
 #include <ostream>
 
+#include "models/Timestamp.hh"
+
 /**
  * Representación de un punto de una nube de datos 3D
  */
@@ -26,46 +28,45 @@ class Point {
      * @param y Posición en y del punto
      * @param z Posición en z del punto
      */
-    Point(uint64_t timestamp, uint8_t reflectivity, int32_t x, int32_t y, int32_t z)
-        : timestamp(timestamp), reflectivity(reflectivity), x(x), y(y), z(z) {
-    }
+    Point(Timestamp timestamp, float reflectivity, int32_t x, int32_t y, int32_t z)
+        : timestamp(timestamp), reflectivity(reflectivity), x(x), y(y), z(z) {}
 
     /**
      * Devuelve el timestamp del punto
      * @return Timestamp del punto
      */
-    inline uint64_t getTimestamp() { return this->timestamp; };
+    inline const Timestamp &getTimestamp() const { return this->timestamp; };
 
     /**
      * Devuelve la reflectividad del punto
      * @return Reflectividad del punto
      */
-    inline uint8_t getReflectivity() { return this->reflectivity; };
+    inline const float &getReflectivity() const { return this->reflectivity; };
 
     /**
      * Devuelve la localización en el eje x del punto
      * @return Posición en x del punto
      */
-    inline int32_t getX() { return this->x; };
+    inline const int32_t &getX() const { return this->x; };
 
     /**
      * Devuelve la localización en el eje y del punto
      * @return Posición en y del punto
      */
-    inline int32_t getY() { return this->y; };
+    inline const int32_t &getY() const { return this->y; };
 
     /**
      * Devuelve la localización en el eje z del punto
      * @return Posición en z del punto
      */
-    inline int32_t getZ() { return this->z; };
+    inline const int32_t &getZ() const { return this->z; };
 
     /**
      * Obtiene un string con los datos del punto
      * @return String con los datos del punto
      */
     inline const std::string string() {
-        return "[Time: " + std::to_string(this->timestamp) + "] [Ref: " + std::to_string(this->reflectivity) + "] " +
+        return "[Time: " + this->timestamp.string() + "] [Ref: " + std::to_string(this->reflectivity) + "] " +
                std::to_string(this->x) + ", " + std::to_string(this->y) + ", " + std::to_string(this->z);
     }
 
@@ -73,12 +74,11 @@ class Point {
     friend std::ostream &operator<<(std::ostream &strm, Point &p) { return strm << p.string(); }
 
    private:
-    static uint64_t timestamp_counter;  ///< Contador del timestamp del punto
-    uint64_t timestamp;                 ///< Timestamp del punto
-    uint8_t reflectivity;               ///< Reflectividad del punto
-    int32_t x;                          ///< Localización en el eje x del punto
-    int32_t y;                          ///< Localización en el eje y del punto
-    int32_t z;                          ///< Localización en el eje <x> del punto
+    Timestamp timestamp;  ///< Timestamp del punto
+    float reflectivity;   ///< Reflectividad del punto
+    int32_t x;            ///< Localización en el eje x del punto
+    int32_t y;            ///< Localización en el eje y del punto
+    int32_t z;            ///< Localización en el eje <x> del punto
 };
 
 #endif  //__POINT_CLASS_H
