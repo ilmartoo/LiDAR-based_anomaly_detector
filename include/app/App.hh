@@ -45,10 +45,10 @@ class App {
      * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      */
     App(const std::string &filename, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime,
-        float minReflectivity)
+        float minReflectivity, float background_distance)
         : timerMode(timerMode), backgroundTime(backgroundTime), minReflectivity(minReflectivity) {
-        scanner = new ScannerFile(filename);            // Creamos escaner
-        oc = new ObjectCharacterizator(frameDuration);  // Creamos caracterizador
+        scanner = new ScannerFile(filename);                                 // Creamos escaner
+        oc = new ObjectCharacterizator(frameDuration, background_distance);  // Creamos caracterizador
         // ad =
 
         this->start();
@@ -65,10 +65,10 @@ class App {
      * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      */
     App(const char *broadcast_code, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime,
-        float minReflectivity)
+        float minReflectivity, float background_distance)
         : timerMode(timerMode), backgroundTime(backgroundTime), minReflectivity(minReflectivity) {
-        scanner = new ScannerLidar(broadcast_code);
-        oc = new ObjectCharacterizator(frameDuration);
+        scanner = new ScannerLidar(broadcast_code);                          // Creamos escaner
+        oc = new ObjectCharacterizator(frameDuration, background_distance);  // Creamos caracterizador
         // ad =
 
         this->start();
@@ -119,4 +119,4 @@ class App {
     IAnomalyDetector *ad;        ///< Detector de anomalías
 };
 
-#endif  //APP_CLASS_H
+#endif  // APP_CLASS_H

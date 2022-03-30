@@ -13,7 +13,7 @@ TARGETDIR	:= build
 
 # Flags, librerias e includes
 LIBPATH		:= /usr/local/lib
-LIBS		:= -L$(LIBPATH) -lpthread -llivox_sdk_static 
+LIBS		:= -L$(LIBPATH) -lm -lpthread -llivox_sdk_static 
 TEST_LIBS	:= -lgtest -lgmock
 
 INCPATH		:= /usr/local/include

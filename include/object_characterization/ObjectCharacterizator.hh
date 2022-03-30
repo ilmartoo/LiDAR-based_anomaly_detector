@@ -27,8 +27,11 @@ class ObjectCharacterizator : public IObjectCharacterizator {
      * Constructor
      * @param frameDuration Duración del frame de puntos en milisegundos
      */
-    ObjectCharacterizator(uint32_t frameDuration)
-        : frameDuration(frameDuration * 1000000), minReflectivity(0.f), exit(true) {
+    ObjectCharacterizator(uint32_t frameDuration, float backgroundDistance)
+        : frameDuration(frameDuration * 1000000),
+          backgroundDistance(backgroundDistance),
+          minReflectivity(0.f),
+          exit(true) {
         state = defStopped;
 
         background = new std::vector<Point>();
@@ -65,8 +68,9 @@ class ObjectCharacterizator : public IObjectCharacterizator {
    private:
     enum CharacterizatorState state;  ///< Estado en el que se encuentra el caracterizador de objetos
 
-    uint64_t frameDuration;  ///< Duración del frame de puntos en nanosegundos
-    float minReflectivity;   ///< Reflectividad mínima que necesitan los puntos para no ser descartados
+    uint64_t frameDuration;    ///< Duración del frame de puntos en nanosegundos
+    float minReflectivity;     ///< Reflectividad mínima que necesitan los puntos para no ser descartados
+    float backgroundDistance;  ///< Distancia mínima a la que tiene que estar un punto para no pertenecer al background
 
     std::vector<Point> *background;  ///< Mapa de puntos que forman el background
     PointMap *object;                ///< Mapa de puntos que forman el objeto
@@ -79,6 +83,14 @@ class ObjectCharacterizator : public IObjectCharacterizator {
      * @param backgroundTime Milisegundos durante los que todos los puntos recogidos formarán parte del background
      */
     void managePoints(uint32_t backgroundTime);
+
+    /**
+     * Comprueba si un punto pertenece al background
+     * @param p Punto a comprobar
+     * @return true El punto pertenece al background
+     * @return false El punto no pertenece al background
+     */
+    bool isBackground(const Point &p) const;
 };
 
-#endif  //OBJECTCARACTERIZATOR_CLASS_H
+#endif  // OBJECTCARACTERIZATOR_CLASS_H

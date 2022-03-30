@@ -10,6 +10,7 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include <cmath>
 
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "debug_lbad.hh"
@@ -32,7 +33,9 @@ void ObjectCharacterizator::newPoint(Point &p) {
             case defObject:
                 printDebug("Punto añadido al objeto:\n" + p.string());  // debug
 
-                object->push(p);  // Guardamos punto
+                if (isBackground(p)) {
+                    object->push(p);  // Guardamos punto
+                }
 
                 break;
 
@@ -79,11 +82,26 @@ void ObjectCharacterizator::managePoints(uint32_t backgroundTime) {
         if (!object->empty()) {
             Point &p = object->front();
 
+            // Eliminamos si su timestamp es viejo
             if (p.getTimestamp() + frameDuration < object->getLastTimestamp()) {
-                printDebug("Punto eliminado:\n" + p.string());  // debug
+                printDebug("Punto caducado:\n" + p.string());  // debug
 
                 object->pop();  // Eliminamos punto
             }
         }
     }
 }
+
+// Comprueba si un punto pertenece al background
+bool ObjectCharacterizator::isBackground(const Point &p) const {
+    for (Point &pb : *background) {
+        // Distancia euclidea
+        double distance = pow(p.getX() - pb.getX(), 2) + pow(p.getY() - pb.getY(), 2) + pow(p.getZ() - pb.getZ(), 2);
+        distance = sqrt(distance);
+
+        if (distance < backgroundDistance) {
+            return true;  // Pertenece al background
+        }
+    }
+    return false;  // No pertenece al background
+};

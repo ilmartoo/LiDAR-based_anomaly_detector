@@ -18,29 +18,33 @@
 #include "debug_lbad.hh"
 
 /* Defaults */
-#define DEFAULT_FRAME_TIME      100  // Default frame time (ms)
-#define DEFAULT_BACKGROUND_TIME 500  // Default background time (ms)
-#define DEFAULT_MIN_RELECTIVITY 0.f  // Default point reflectivity
+#define DEFAULT_TIMER_MODE          kUntimed  // Default timer mode
+#define DEFAULT_FRAME_TIME          100       // Default frame time (ms)
+#define DEFAULT_BACKGROUND_TIME     500       // Default background time (ms)
+#define DEFAULT_MIN_RELECTIVITY     0.f       // Default point reflectivity
+#define DEFAULT_BACKGROUND_DISTANCE 0.2f      // Default backgound distance (m)
 
 /* ParsedInput struct */
 struct ParsedInput {
     ParsedInput()
         : is_ok(false),
-          time_mode(kUntimed),
+          time_mode(DEFAULT_TIMER_MODE),
           frame_time(DEFAULT_FRAME_TIME),
           background_time(DEFAULT_BACKGROUND_TIME),
-          min_reflectivity(DEFAULT_MIN_RELECTIVITY){};
+          min_reflectivity(DEFAULT_MIN_RELECTIVITY),
+          background_distance(DEFAULT_BACKGROUND_DISTANCE){};
 
     bool is_ok;     ///< Variable para comprobar si se ha introducido el input necesario
     int exit_code;  ///< Exit code to return when is_ok is false
 
-    bool is_lidar;             ///< Tipo de escanner a usar: true si es mediante lidar
-    std::string filename;      ///< Nombre del archivo de datos
-    char *broadcast_code;      ///< Codigo de broadcast del sensor lidar
-    TimerMode time_mode;       ///< Tipo de métricas a tomar
-    uint32_t frame_time;       ///< Tiempo que duraran los puntos en el frame
-    uint32_t background_time;  ///< Tiempo en el cual los puntos formarán parte del background
-    float min_reflectivity;    ///< Reflectividad mínima que necesitan los puntos para no ser descartados
+    bool is_lidar;              ///< Tipo de escanner a usar: true si es mediante lidar
+    std::string filename;       ///< Nombre del archivo de datos
+    char *broadcast_code;       ///< Codigo de broadcast del sensor lidar
+    TimerMode time_mode;        ///< Tipo de métricas a tomar
+    uint32_t frame_time;        ///< Tiempo que duraran los puntos en el frame
+    uint32_t background_time;   ///< Tiempo en el cual los puntos formarán parte del background
+    float min_reflectivity;     ///< Reflectividad mínima que necesitan los puntos para no ser descartados
+    float background_distance;  ///< Distancia mínima a la que tiene que estar un punto para no pertenecer al background
 };
 
 /* Declarations */
@@ -55,7 +59,7 @@ int main(int argc, char *argv[]) {
 
     if (pi.is_ok) {
         App app(pi.is_lidar ? pi.broadcast_code : pi.filename, pi.time_mode, pi.frame_time, pi.background_time,
-                pi.min_reflectivity);
+                pi.min_reflectivity, pi.background_distance);
     }
 
     return EXIT_SUCCESS;  // Exit
@@ -120,10 +124,10 @@ ParsedInput parseInput(int argc, char *argv[]) {
     }
 
     /* Duración del frame */
-    if (parser.optionExists("-d")) {
-        printDebug("Opción -d");  // debug
+    if (parser.optionExists("-p")) {
+        printDebug("Opción -p");  // debug
 
-        const std::string &option = parser.getOption("-d");
+        const std::string &option = parser.getOption("-p");
         // No se ha proporcionado valor
         if (option.empty()) {
             return missusage(pi);  // Salimos
@@ -219,6 +223,28 @@ ParsedInput parseInput(int argc, char *argv[]) {
         }
     }
 
+    /* Distancia al background mínima */
+    if (parser.optionExists("-d")) {
+        printDebug("Opción -d");  // debug
+
+        const std::string &option = parser.getOption("-d");
+        // No se ha proporcionado valor
+        if (option.empty()) {
+            return missusage(pi);  // Salimos
+        }
+        // Obtención del valor
+        else {
+            // Valor válido
+            try {
+                pi.background_distance = std::stof(option);
+            }
+            // Valor inválido
+            catch (std::exception &e) {
+                return missusage(pi);  // Salimos
+            }
+        }
+    }
+
     return pi;
 }
 
@@ -227,10 +253,9 @@ void usage() {
     std::cout
         << std::endl
         << "Usage:" << std::endl
-        << " anomaly_detection <-b broadcast_code> [-d frame_time] [-t time_mode] [-g background_time] [-r "
-           "min_reflectivity]"
+        << " anomaly_detection <-b broadcast_code> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]"
         << std::endl
-        << " anomaly_detection <-f filename> [-d frame_time] [-t time_mode] [-g background_time] [-r min_reflectivity]"
+        << " anomaly_detection <-f filename> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]"
         << std::endl
         << " anomaly_detection <-h | --help>" << std::endl
         << std::endl;
@@ -239,21 +264,25 @@ void usage() {
 // Command line help
 void help() {
     usage();  // Imprimimos usage
-    std::cout << "\t -b                Broadcast code of the lidar sensor (" << kBroadcastCodeSize << " digits)"
-              << std::endl
-              << "\t -f                File with the 3D points to get the data from" << std::endl
-              << "\t -d                Amount of miliseconds to use as frame duration time (default is 100)"
-              << std::endl
-              << "\t -t                Type of chronometer to set up and measure time from (default is notime)"
-              << std::endl
-              << "\t                       notime - No chrono set" << std::endl
-              << "\t                       char   - Characterizator chrono set" << std::endl
-              << "\t                       anom   - Anomaly detector chrono set" << std::endl
-              << "\t                       all    - All chronos set" << std::endl
-              << "\t -g                Time during which scanned points will be part of the background" << std::endl
-              << "\t -r                Minimum reflectivity poinst may have not to be discarded" << std::endl
-              << "\t -h,--help         Print the program help text" << std::endl
-              << std::endl;
+    std::cout
+        << "\t -b                Broadcast code of the lidar sensor composed of " << kBroadcastCodeSize << " digits"
+        << std::endl
+        << "\t -f                File with the 3D points to get the data from" << std::endl
+        << "\t -p                Amount of miliseconds to use as frame duration time. Default: " << DEFAULT_FRAME_TIME
+        << std::endl
+        << "\t -t                Type of chronometer to set up and measure time from. Default: notime" << std::endl
+        << "\t                       notime - No chrono set" << std::endl
+        << "\t                       char   - Characterizator chrono set" << std::endl
+        << "\t                       anom   - Anomaly detector chrono set" << std::endl
+        << "\t                       all    - All chronos set" << std::endl
+        << "\t -g                Time during which scanned points will be part of the background. Default: "
+        << DEFAULT_BACKGROUND_TIME << std::endl
+        << "\t -r                Minimum reflectivity poinst may have not to be discarded. Default: "
+        << DEFAULT_MIN_RELECTIVITY << std::endl
+        << "\t -d                Minimum distance from the background a point must have not to be discarded. Default: "
+        << DEFAULT_BACKGROUND_DISTANCE << std::endl
+        << "\t -h,--help         Print the program help text" << std::endl
+        << std::endl;
 }
 
 // Exit when command line options are used wrong
