@@ -68,7 +68,7 @@ class Timestamp {
      * @return false El Timestamp actual es mayor o igual
      */
     bool operator<(const Timestamp &t) const {
-        return this->seconds < t.seconds || this->seconds == t.seconds && this->nanoseconds < t.nanoseconds;
+        return this->seconds < t.seconds || (this->seconds == t.seconds && this->nanoseconds < t.nanoseconds);
     }
 
     /**
@@ -78,7 +78,7 @@ class Timestamp {
      * @return false El Timestamp actual es menor o igual
      */
     bool operator>(const Timestamp &t) const {
-        return this->seconds > t.seconds || this->seconds == t.seconds && this->nanoseconds > t.nanoseconds;
+        return this->seconds > t.seconds || (this->seconds == t.seconds && this->nanoseconds > t.nanoseconds);
     }
 
     /**
@@ -96,7 +96,7 @@ class Timestamp {
      * @param ns Nanosegundos a sumar
      * @return Timestamp resultado
      */
-    Timestamp &operator+(const uint64_t ns) const {
+    Timestamp operator+(const uint64_t ns) const {
         Timestamp t(this->seconds + ns / NANO_DIGITS, this->nanoseconds + ns % NANO_DIGITS);
         return t;
     }
