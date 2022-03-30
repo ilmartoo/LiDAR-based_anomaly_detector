@@ -15,14 +15,37 @@
 #include "app/InputParser.hh"
 #include "debug_lbad.hh"
 
+/* Defaults */
 #define DEFAULT_FRAME_TIME 100  // Default frame time
 
-void help();       // Command line help
-void usage();      // Command line usage
-void missusage();  // Exit when command line options are used wrong
+/* ParsedInput struct */
+struct ParsedInput {
+    ParsedInput() : time_mode(kUntimed), frame_time(DEFAULT_FRAME_TIME){};
+
+    bool is_lidar;         ///< Tipo de escanner a usar: true si es mediante lidar
+    std::string filename;  ///< Nombre del archivo de datos
+    char *broadcast_code;  ///< Codigo de broadcast del sensor lidar
+    TimerMode time_mode;   ///< Tipo de métricas a tomar
+    uint32_t frame_time;   ///< Tiempo que duraran los puntos en el frame
+};
+
+/* Declarations */
+void help();                           // Command line help
+void usage();                          // Command line usage
+void missusage();                      // Exit when command line options are used wrong
+ParsedInput parseInput(int, char **);  // Command line input parser
 
 // Main function
 int main(int argc, char *argv[]) {
+    ParsedInput pi = parseInput(argc, argv);  // Parse input
+
+    App app(pi.is_lidar ? pi.broadcast_code : pi.filename, pi.time_mode, pi.frame_time);
+
+    return EXIT_SUCCESS;  // Exit
+}
+
+// Command line parser & App creator
+ParsedInput parseInput(int argc, char *argv[]) {
     // Parser de argumentos
     InputParser parser(argc, argv);
 
@@ -30,13 +53,14 @@ int main(int argc, char *argv[]) {
     if (parser.optionExists("-h") || parser.optionExists("--help")) {
         printDebug("Opción -h | --help");  // debug
 
-        help();               // Imprimimos help
-        return EXIT_SUCCESS;  // Salimos
+        help();              // Imprimimos help
+        exit(EXIT_SUCCESS);  // Salimos
     }
 
     /* App options */
-    TimerMode tm = kUntimed;
-    uint32_t ft = DEFAULT_FRAME_TIME;
+    struct ParsedInput pi;  // Valores por defecto
+    pi.frame_time = DEFAULT_FRAME_TIME;
+    pi.time_mode = kUntimed;
 
     /* Duración del frame */
     if (parser.optionExists("-d")) {
@@ -49,7 +73,14 @@ int main(int argc, char *argv[]) {
         }
         // Obtención del valor
         else {
-            ft = static_cast<uint32_t>(std::stoul(option));
+            // Valor válido
+            try {
+                pi.frame_time = static_cast<uint32_t>(std::stoul(option));
+            }
+            // Valor inválido
+            catch (std::exception &e) {
+                missusage();  // Salimos
+            }
         }
     }
 
@@ -58,7 +89,6 @@ int main(int argc, char *argv[]) {
         printDebug("Opción -t");  // debug
 
         const std::string &option = parser.getOption("-t");
-        std::cout << "-- " << option << " --" << std::endl;
         // No se ha proporcionado valor
         if (option.empty()) {
             missusage();  // Salimos
@@ -71,15 +101,15 @@ int main(int argc, char *argv[]) {
             }
             // char
             else if (option.compare("char") == 0) {
-                tm = kTimedCharacterization;
+                pi.time_mode = kTimedCharacterization;
             }
             // anom
             else if (option.compare("anom") == 0) {
-                tm = kTimedAnomalyDetection;
+                pi.time_mode = kTimedAnomalyDetection;
             }
             // all
             else if (option.compare("all") == 0) {
-                tm = kTimed;
+                pi.time_mode = kTimed;
             }
             // Valor inválido
             else {
@@ -92,12 +122,28 @@ int main(int argc, char *argv[]) {
     if (parser.optionExists("-b")) {
         printDebug("Opción -b");  // debug
 
+        const std::string &option = parser.getOption("-b");
+        // No se ha proporcionado valor
+        if (option.empty()) {
+            missusage();  // Salimos
+        }
+
+        pi.is_lidar = true;
+        pi.broadcast_code = const_cast<char *>(option.c_str());
     }
 
     /* Input por archivo */
     else if (parser.optionExists("-f")) {
         printDebug("Opción -f");  // debug
 
+        const std::string &option = parser.getOption("-f");
+        // No se ha proporcionado valor
+        if (option.empty()) {
+            missusage();  // Salimos
+        }
+
+        pi.is_lidar = false;
+        pi.filename = option;
     }
 
     /* No se ha especificado una de las opciones obligatorias */
@@ -105,19 +151,19 @@ int main(int argc, char *argv[]) {
         printDebug("No se ha especificado una opción obligatoria");  // debug
 
         help();  // Imprimimos help
-        return EXIT_SUCCESS;
+        exit(EXIT_SUCCESS);
     }
 
-    return EXIT_SUCCESS;
+    return pi;
 }
 
 // Command line usage
 void usage() {
     std::cout << std::endl
               << "Usage:" << std::endl
-              << " lbad <-b broadcast_code> [-d frame_time] [-t time_mode]" << std::endl
-              << " lbad <-f filename> [-d frame_time] [-t time_mode]" << std::endl
-              << " lbad <-h | --help>" << std::endl
+              << " anomaly_detection <-b broadcast_code> [-d frame_time] [-t time_mode]" << std::endl
+              << " anomaly_detection <-f filename> [-d frame_time] [-t time_mode]" << std::endl
+              << " anomaly_detection <-h | --help>" << std::endl
               << std::endl;
 }
 
@@ -134,7 +180,7 @@ void help() {
               << "\t                       char   - Characterizator chrono set" << std::endl
               << "\t                       anom   - Anomaly detector chrono set" << std::endl
               << "\t                       all    - All chronos set" << std::endl
-              << "\t -h, --help        Print the program help text" << std::endl
+              << "\t -h,--help         Print the program help text" << std::endl
               << std::endl;
 }
 
@@ -145,28 +191,3 @@ void missusage() {
     usage();
     exit(EXIT_FAILURE);
 }
-
-// Funcionality test
-// #include "scanner/IScanner.hh"
-// #include "scanner/ScannerFile.hh"
-// #include "models/Point.hh"
-// void callback(Point p);
-// int main(int argc, char* argv[]) {
-//     IScanner* scanner = new ScannerFile("data/puntos_test.csv");
-
-//     scanner->initScanner();
-
-//     scanner->setCallback(callback);
-
-//     scanner->startScanner();
-
-//     scanner->closeScanner();
-
-//     delete scanner;
-
-//     return EXIT_SUCCESS;
-// }
-
-// void callback(Point p) {
-//     std::cout << p << std::endl;
-// }
