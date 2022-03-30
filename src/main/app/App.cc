@@ -7,6 +7,7 @@
  *
  */
 
+#include <iostream>
 #include <stdint.h>
 #include <functional>
 #include <signal.h>
@@ -35,6 +36,8 @@ void App::wait() {
     sigprocmask(SIG_BLOCK, &wset, nullptr);  // Bloqueamos señal de interrupción
 
     sigwait(&wset, &sig);  // Recibimos señal de interrupción
+
+    std::cout << "\r\r";  // Output formatting
 }
 
 void App::stop() {
