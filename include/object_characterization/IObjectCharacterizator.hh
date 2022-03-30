@@ -10,6 +10,8 @@
 #ifndef __OBJECTCARACTERIZATOR_INTERFACE_H
 #define __OBJECTCARACTERIZATOR_INTERFACE_H
 
+#include <thread>
+
 #include "models/Point.hh"
 #include "models/CharacteristicsVector.hh"
 
@@ -56,6 +58,9 @@ class IObjectCharacterizator {
      * Para la caracterización de objetos
      */
     virtual void stop() = 0;
+
+   protected:
+    std::thread *executionThread;  ///< Hilo de ejecución del caracterizador
 };
 
 #endif  //__OBJECTCARACTERIZATOR_INTERFACE_H

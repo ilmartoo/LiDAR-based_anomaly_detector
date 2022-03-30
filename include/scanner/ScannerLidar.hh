@@ -61,14 +61,14 @@ class ScannerLidar : public IScanner {
      * Inicialización del escaner
      * @return Se devolverá true si se ha establecido el escaner correctamente
      */
-    bool initScanner();
+    bool init();
 
     /**
      * Comienza la obtención de puntos
      * @return Se devolverá true al finalizar de leer correctamente el archivo o false si ocurre un
      * error en el proceso
      */
-    bool startScanner();
+    bool start();
 
     /**
      * Establece la función especificada como función de callback a la que se llamará cada vez que
@@ -81,7 +81,7 @@ class ScannerLidar : public IScanner {
     /**
      * Finaliza el escaner
      */
-    void closeScanner();
+    void stop();
 
    private:
     DeviceItem lidar;  ///< Datos del sensor LiDAR

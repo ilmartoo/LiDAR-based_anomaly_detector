@@ -29,14 +29,14 @@ class IScanner {
      * Inicialización del escaner
      * @return Se devolverá true si se ha establecido el escaner correctamente
      */
-    virtual bool initScanner() = 0;
+    virtual bool init() = 0;
 
     /**
      * Comienza la obtención de puntos
      * @return Se devolverá true al finalizar de leer correctamente el archivo o false si ocurre un
      * error en el proceso
      */
-    virtual bool startScanner() = 0;
+    virtual bool start() = 0;
 
     /**
      * Establece la función especificada como función de callback a la que se llamará cada vez que
@@ -49,7 +49,7 @@ class IScanner {
     /**
      * Finaliza el escaner
      */
-    virtual void closeScanner() = 0;
+    virtual void stop() = 0;
 };
 
 #endif  //__SCANNER_INTERFACE_H

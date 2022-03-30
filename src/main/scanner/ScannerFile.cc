@@ -20,7 +20,7 @@
 #include "debug_lbad.hh"
 
 // Inicialización del escaner
-bool ScannerFile::initScanner() {
+bool ScannerFile::init() {
     printDebug("Inicializando el escaner de archivos.");  // debug
 
     // Abrimos stream del archivo
@@ -36,11 +36,11 @@ bool ScannerFile::initScanner() {
 }
 
 // Comienza la obtención de puntos
-bool ScannerFile::startScanner() {
-    printDebug("Inicio del escaneo de puntos.");  // debug
+bool ScannerFile::start() {
+    std::cout << "Inicio del escaneo de puntos." << std::endl;
 
     if (infile.is_open()) {
-        fileReader = std::thread(&ScannerFile::pointReader, this);
+        executionThread = new std::thread(&ScannerFile::readData, this);
     }
     // Fallo de apertura
     else {
@@ -61,18 +61,19 @@ bool ScannerFile::setCallback(const std::function<void(Point)> func) {
 }
 
 // Finaliza el escaner
-void ScannerFile::closeScanner() {
+void ScannerFile::stop() {
     printDebug("Finalizando el escaneo de puntos.");
 
-    fileReader.~thread();  // Finalizamos hilo de lectura
+    executionThread->detach();   // Desasociamos el hilo
+    executionThread->~thread();  // Finalizamos hilo de lectura
 
     infile.close();  // Cerramos stream del archivo
 
-    printDebug("Finalizado el escaneo de puntos.");
+    std::cout << "Finalizado el escaneo de puntos." << std::endl;
 }
 
 // Lectura de puntos del archivo
-void ScannerFile::pointReader() {
+void ScannerFile::readData() {
     std::string line;     // String de la linea
     std::string data[5];  // Strings de las celdas
 
@@ -124,9 +125,8 @@ void ScannerFile::pointReader() {
         data[4] = line.substr(i, line.substr(i).find_first_of(','));
 
         // Creación del punto
-        Point p(Timestamp(data[0]), std::stof(data[1]),
-                static_cast<uint32_t>(std::stoi(data[2])), static_cast<uint32_t>(std::stoi(data[3])),
-                static_cast<uint32_t>(std::stoi(data[4])));
+        Point p(Timestamp(data[0]), std::stof(data[1]), static_cast<uint32_t>(std::stoi(data[2])),
+                static_cast<uint32_t>(std::stoi(data[3])), static_cast<uint32_t>(std::stoi(data[4])));
 
         // Llamada al callback
         if (this->callback) {

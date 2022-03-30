@@ -42,33 +42,33 @@ void ObjectCharacterizator::newPoint(Point &p) {
     }
 }
 
-// Comienza la definición de objetos, definiendo el background durante los milisegundos
-// especificados para despues definir los objetos
+// Comienza la definición de objetos
 void ObjectCharacterizator::start(uint16_t backgroundTime) {
-    printDebug("Iniciando caracterización.");  // debug
+    std::cout << "Iniciando caracterización." << std::endl;
 
-    state = defBackground;  // Empezamos a obtener puntos de background
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(backgroundTime));
-
-    state = defObject;  // Empezamos a obtener puntos del objeto
-
-    timestampChecker = std::thread(&ObjectCharacterizator::removeOldObjectPoints, this);
+    executionThread = new std::thread(&ObjectCharacterizator::managePoints, this, backgroundTime);
 };
 
 // Para la caracterización de objetos
 void ObjectCharacterizator::stop() {
     printDebug("Finalizando caracterización.");  // debug
 
-    state = defStopped;
+    state = defStopped;  // Paramos de obtener puntos
 
-    timestampChecker.~thread();  // Parar el hilo de comprobación de timestamps
+    executionThread->detach();   // Desasociamos el hilo
+    executionThread->~thread();  // Parar el hilo de gestión de puntos
 
-    printDebug("Finalizada caracterización.");  // debug
+    std::cout << "Finalizada caracterización." << std::endl;
 }
 
-// Elimina los puntos del objeto cullo tiempo de vida sea mayor que el máximo establecido
-void ObjectCharacterizator::removeOldObjectPoints() {
+// Guarda en background y elimina los puntos del objeto fuera del frame
+void ObjectCharacterizator::managePoints(uint16_t backgroundTime) {
+    state = defBackground;  // Empezamos a obtener puntos de background
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(backgroundTime));
+
+    state = defObject;  // Empezamos a obtener puntos del objeto
+
     while (true) {
         if (!object->empty()) {
             Point &p = object->front();

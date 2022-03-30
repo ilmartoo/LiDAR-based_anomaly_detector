@@ -40,6 +40,7 @@ class ObjectCharacterizator : public IObjectCharacterizator {
     ~ObjectCharacterizator() {
         delete background;
         delete object;
+        delete executionThread;
     }
 
     /**
@@ -49,8 +50,7 @@ class ObjectCharacterizator : public IObjectCharacterizator {
     void newPoint(Point &p);
 
     /**
-     * Comienza la definición de objetos, definiendo el background durante los milisegundos
-     * especificados para despues definir los objetos
+     * Comienza la definición de objetos
      * @param backgroundTime Milisegundos durante los que todos los puntos recogidos formarán
      * parte del background
      */
@@ -69,12 +69,12 @@ class ObjectCharacterizator : public IObjectCharacterizator {
     std::vector<Point> *background;  ///< Mapa de puntos que forman el background
     PointMap *object;                ///< Mapa de puntos que forman el objeto
 
-    std::thread timestampChecker;  ///< Hilo encargado de eliminar puntos del objeto con un frametime no válido
-
     /**
-     * Elimina los puntos del objeto cullo tiempo de vida sea mayor que el máximo establecido
+     * Guarda en background y elimina los puntos del objeto fuera del frame
+     * @param backgroundTime Milisegundos durante los que todos los puntos recogidos formarán
+     * parte del background
      */
-    void removeOldObjectPoints();
+    void managePoints(uint16_t backgroundTime);
 };
 
 #endif  //__OBJECTCARACTERIZATOR_CLASS_H

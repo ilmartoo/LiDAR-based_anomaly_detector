@@ -17,6 +17,9 @@ class IAnomalyDetector {
     virtual std::vector<Model> getModels() = 0;
     virtual void setModel(Model m) = 0;
     virtual void compare(CharacteristicsVector cv) = 0;
+
+   protected:
+    std::thread executionThread;  ///< Hilo de ejecución del detector de anomalías
 };
 
 #endif  //__ANOMALYDETECTOR_INTERFACE_H

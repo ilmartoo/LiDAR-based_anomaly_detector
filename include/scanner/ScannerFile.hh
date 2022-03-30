@@ -38,20 +38,21 @@ class ScannerFile : public IScanner {
         if (this->infile.is_open()) {
             this->infile.close();
         }
+        delete executionThread;
     };
 
     /**
      * Inicialización del escaner
      * @return Se devolverá true si se ha establecido el escaner correctamente
      */
-    bool initScanner();
+    bool init();
 
     /**
      * Comienza la obtención de puntos
      * @return Se devolverá true al finalizar de leer correctamente el archivo o false si ocurre un
      * error en el proceso
      */
-    bool startScanner();
+    bool start();
 
     /**
      * Establece la función especificada como función de callback a la que se llamará cada vez que
@@ -64,7 +65,7 @@ class ScannerFile : public IScanner {
     /**
      * Finaliza el escaner
      */
-    void closeScanner();
+    void stop();
 
    private:
     const std::string &filename;  ///< Nombre del archivo de datos
@@ -72,12 +73,12 @@ class ScannerFile : public IScanner {
 
     std::function<void(Point)> callback;  ///< Función de callback
 
-    std::thread fileReader;  ///< Hilo lector del archivo
+    std::thread *executionThread;  ///< Hilo de ejecución del escaner
 
     /**
      * Lee los puntos del archivo de input
      */
-    void pointReader();
+    void readData();
 };
 
 #endif  //__SCANNERFILE_CLASS_H
