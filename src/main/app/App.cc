@@ -20,7 +20,7 @@ void App::start() {
     scanner->setCallback(([this](Point p) { this->oc->newPoint(p); }));  // Establecemos callback
     scanner->start();                                                    // Iniciamos el escaner
 
-    oc->start(100);  // Iniciamos el caracterizador
+    oc->start(backgroundTime, minReflectivity);  // Iniciamos el caracterizador
 
     // ad->start(); // Iniciamos el detector de anomalías
 }

@@ -41,10 +41,14 @@ class App {
      * @param filename Nombre de la ruta completa o relativa al archivo de datos
      * @param timerMode Tipo de mediciones de tiempo a tomar
      * @param frameDuration Milisegundos que debe durar un frame en el caracterizador de objetos
+     * @param backgroundTime Milisegundos en los que los puntos tomados formarán parte del background
+     * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      */
-    App(const std::string &filename, TimerMode timerMode, uint32_t frameDuration) : timerMode(timerMode) {
-        scanner = new ScannerFile(filename);
-        oc = new ObjectCharacterizator(frameDuration);
+    App(const std::string &filename, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime,
+        float minReflectivity)
+        : timerMode(timerMode), backgroundTime(backgroundTime), minReflectivity(minReflectivity) {
+        scanner = new ScannerFile(filename);            // Creamos escaner
+        oc = new ObjectCharacterizator(frameDuration);  // Creamos caracterizador
         // ad =
 
         this->start();
@@ -57,8 +61,12 @@ class App {
      * @param broadcast_code Codigo de broadcast del sensor lidar
      * @param filename Nombre de la ruta completa o relativa al archivo de datos
      * @param timerMode Tipo de mediciones de tiempo a tomar
+     * @param backgroundTime Milisegundos en los que los puntos tomados formarán parte del background
+     * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      */
-    App(const char *broadcast_code, TimerMode timerMode, uint32_t frameDuration) : timerMode(timerMode) {
+    App(const char *broadcast_code, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime,
+        float minReflectivity)
+        : timerMode(timerMode), backgroundTime(backgroundTime), minReflectivity(minReflectivity) {
         scanner = new ScannerLidar(broadcast_code);
         oc = new ObjectCharacterizator(frameDuration);
         // ad =
@@ -78,7 +86,11 @@ class App {
     /**
      * Destructor de la app
      */
-    ~App() {}
+    ~App() {
+        delete scanner;
+        delete oc;
+        // delete ad;
+    }
 
    private:
     /**
@@ -98,6 +110,9 @@ class App {
 
     enum InputType inputType;  ///< Tipo de input de datos
     enum TimerMode timerMode;  ///< Tipo de mediciones de tiempo a tomar
+
+    uint32_t backgroundTime;  ///< Tiempo en milisegundos en el cual los puntos tomados formarán parte del background
+    float minReflectivity;    ///< Reflectividad mínima que necesitan los puntos para no ser descartados
 
     IScanner *scanner;           ///< Escaner de puntos
     IObjectCharacterizator *oc;  ///< Caracterizador de objetos
