@@ -29,7 +29,7 @@ class ScannerFile : public IScanner {
      * Constructor del objeto ScannerFile
      * @param filename Archivo contenedor de datos
      */
-    ScannerFile(const std::string &filename) : filename(filename) {}
+    ScannerFile(const std::string &filename) : filename(filename), exit(true) {}
 
     /**
      * Destructor del scanner
@@ -74,6 +74,7 @@ class ScannerFile : public IScanner {
     std::function<void(Point)> callback;  ///< Función de callback
 
     std::thread *executionThread;  ///< Hilo de ejecución del escaner
+    bool exit;                     ///< Variable para la finalización del hilo
 
     /**
      * Lee los puntos del archivo de input

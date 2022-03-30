@@ -49,18 +49,15 @@ class IObjectCharacterizator {
     /**
      * Comienza la definición de objetos, definiendo el background durante los milisegundos
      * especificados para despues definir los objetos
-     * @param backgroundTime Milisegundos durante los que todos los puntos recogidos formarán
-     * parte del background
+     * @param backgroundTime Milisegundos durante los que todos los puntos recogidos formarán parte del background
+     * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      */
-    virtual void start(uint16_t backgroundTime) = 0;
+    virtual void start(uint32_t backgroundTime, float minReflectivity) = 0;
 
     /**
      * Para la caracterización de objetos
      */
     virtual void stop() = 0;
-
-   protected:
-    std::thread *executionThread;  ///< Hilo de ejecución del caracterizador
 };
 
 #endif  //__OBJECTCARACTERIZATOR_INTERFACE_H

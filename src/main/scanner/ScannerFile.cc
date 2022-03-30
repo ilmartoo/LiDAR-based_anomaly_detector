@@ -40,7 +40,8 @@ bool ScannerFile::start() {
     std::cout << "Inicio del escaneo de puntos." << std::endl;
 
     if (infile.is_open()) {
-        executionThread = new std::thread(&ScannerFile::readData, this);
+        exit = false;                                                     // Permitimos la ejecución del hilo
+        executionThread = new std::thread(&ScannerFile::readData, this);  // Creamos hilo
     }
     // Fallo de apertura
     else {
@@ -64,8 +65,8 @@ bool ScannerFile::setCallback(const std::function<void(Point)> func) {
 void ScannerFile::stop() {
     printDebug("Finalizando el escaneo de puntos.");
 
-    executionThread->detach();   // Desasociamos el hilo
-    executionThread->~thread();  // Finalizamos hilo de lectura
+    exit = true;              // Comunicamos al hilo que finalice la ejecución
+    executionThread->join();  // Realizamos unión del hilo de lectura
 
     infile.close();  // Cerramos stream del archivo
 
@@ -78,9 +79,9 @@ void ScannerFile::readData() {
     std::string data[5];  // Strings de las celdas
 
     // Proceso de lectura de puntos
-    std::getline(infile, line);  // Linea de cabecera
+    std::getline(this->infile, line);  // Linea de cabecera
 
-    for (int commas, i; std::getline(infile, line);) {
+    for (int commas, i; std::getline(this->infile, line) && !this->exit;) {
         // Fallo en la lectura
         if (infile.fail()) {
             std::cout << "Fallo en la lectura de puntos" << std::endl;

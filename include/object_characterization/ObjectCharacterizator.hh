@@ -27,7 +27,8 @@ class ObjectCharacterizator : public IObjectCharacterizator {
      * Constructor
      * @param frameDuration Duración del frame de puntos en milisegundos
      */
-    ObjectCharacterizator(uint32_t frameDuration) : frameDuration(frameDuration * 1000000) {
+    ObjectCharacterizator(uint32_t frameDuration)
+        : frameDuration(frameDuration * 1000000), minReflectivity(0.f), exit(true) {
         state = defStopped;
 
         background = new std::vector<Point>();
@@ -51,10 +52,10 @@ class ObjectCharacterizator : public IObjectCharacterizator {
 
     /**
      * Comienza la definición de objetos
-     * @param backgroundTime Milisegundos durante los que todos los puntos recogidos formarán
-     * parte del background
+     * @param backgroundTime Milisegundos durante los que todos los puntos recogidos formarán parte del background
+     * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      */
-    void start(uint16_t backgroundTime);
+    virtual void start(uint32_t backgroundTime, float minReflectivity);
 
     /**
      * Para la caracterización de objetos
@@ -65,16 +66,19 @@ class ObjectCharacterizator : public IObjectCharacterizator {
     enum CharacterizatorState state;  ///< Estado en el que se encuentra el caracterizador de objetos
 
     uint64_t frameDuration;  ///< Duración del frame de puntos en nanosegundos
+    float minReflectivity;   ///< Reflectividad mínima que necesitan los puntos para no ser descartados
 
     std::vector<Point> *background;  ///< Mapa de puntos que forman el background
     PointMap *object;                ///< Mapa de puntos que forman el objeto
 
+    std::thread *executionThread;  ///< Hilo de ejecución del caracterizador
+    bool exit;                     ///< Variable para la finalización del hilo
+
     /**
      * Guarda en background y elimina los puntos del objeto fuera del frame
-     * @param backgroundTime Milisegundos durante los que todos los puntos recogidos formarán
-     * parte del background
+     * @param backgroundTime Milisegundos durante los que todos los puntos recogidos formarán parte del background
      */
-    void managePoints(uint16_t backgroundTime);
+    void managePoints(uint32_t backgroundTime);
 };
 
 #endif  //__OBJECTCARACTERIZATOR_CLASS_H
