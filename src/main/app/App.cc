@@ -8,12 +8,37 @@
  */
 
 #include <stdint.h>
+#include <functional>
+#include <signal.h>
 
 #include "app/App.hh"
 #include "app/InputParser.hh"
+#include "models/Point.hh"
 
-void App::start() {}
+void App::start() {
+    scanner->init();                                                     // Inicializamos el escaner
+    scanner->setCallback(([this](Point p) { this->oc->newPoint(p); }));  // Establecemos callback
+    scanner->start();                                                    // Iniciamos el escaner
 
-void App::start(uint32_t seconds) {}
+    oc->start(100);  // Iniciamos el caracterizador
 
-void App::stop() {}
+    // ad->start(); // Iniciamos el detector de anomalías
+}
+
+void App::wait() {
+    int sig;             // Creamos buffer de señal
+    sigset_t wset;       // Creamos set
+    sigemptyset(&wset);  // Vaciamos set
+
+    sigaddset(&wset, SIGINT);  // Añadimos señal de interrupción
+
+    sigprocmask(SIG_BLOCK, &wset, nullptr);  // Bloqueamos señal de interrupción
+
+    sigwait(&wset, &sig);  // Recibimos señal de interrupción
+}
+
+void App::stop() {
+    scanner->stop();  // Finalizamos el escaner
+
+    oc->stop();  // Finalizamos el caracterizador
+}

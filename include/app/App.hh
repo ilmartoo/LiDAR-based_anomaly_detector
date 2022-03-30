@@ -30,7 +30,7 @@ enum InputType {
 enum TimerMode {
     kUntimed = 0,                   ///< Ejecución sin medida de tiempo
     kTimedCharacterization = 0b01,  ///< Ejecución con medida de tiempo en la caracterización de objetos
-    kTimedAnomalyDetection = 0b10,   ///< Ejecución con medida de tiempo en la detección de anomalías
+    kTimedAnomalyDetection = 0b10,  ///< Ejecución con medida de tiempo en la detección de anomalías
     kTimed = 0b11,                  ///< Ejecución con medida de tiempo en todo el programa
 };
 
@@ -45,16 +45,27 @@ class App {
     App(const std::string &filename, TimerMode timerMode, uint32_t frameDuration) : timerMode(timerMode) {
         scanner = new ScannerFile(filename);
         oc = new ObjectCharacterizator(frameDuration);
+        // ad =
+
+        this->start();
+        this->wait();
+        this->stop();
     }
 
     /**
      * Constructor de la app para input de sensor lidar
+     * @param broadcast_code Codigo de broadcast del sensor lidar
      * @param filename Nombre de la ruta completa o relativa al archivo de datos
      * @param timerMode Tipo de mediciones de tiempo a tomar
      */
     App(const char *broadcast_code, TimerMode timerMode, uint32_t frameDuration) : timerMode(timerMode) {
         scanner = new ScannerLidar(broadcast_code);
         oc = new ObjectCharacterizator(frameDuration);
+        // ad =
+
+        this->start();
+        this->wait();
+        this->stop();
     }
 
     /**
@@ -69,31 +80,28 @@ class App {
      */
     ~App() {}
 
+   private:
     /**
      * Inicia la aplicación
      */
     void start();
 
     /**
-     * Inicia la aplicación
-     * @param seconds Tiempo a ejecutar la aplicación
+     * Espera la llegada de una señal SIGINT
      */
-    void start(uint32_t seconds);
+    void wait();
 
     /**
      * Finaliza la aplicación
      */
     void stop();
 
-   private:
     enum InputType inputType;  ///< Tipo de input de datos
     enum TimerMode timerMode;  ///< Tipo de mediciones de tiempo a tomar
 
-    uint32_t endTime;  ///< Tiempo total de ejecución de la aplicación
-
     IScanner *scanner;           ///< Escaner de puntos
     IObjectCharacterizator *oc;  ///< Caracterizador de objetos
-    // IAnomalyDetector &ad;        ///< Detector de anomalías
+    IAnomalyDetector *ad;        ///< Detector de anomalías
 };
 
 #endif  //__APP_CLASS_H
