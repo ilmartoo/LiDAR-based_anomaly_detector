@@ -10,6 +10,11 @@
 class IAnomalyDetector {
    public:
     /**
+     * Destructor virtual
+     */
+    virtual ~IAnomalyDetector() {}
+
+    /**
      * Carga los modelos disponibles del archivo especificado
      * @param
      */
