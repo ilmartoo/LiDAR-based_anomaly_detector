@@ -70,6 +70,16 @@ class Point {
                std::to_string(this->x) + ", " + std::to_string(this->y) + ", " + std::to_string(this->z);
     }
 
+    /**
+     * Obtiene un string con los datos del punto en formato csv: x,y,z,time,reflec
+     * @return String con los datos del punto en formato csv
+     */
+    inline const std::string csv_string() {
+        return std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + "," +
+               std::to_string(timestamp.getSeconds() * NANO_DIGITS + timestamp.getNanoseconds()) + "," +
+               std::to_string(reflectivity);
+    }
+
     // Imprime la información del punto p
     friend std::ostream &operator<<(std::ostream &strm, Point &p) { return strm << p.string(); }
 
@@ -81,4 +91,4 @@ class Point {
     int32_t z;            ///< Localización en el eje <x> del punto
 };
 
-#endif  //POINT_CLASS_H
+#endif  // POINT_CLASS_H
