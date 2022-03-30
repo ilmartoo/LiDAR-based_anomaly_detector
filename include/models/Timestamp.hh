@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __TIMESTAMP_CLASS_H
-#define __TIMESTAMP_CLASS_H
+#ifndef TIMESTAMP_CLASS_H
+#define TIMESTAMP_CLASS_H
 
 #include <stdint.h>
 #include <string>
@@ -114,4 +114,4 @@ class Timestamp {
     uint32_t nanoseconds;  ///< Nanosegundos
 };
 
-#endif  //__TIMESTAMP_CLASS_H
+#endif  //TIMESTAMP_CLASS_H

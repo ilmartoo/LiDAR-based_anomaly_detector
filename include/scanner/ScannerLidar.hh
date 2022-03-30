@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __SCANNERLIDAR_CLASS_H
-#define __SCANNERLIDAR_CLASS_H
+#ifndef SCANNERLIDAR_CLASS_H
+#define SCANNERLIDAR_CLASS_H
 
 #include <iostream>
 #include <string>
@@ -154,4 +154,4 @@ class ScannerLidar : public IScanner {
     void onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type);
 };
 
-#endif  //__SCANNERLIDAR_CLASS_H
+#endif  //SCANNERLIDAR_CLASS_H

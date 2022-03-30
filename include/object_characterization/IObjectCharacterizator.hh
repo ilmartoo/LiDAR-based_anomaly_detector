@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __OBJECTCARACTERIZATOR_INTERFACE_H
-#define __OBJECTCARACTERIZATOR_INTERFACE_H
+#ifndef OBJECTCARACTERIZATOR_INTERFACE_H
+#define OBJECTCARACTERIZATOR_INTERFACE_H
 
 #include <thread>
 
@@ -60,4 +60,4 @@ class IObjectCharacterizator {
     virtual void stop() = 0;
 };
 
-#endif  //__OBJECTCARACTERIZATOR_INTERFACE_H
+#endif  //OBJECTCARACTERIZATOR_INTERFACE_H

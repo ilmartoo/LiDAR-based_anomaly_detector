@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __OBJECTCARACTERIZATOR_CLASS_H
-#define __OBJECTCARACTERIZATOR_CLASS_H
+#ifndef OBJECTCARACTERIZATOR_CLASS_H
+#define OBJECTCARACTERIZATOR_CLASS_H
 
 #include <vector>
 #include <thread>
@@ -81,4 +81,4 @@ class ObjectCharacterizator : public IObjectCharacterizator {
     void managePoints(uint32_t backgroundTime);
 };
 
-#endif  //__OBJECTCARACTERIZATOR_CLASS_H
+#endif  //OBJECTCARACTERIZATOR_CLASS_H

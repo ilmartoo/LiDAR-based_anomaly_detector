@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __APP_CLASS_H
-#define __APP_CLASS_H
+#ifndef APP_CLASS_H
+#define APP_CLASS_H
 
 #include <stdint.h>
 #include <string>
@@ -119,4 +119,4 @@ class App {
     IAnomalyDetector *ad;        ///< Detector de anomalías
 };
 
-#endif  //__APP_CLASS_H
+#endif  //APP_CLASS_H

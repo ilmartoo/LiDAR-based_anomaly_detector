@@ -1,5 +1,5 @@
-#ifndef __ANOMALYDETECTOR_INTERFACE_H
-#define __ANOMALYDETECTOR_INTERFACE_H
+#ifndef ANOMALYDETECTOR_INTERFACE_H
+#define ANOMALYDETECTOR_INTERFACE_H
 
 #include <string>
 #include <vector>
@@ -27,4 +27,4 @@ class IAnomalyDetector {
     std::thread executionThread;  ///< Hilo de ejecución del detector de anomalías
 };
 
-#endif  //__ANOMALYDETECTOR_INTERFACE_H
+#endif  //ANOMALYDETECTOR_INTERFACE_H

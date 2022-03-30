@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __POINT_CLASS_H
-#define __POINT_CLASS_H
+#ifndef POINT_CLASS_H
+#define POINT_CLASS_H
 
 #include <stdint.h>
 #include <ostream>
@@ -81,4 +81,4 @@ class Point {
     int32_t z;            ///< Localización en el eje <x> del punto
 };
 
-#endif  //__POINT_CLASS_H
+#endif  //POINT_CLASS_H

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __SCANNERFILE_CLASS_H
-#define __SCANNERFILE_CLASS_H
+#ifndef SCANNERFILE_CLASS_H
+#define SCANNERFILE_CLASS_H
 
 #include <iostream>
 #include <string>
@@ -82,4 +82,4 @@ class ScannerFile : public IScanner {
     void readData();
 };
 
-#endif  //__SCANNERFILE_CLASS_H
+#endif  //SCANNERFILE_CLASS_H

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __SCANNER_INTERFACE_H
-#define __SCANNER_INTERFACE_H
+#ifndef SCANNER_INTERFACE_H
+#define SCANNER_INTERFACE_H
 
 #include <string>
 #include <functional>
@@ -52,4 +52,4 @@ class IScanner {
     virtual void stop() = 0;
 };
 
-#endif  //__SCANNER_INTERFACE_H
+#endif  //SCANNER_INTERFACE_H

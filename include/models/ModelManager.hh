@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __MODELMANAGER_CLASS_H
-#define __MODELMANAGER_CLASS_H
+#ifndef MODELMANAGER_CLASS_H
+#define MODELMANAGER_CLASS_H
 
 #include <string>
 #include <list>
@@ -39,4 +39,4 @@ class ModelManager {
     static std::list<Model> modelos;
 };
 
-#endif  //__MODELMANAGER_CLASS_H
+#endif  //MODELMANAGER_CLASS_H

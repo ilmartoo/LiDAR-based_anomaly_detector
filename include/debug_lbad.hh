@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __DEBUG_HEADER_H
-#define __DEBUG_HEADER_H
+#ifndef DEBUG_HEADER_H
+#define DEBUG_HEADER_H
 
 #include <iostream>
 #include <string>
@@ -24,4 +24,4 @@ inline void printDebug(std::string debugstr) {
 #endif
 }
 
-#endif  //__DEBUG_HEADER_H
+#endif  //DEBUG_HEADER_H

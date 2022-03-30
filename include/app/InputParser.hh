@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __INPUTPARSER_CLASS_H
-#define __INPUTPARSER_CLASS_H
+#ifndef INPUTPARSER_CLASS_H
+#define INPUTPARSER_CLASS_H
 
 #include <string>
 #include <vector>
@@ -72,4 +72,4 @@ class InputParser {
     std::vector<std::string> tokens;
 };
 
-#endif  //__INPUTPARSER_CLASS_H
+#endif  //INPUTPARSER_CLASS_H

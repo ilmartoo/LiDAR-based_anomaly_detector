@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __POINTMAP_CLASS_H
-#define __POINTMAP_CLASS_H
+#ifndef POINTMAP_CLASS_H
+#define POINTMAP_CLASS_H
 
 #include <queue>
 #include <mutex>
@@ -73,4 +73,4 @@ class PointMap {
     Timestamp *lastTimestamp;  ///< Ultimo timestamp obtenido
 };
 
-#endif  //__POINTMAP_CLASS_H
+#endif  //POINTMAP_CLASS_H

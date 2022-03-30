@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __MODEL_CLASS_H
-#define __MODEL_CLASS_H
+#ifndef MODEL_CLASS_H
+#define MODEL_CLASS_H
 
 #include <string>
 
@@ -44,4 +44,4 @@ class Model {
     CharacteristicsVector cv;
 };
 
-#endif  //__MODEL_CLASS_H
+#endif  //MODEL_CLASS_H
