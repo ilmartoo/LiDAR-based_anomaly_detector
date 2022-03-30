@@ -13,6 +13,8 @@
 #include <queue>
 #include <mutex>
 
+#include <iostream>
+
 #include "models/Point.hh"
 #include "models/Timestamp.hh"
 
@@ -33,8 +35,8 @@ class PointMap {
     void push(Point &p) {
         mutexMaps.lock();  // Bloqueamos el mutex
 
-        map.push(p);                                                 // Guardamos punto
-        lastTimestamp = const_cast<Timestamp *>(&p.getTimestamp());  // Guardamos último timestamp
+        map.push(p);                                           // Guardamos punto
+        lastTimestamp = const_cast<Timestamp *>(&map.back().getTimestamp());  // Guardamos último timestamp
 
         mutexMaps.unlock();  // Desbloqueamos el mutex
     }
@@ -63,7 +65,7 @@ class PointMap {
      */
     inline Point &front() { return map.front(); }
 
-    const Timestamp *getLastTimestamp() { return this->lastTimestamp; }
+    const Timestamp getLastTimestamp() const { return *this->lastTimestamp; }
 
    private:
     std::mutex mutexMaps;      ///< Mutex de acceso a los mapas de puntos
