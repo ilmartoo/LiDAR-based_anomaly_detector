@@ -105,7 +105,9 @@ class Timestamp {
      * Obtiene un string con los datos del timestamp
      * @return String con los datos del timestamp
      */
-    inline const std::string string() { return std::to_string(seconds * NANO_DIGITS + nanoseconds); }
+    inline const std::string string() const {
+        return std::to_string(seconds) + "s " + std::to_string(nanoseconds) + "ns";
+    }
 
    private:
     uint32_t seconds;      ///< Segundos
