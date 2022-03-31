@@ -45,10 +45,10 @@ class App {
      * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      */
     App(const std::string &filename, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime,
-        float minReflectivity, float background_distance)
+        float minReflectivity, float backgroundDistance)
         : timerMode(timerMode), backgroundTime(backgroundTime), minReflectivity(minReflectivity) {
         scanner = new ScannerFile(filename);                                 // Creamos escaner
-        oc = new ObjectCharacterizator(frameDuration, background_distance);  // Creamos caracterizador
+        oc = new ObjectCharacterizator(frameDuration, backgroundDistance);  // Creamos caracterizador
         // ad =
 
         this->start();

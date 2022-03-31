@@ -58,8 +58,13 @@ int main(int argc, char *argv[]) {
     ParsedInput pi = parseInput(argc, argv);  // Parse input
 
     if (pi.is_ok) {
-        App app(pi.is_lidar ? pi.broadcast_code : pi.filename, pi.time_mode, pi.frame_time, pi.background_time,
-                pi.min_reflectivity, pi.background_distance);
+        if (pi.is_lidar) {
+            App app(pi.broadcast_code, pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity,
+                    pi.background_distance);
+        } else {
+            App app(pi.filename, pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity,
+                    pi.background_distance);
+        }
     }
 
     return EXIT_SUCCESS;  // Exit
@@ -90,7 +95,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
         const std::string &option = parser.getOption("-b");
         // No se ha proporcionado valor
-        if (option.empty() || option.length() != kBroadcastCodeSize) {
+        if (option.empty() || option.length() > kBroadcastCodeSize) {
             return missusage(pi);  // Salimos
         }
 
@@ -265,8 +270,8 @@ void usage() {
 void help() {
     usage();  // Imprimimos usage
     std::cout
-        << "\t -b                Broadcast code of the lidar sensor composed of " << kBroadcastCodeSize << " digits"
-        << std::endl
+        << "\t -b                Broadcast code of the lidar sensor composed of " << kBroadcastCodeSize
+        << " digits maximum" << std::endl
         << "\t -f                File with the 3D points to get the data from" << std::endl
         << "\t -p                Amount of miliseconds to use as frame duration time. Default: " << DEFAULT_FRAME_TIME
         << std::endl
