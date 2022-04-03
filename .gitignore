@@ -3,6 +3,7 @@ sample/
 schemas/
 bin/
 build/
+lib/
 
 # VSCode
 .vscode/
