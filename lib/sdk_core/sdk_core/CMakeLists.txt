@@ -86,6 +86,6 @@ target_sources(${SDK_LIBRARY}
 
 
 install(TARGETS ${SDK_LIBRARY}
-        PUBLIC_HEADER DESTINATION include
+        PUBLIC_HEADER DESTINATION include/${PROJECT_NAME}
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib)

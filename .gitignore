@@ -1,18 +1,12 @@
 # User defined exclusions
 sample/
 schemas/
-.vscode/
 bin/
 build/
-lib/
 
-# Stop tracking library files
-sdk_core/
-googletest/
-
-# CMake files
-CMakeFiles/
-CMakeCache.txt
+# VSCode
+.vscode/
+*.code-workspace
 
 # Prerequisites
 *.d
