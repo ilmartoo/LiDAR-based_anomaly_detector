@@ -12,11 +12,10 @@
 #include <thread>
 #include <cmath>
 
-#include <iostream>  // std::cout, std::ostream, std::ios
-#include <fstream>   // std::filebuf
-
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "debug_lbad.hh"
+
+#include "app/string_format.h"
 
 // Callback a donde se recebirán los puntos escaneados
 void ObjectCharacterizator::newPoint(const Point &p) {
@@ -71,6 +70,16 @@ void ObjectCharacterizator::stop() {
 
     exit = true;              // Comunicamos al hilo que finalice la ejecución
     executionThread->join();  // Realizamos unión del hilo de gestión de puntos
+
+    ////////
+    // while(!object->empty()) {
+    //     std::cout << skyblue_s(object->front().string()) << std::endl;
+    //     object->pop();
+    // }
+    //
+    // for (auto &p : *background)
+    //     std::cout << lightred_s(p.string()) << std::endl;
+    ////////
 
     std::cout << "Finalizada caracterización." << std::endl;
 }
