@@ -91,7 +91,7 @@ uint64_t RawLdsStampToNs(LdsStamp &timestamp, uint8_t timestamp_type) {
 
     return time_epoch;
   } else {
-    printf("Timestamp type[%d] invalid.\n", timestamp_type);
+    //printf("Timestamp type[%d] invalid.\n", timestamp_type);
     return 0;
   }
 }
@@ -129,7 +129,7 @@ uint64_t GetStoragePacketTimestamp(StoragePacket *packet, uint8_t data_src) {
 
     return time_epoch;
   } else {
-    printf("Timestamp type[%d] invalid.\n", raw_packet->timestamp_type);
+    //printf("Timestamp type[%d] invalid.\n", raw_packet->timestamp_type);
     return 0;
   }
 }
@@ -158,12 +158,12 @@ void ParseCommandlineInputBdCode(const char *cammandline_str,
   char *bd_str = strtok(strs, pattern.c_str());
   std::string invalid_bd = "000000000";
   while (bd_str != NULL) {
-    printf("Commandline input bd:%s\n", bd_str);
+    //printf("Commandline input bd:%s\n", bd_str);
     if ((kBdCodeSize == strlen(bd_str)) &&
         (NULL == strstr(bd_str, invalid_bd.c_str()))) {
       bd_code_list.push_back(bd_str);
     } else {
-      printf("Invalid bd:%s!\n", bd_str);
+      //printf("Invalid bd:%s!\n", bd_str);
     }
     bd_str = strtok(NULL, pattern.c_str());
   }
@@ -653,7 +653,7 @@ void Lds::UpdateLidarInfoByEthPacket(LidarDevice *p_lidar,
     p_lidar->onetime_publish_packets =
         GetPacketNumPerSec(p_lidar->info.type,
         p_lidar->raw_data_type) * buffer_time_ms_ / 1000;
-    printf("Lidar[%d][%s] DataType[%d] timestamp_type[%d] PacketInterval[%d] "
+    //printf("Lidar[%d][%s] DataType[%d] timestamp_type[%d] PacketInterval[%d] "
         "PublishPackets[%d]\n", p_lidar->handle, p_lidar->info.broadcast_code,
         p_lidar->raw_data_type, p_lidar->timestamp_type,
         p_lidar->packet_interval, p_lidar->onetime_publish_packets);
@@ -670,7 +670,7 @@ void Lds::StorageRawPacket(uint8_t handle, LivoxEthPacket* eth_packet) {
          sizeof(cur_timestamp));
   timestamp = RawLdsStampToNs(cur_timestamp, eth_packet->timestamp_type);
   if (timestamp >= kRosTimeMax) {
-    printf("Raw EthPacket time out of range Lidar[%d]\n", handle);
+    //printf("Raw EthPacket time out of range Lidar[%d]\n", handle);
     return;
   }
 
@@ -693,7 +693,7 @@ void Lds::StorageRawPacket(uint8_t handle, LivoxEthPacket* eth_packet) {
       uint32_t queue_size = CalculatePacketQueueSize(
           buffer_time_ms_, p_lidar->info.type, eth_packet->data_type);
       InitQueue(p_queue, queue_size);
-      printf("Lidar[%d][%s] storage queue size : %d %d\n", p_lidar->handle,
+      //printf("Lidar[%d][%s] storage queue size : %d %d\n", p_lidar->handle,
              p_lidar->info.broadcast_code, queue_size, p_queue->size);
     }
     if (!QueueIsFull(p_queue)) {
@@ -724,7 +724,7 @@ void Lds::StorageRawPacket(uint8_t handle, LivoxEthPacket* eth_packet) {
     if (nullptr == p_queue->storage_packet) {
       uint32_t queue_size = 256;  /* fixed imu data queue size */
       InitQueue(p_queue, queue_size);
-      printf("Lidar[%d][%s] imu storage queue size : %d %d\n", p_lidar->handle,
+      //printf("Lidar[%d][%s] imu storage queue size : %d %d\n", p_lidar->handle,
              p_lidar->info.broadcast_code, queue_size, p_queue->size);
     }
     if (!QueueIsFull(p_queue)) {
