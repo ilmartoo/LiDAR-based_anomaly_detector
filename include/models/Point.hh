@@ -28,8 +28,15 @@ class Point {
      * @param y Posición en y del punto
      * @param z Posición en z del punto
      */
-    Point(Timestamp timestamp, float reflectivity, int32_t x, int32_t y, int32_t z)
+    Point(const Timestamp timestamp, const uint8_t reflectivity, const int32_t x, const int32_t y, const int32_t z)
         : timestamp(timestamp), reflectivity(reflectivity), x(x), y(y), z(z) {}
+
+    /**
+     * Constructor del objeto Punto
+     * @param p Punto a copiar
+     */
+    Point(const Point &p)
+        : timestamp(p.timestamp), reflectivity(p.reflectivity), x(p.x), y(p.y), z(p.z) {}
 
     /**
      * Devuelve el timestamp del punto
@@ -41,7 +48,7 @@ class Point {
      * Devuelve la reflectividad del punto
      * @return Reflectividad del punto
      */
-    inline const float &getReflectivity() const { return this->reflectivity; };
+    inline const uint8_t &getReflectivity() const { return this->reflectivity; };
 
     /**
      * Devuelve la localización en el eje x del punto
@@ -65,7 +72,7 @@ class Point {
      * Obtiene un string con los datos del punto
      * @return String con los datos del punto
      */
-    inline const std::string string() {
+    inline const std::string string() const {
         return "[Time: " + this->timestamp.string() + "] [Ref: " + std::to_string(this->reflectivity) + "] " +
                std::to_string(this->x) + ", " + std::to_string(this->y) + ", " + std::to_string(this->z);
     }
@@ -74,9 +81,9 @@ class Point {
      * Obtiene un string con los datos del punto en formato csv: x,y,z,time,reflec
      * @return String con los datos del punto en formato csv
      */
-    inline const std::string csv_string() {
+    inline const std::string csv_string() const {
         return std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + "," +
-               std::to_string(timestamp.getSeconds() * NANO_DIGITS + timestamp.getNanoseconds()) + "," +
+               std::to_string(timestamp.getSeconds()) + std::to_string(timestamp.getNanoseconds()) + "," +
                std::to_string(reflectivity);
     }
 
@@ -84,11 +91,11 @@ class Point {
     friend std::ostream &operator<<(std::ostream &strm, Point &p) { return strm << p.string(); }
 
    private:
-    Timestamp timestamp;  ///< Timestamp del punto
-    float reflectivity;   ///< Reflectividad del punto
-    int32_t x;            ///< Localización en el eje x del punto
-    int32_t y;            ///< Localización en el eje y del punto
-    int32_t z;            ///< Localización en el eje <x> del punto
+    Timestamp timestamp;   ///< Timestamp del punto
+    uint8_t reflectivity;  ///< Reflectividad del punto
+    int32_t x;             ///< Localización en el eje x del punto
+    int32_t y;             ///< Localización en el eje y del punto
+    int32_t z;             ///< Localización en el eje <x> del punto
 };
 
 #endif  // POINT_CLASS_H
