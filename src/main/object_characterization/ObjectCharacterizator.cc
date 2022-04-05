@@ -12,18 +12,21 @@
 #include <thread>
 #include <cmath>
 
+#include <iostream>  // std::cout, std::ostream, std::ios
+#include <fstream>   // std::filebuf
+
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "debug_lbad.hh"
 
 // Callback a donde se recebirán los puntos escaneados
-void ObjectCharacterizator::newPoint(Point &p) {
+void ObjectCharacterizator::newPoint(const Point &p) {
     // Comprobamos reflectividad
     if (p.getReflectivity() >= minReflectivity) {
         // Escogemos la acción adecuada respecto del estado
         switch (state) {
             // Punto de background
             case defBackground:
-                printDebug("Punto añadido al background:\n" + p.string());  // debug
+                printDebug("Punto añadido al background: " + p.string());  // debug
 
                 background->push_back(p);  // Guardamos punto
 
@@ -31,10 +34,12 @@ void ObjectCharacterizator::newPoint(Point &p) {
 
             // Punto del objeto
             case defObject:
-                printDebug("Punto añadido al objeto:\n" + p.string());  // debug
-
                 if (isBackground(p)) {
-                    object->push(p);  // Guardamos punto
+                    printDebug("Punto añadido al objeto: " + p.string());  // debug
+                    object->push(p);                                       // Guardamos punto
+
+                } else {
+                    printDebug("Punto enviado pertenece al background: " + p.string());  // debug
                 }
 
                 break;
@@ -84,7 +89,7 @@ void ObjectCharacterizator::managePoints(uint32_t backgroundTime) {
 
             // Eliminamos si su timestamp es viejo
             if (p.getTimestamp() + frameDuration < object->getLastTimestamp()) {
-                printDebug("Punto caducado:\n" + p.string());  // debug
+                printDebug("Punto caducado: " + p.string());  // debug
 
                 object->pop();  // Eliminamos punto
             }
