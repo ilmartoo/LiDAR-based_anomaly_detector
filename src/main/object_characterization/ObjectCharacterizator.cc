@@ -15,7 +15,10 @@
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "debug_lbad.hh"
 
+///////////////
+#include <fstream>
 #include "app/string_format.h"
+///////////////
 
 // Callback a donde se recebirán los puntos escaneados
 void ObjectCharacterizator::newPoint(const Point &p) {
@@ -33,7 +36,7 @@ void ObjectCharacterizator::newPoint(const Point &p) {
 
             // Punto del objeto
             case defObject:
-                if (isBackground(p)) {
+                if (!isBackground(p)) {
                     printDebug("Punto añadido al objeto: " + p.string());  // debug
                     object->push(p);                                       // Guardamos punto
 
@@ -72,10 +75,13 @@ void ObjectCharacterizator::stop() {
     executionThread->join();  // Realizamos unión del hilo de gestión de puntos
 
     ////////
-    // while(!object->empty()) {
-    //     std::cout << skyblue_s(object->front().string()) << std::endl;
-    //     object->pop();
-    // }
+    std::ofstream os("output_points.csv", std::ios::out);
+    while(!object->empty()) {
+        // std::cout << skyblue_s(object->front().string()) << std::endl;
+        os << object->front().csv_string() << std::endl;
+        object->pop();
+    }
+    os.close();
     //
     // for (auto &p : *background)
     //     std::cout << lightred_s(p.string()) << std::endl;
