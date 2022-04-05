@@ -95,7 +95,6 @@ void ScannerLVX::readData() {
     uint32_t data_offset = 0;
     LivoxEthPacket *eth_packet;
     livox_ros::LvxFilePacket *detail_packet;
-    int32_t handle;
     uint8_t data_type;
 
     while (r == livox_ros::kLvxFileOk) {
@@ -107,13 +106,11 @@ void ScannerLVX::readData() {
             if (lvx_file.GetFileVersion() != 0) {
                 detail_packet = (livox_ros::LvxFilePacket *)&packet_base[data_offset];  // Point packet
                 eth_packet = (LivoxEthPacket *)(&detail_packet->version);               // Ethernet packet
-                handle = detail_packet->device_index;                                   // Packet handle
 
             } else {
                 livox_ros::LvxFilePacketV0 *detail_packet =
                     (livox_ros::LvxFilePacketV0 *)&packet_base[data_offset];  // V0 Point packet
                 eth_packet = (LivoxEthPacket *)(&detail_packet->version);     // Ethernet packet
-                handle = detail_packet->device_index;                         // Packet handle
             }
 
             data_type = eth_packet->data_type;  // Packet data type
