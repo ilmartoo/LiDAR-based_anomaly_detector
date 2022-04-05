@@ -16,7 +16,7 @@
 #include <functional>
 #include <string.h>
 
-#include "livox_sdk.h"
+#include "livox_sdk/livox_sdk.h"
 
 #include "scanner/IScanner.hh"
 #include "models/Point.hh"
@@ -76,7 +76,7 @@ class ScannerLidar : public IScanner {
      * @param func Función de callback a ser llamada por el sensor
      * @return Se devolverá true si se ha establecido el callback correctamente
      */
-    bool setCallback(const std::function<void(Point)> func);
+    bool setCallback(const std::function<void(const Point &p)> func);
 
     /**
      * Finaliza el escaner
@@ -86,7 +86,7 @@ class ScannerLidar : public IScanner {
    private:
     DeviceItem lidar;  ///< Datos del sensor LiDAR
 
-    std::function<void(Point)> callback;  ///< Función de callback
+    std::function<void(const Point &p)> callback;  ///< Función de callback
 
     /**
      * Obtiene los datos del punto enviado por el sensor

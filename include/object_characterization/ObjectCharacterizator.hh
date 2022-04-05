@@ -27,12 +27,13 @@ class ObjectCharacterizator : public IObjectCharacterizator {
      * Constructor
      * @param frameDuration Duración del frame de puntos en milisegundos
      */
-    ObjectCharacterizator(uint32_t frameDuration, float backgroundDistance)
-        : frameDuration(frameDuration * 1000000),
-          backgroundDistance(backgroundDistance),
-          minReflectivity(0.f),
-          exit(true) {
+    ObjectCharacterizator(uint32_t frameDuration, float backgroundDistance) {
         state = defStopped;
+
+        this->frameDuration = frameDuration * 1000000;
+        this->exit = true;
+        this->backgroundDistance = backgroundDistance;
+        this->minReflectivity = 0.0F;
 
         background = new std::vector<Point>();
         object = new PointMap();
@@ -51,7 +52,7 @@ class ObjectCharacterizator : public IObjectCharacterizator {
      * Callback a donde se recebirán los puntos escaneados
      * @param p Punto escaneado
      */
-    void newPoint(Point &p);
+    void newPoint(const Point &p);
 
     /**
      * Comienza la definición de objetos

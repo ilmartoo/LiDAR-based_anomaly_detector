@@ -38,7 +38,7 @@ class IObjectCharacterizator {
      * Callback a donde se recebirán los puntos escaneados
      * @param p Punto escaneado
      */
-    virtual void newPoint(Point &p) = 0;
+    virtual void newPoint(const Point &p) = 0;
 
     /**
      * Callback a donde se recebirán los puntos escaneados

@@ -17,9 +17,9 @@
 #include "models/Point.hh"
 
 void App::start() {
-    scanner->init();                                                     // Inicializamos el escaner
-    scanner->setCallback(([this](Point p) { this->oc->newPoint(p); }));  // Establecemos callback
-    scanner->start();                                                    // Iniciamos el escaner
+    scanner->init();                                                            // Inicializamos el escaner
+    scanner->setCallback(([this](const Point &p) { this->oc->newPoint(p); }));  // Establecemos callback
+    scanner->start();                                                           // Iniciamos el escaner
 
     oc->start(backgroundTime, minReflectivity);  // Iniciamos el caracterizador
 

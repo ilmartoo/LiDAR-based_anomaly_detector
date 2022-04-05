@@ -44,7 +44,7 @@ class IScanner {
      * @param func Función de callback a ser llamada por el sensor
      * @return Se devolverá true si se ha establecido el callback correctamente
      */
-    virtual bool setCallback(std::function<void(Point)> func) = 0;
+    virtual bool setCallback(std::function<void(const Point &p)> func) = 0;
 
     /**
      * Finaliza el escaner

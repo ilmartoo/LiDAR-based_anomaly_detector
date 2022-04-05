@@ -32,7 +32,7 @@ class PointMap {
      * Introduce un punto al final de la cola
      * @param p Nuevo punto a introducir en la cola
      */
-    void push(Point &p) {
+    void push(const Point &p) {
         mutexMaps.lock();  // Bloqueamos el mutex
 
         map.push(p);                                           // Guardamos punto

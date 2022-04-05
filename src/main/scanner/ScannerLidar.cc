@@ -13,7 +13,7 @@
 #include <string>
 #include <functional>
 
-#include "livox_sdk.h"
+#include "livox_sdk/livox_sdk.h"
 
 #include "scanner/ScannerLidar.hh"
 #include "models/Point.hh"
@@ -86,14 +86,10 @@ void ScannerLidar::lidarConnect(const DeviceInfo *info) {
 }
 
 // Desconecta el sensor
-void ScannerLidar::lidarDisConnect(const DeviceInfo *info) {
-    lidar.device_state = kDeviceStateDisconnect;
-}
+void ScannerLidar::lidarDisConnect(const DeviceInfo *info) { lidar.device_state = kDeviceStateDisconnect; }
 
 // Cambia el la información de estado del sensor
-void ScannerLidar::lidarStateChange(const DeviceInfo *info) {
-    lidar.info = *info;
-}
+void ScannerLidar::lidarStateChange(const DeviceInfo *info) { lidar.info = *info; }
 
 // Callback para cambiar el estado del sensor
 void ScannerLidar::onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type) {
@@ -180,15 +176,16 @@ bool ScannerLidar::init() {
 
 // Comienza la obtención de puntos
 bool ScannerLidar::start() {
-    if (lidar.info.state == kLidarStateNormal &&
-        kStatusSuccess ==
-            LidarStartSampling(lidar.handle, (CommonCommandCallback)&ScannerLidar::onSampleCallback, NULL)) {
+    while (lidar.info.state != kLidarStateNormal) { /* Esperamos a que el sensor esté listo */
+    }
+
+    if (kStatusSuccess ==
+        LidarStartSampling(lidar.handle, (CommonCommandCallback)&ScannerLidar::onSampleCallback, NULL)) {
         lidar.device_state = kDeviceStateSampling;
 
         return true;
-    }
 
-    else {
+    } else {
         std::cerr << "El sensor no está listo para iniciar el escaneo de puntos" << std::endl;
         return false;
     }
@@ -196,7 +193,7 @@ bool ScannerLidar::start() {
 
 // Establece la función especificada como función de callback a la que se llamará cada vez que
 // se escanee un nuevo punto
-bool ScannerLidar::setCallback(const std::function<void(Point)> func) {
+bool ScannerLidar::setCallback(const std::function<void(const Point &p)> func) {
     printDebug("Estableciendo el callback.");  // debug
 
     callback = func;

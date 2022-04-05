@@ -1,9 +1,9 @@
 /**
- * @file ScannerFile.cpp
+ * @file ScannerCSV.cpp
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 19/03/2022
  *
- * Implementación del objeto ScannerFile
+ * Implementación del objeto ScannerCSV
  *
  */
 
@@ -14,14 +14,14 @@
 #include <functional>
 #include <thread>
 
-#include "scanner/ScannerFile.hh"
+#include "scanner/ScannerCSV.hh"
 #include "models/Point.hh"
 #include "models/Timestamp.hh"
 #include "debug_lbad.hh"
 
 // Inicialización del escaner
-bool ScannerFile::init() {
-    printDebug("Inicializando el escaner de archivos.");  // debug
+bool ScannerCSV::init() {
+    printDebug("Inicializando el escaner de archivos csv.");  // debug
 
     // Abrimos stream del archivo
     infile.open(filename, std::ios::in);
@@ -30,18 +30,18 @@ bool ScannerFile::init() {
         return false;
     }
 
-    printDebug("Escaner de archivos inicializado correctamente.");  // debug
+    std::cout << "Escaner de archivos csv inicializado correctamente." << std::endl;
 
     return true;
 }
 
 // Comienza la obtención de puntos
-bool ScannerFile::start() {
+bool ScannerCSV::start() {
     std::cout << "Inicio del escaneo de puntos." << std::endl;
 
     if (infile.is_open()) {
-        exit = false;                                                     // Permitimos la ejecución del hilo
-        executionThread = new std::thread(&ScannerFile::readData, this);  // Creamos hilo
+        exit = false;                                                    // Permitimos la ejecución del hilo
+        executionThread = new std::thread(&ScannerCSV::readData, this);  // Creamos hilo
     }
     // Fallo de apertura
     else {
@@ -54,7 +54,7 @@ bool ScannerFile::start() {
 
 // Establece la función especificada como función de callback a la que se llamará cada vez que
 // se escanee un nuevo punto
-bool ScannerFile::setCallback(const std::function<void(Point)> func) {
+bool ScannerCSV::setCallback(const std::function<void(const Point &p)> func) {
     printDebug("Estableciendo el callback.");  // debug
 
     callback = func;
@@ -62,7 +62,7 @@ bool ScannerFile::setCallback(const std::function<void(Point)> func) {
 }
 
 // Finaliza el escaner
-void ScannerFile::stop() {
+void ScannerCSV::stop() {
     printDebug("Finalizando el escaneo de puntos.");
 
     exit = true;              // Comunicamos al hilo que finalice la ejecución
@@ -74,7 +74,7 @@ void ScannerFile::stop() {
 }
 
 // Lectura de puntos del archivo
-void ScannerFile::readData() {
+void ScannerCSV::readData() {
     std::string line;     // String de la linea
     std::string data[5];  // Strings de las celdas
 
@@ -102,7 +102,7 @@ void ScannerFile::readData() {
         data[0] = line.substr(i, line.substr(i).find_first_of(','));
 
         // Datos no necesarios
-        for (commas = 0; commas < 3; ++i) {
+        for (commas = 0; commas < 4; ++i) {
             if (line[i] == ',') {
                 ++commas;
             }
@@ -112,7 +112,7 @@ void ScannerFile::readData() {
         data[1] = line.substr(i, line.substr(i).find_first_of(','));
 
         // Datos no necesarios
-        for (commas = 0; commas < 1; ++i) {
+        for (commas = 0; commas < 2; ++i) {
             if (line[i] == ',') {
                 ++commas;
             }
@@ -125,13 +125,11 @@ void ScannerFile::readData() {
         i += data[3].length() + 1;  // Pasamos al siguiente valor
         data[4] = line.substr(i, line.substr(i).find_first_of(','));
 
-        // Creación del punto
-        Point p(Timestamp(data[0]), std::stof(data[1]), static_cast<uint32_t>(std::stoi(data[2])),
-                static_cast<uint32_t>(std::stoi(data[3])), static_cast<uint32_t>(std::stoi(data[4])));
-
         // Llamada al callback
         if (this->callback) {
-            this->callback(p);
+            this->callback(Point(Timestamp(data[0]), static_cast<uint8_t>(std::stoi(data[1])),
+                                 static_cast<uint32_t>(std::stoi(data[2])), static_cast<uint32_t>(std::stoi(data[3])),
+                                 static_cast<uint32_t>(std::stoi(data[4]))));
         }
     }
 }

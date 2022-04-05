@@ -1,14 +1,14 @@
 /**
- * @file ScannerFile.hh
+ * @file ScannerCSV.hh
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 19/03/2022
  *
- * Definicion del objeto ScannerFile
+ * Definicion del objeto ScannerCSV
  *
  */
 
-#ifndef SCANNERFILE_CLASS_H
-#define SCANNERFILE_CLASS_H
+#ifndef SCANNERCSV_CLASS_H
+#define SCANNERCSV_CLASS_H
 
 #include <iostream>
 #include <string>
@@ -23,18 +23,18 @@
  * Implementación de la interfaz IScanner para la lectura de puntos de archivos CSV obtenidos del
  * programa propietario Livox Viewer
  */
-class ScannerFile : public IScanner {
+class ScannerCSV : public IScanner {
    public:
     /**
-     * Constructor del objeto ScannerFile
+     * Constructor del objeto ScannerCSV
      * @param filename Archivo contenedor de datos
      */
-    ScannerFile(const std::string &filename) : filename(filename), exit(true) {}
+    ScannerCSV(const std::string &filename) : filename(filename), exit(true) {}
 
     /**
      * Destructor del scanner
      */
-    ~ScannerFile() {
+    ~ScannerCSV() {
         if (this->infile.is_open()) {
             this->infile.close();
         }
@@ -60,7 +60,7 @@ class ScannerFile : public IScanner {
      * @param func Función de callback a ser llamada por el sensor
      * @return Se devolverá true si se ha establecido el callback correctamente
      */
-    bool setCallback(const std::function<void(Point)> func);
+    bool setCallback(const std::function<void(const Point &p)> func);
 
     /**
      * Finaliza el escaner
@@ -71,7 +71,7 @@ class ScannerFile : public IScanner {
     const std::string &filename;  ///< Nombre del archivo de datos
     std::ifstream infile;         ///< Stream del archivo de datos
 
-    std::function<void(Point)> callback;  ///< Función de callback
+    std::function<void(const Point &p)> callback;  ///< Función de callback
 
     std::thread *executionThread;  ///< Hilo de ejecución del escaner
     bool exit;                     ///< Variable para la finalización del hilo
@@ -82,4 +82,4 @@ class ScannerFile : public IScanner {
     void readData();
 };
 
-#endif  //SCANNERFILE_CLASS_H
+#endif  //SCANNERCSV_CLASS_H
