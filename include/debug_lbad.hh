@@ -14,14 +14,16 @@
 #include <iostream>
 #include <string>
 
+#include "app/string_format.h"
+
 /**
  * Imprime mensajes de debugging si la macro DEBUG_LBAD está definida
  * @param debugstr Mensaje de debugging
  */
 inline void printDebug(std::string debugstr) {
 #ifdef DEBUG_LBAD
-    std::cout << "[DEBUG] " << debugstr << std::endl;
+    std::cout << yellow_s("[DEBUG] " + debugstr) << std::endl;
 #endif
 }
 
-#endif  //DEBUG_HEADER_H
+#endif  // DEBUG_HEADER_H
