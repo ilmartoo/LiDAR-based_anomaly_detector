@@ -14,7 +14,7 @@
 #include <string>
 
 #include "scanner/IScanner.hh"
-#include "scanner/ScannerFile.hh"
+#include "scanner/ScannerCSV.hh"
 #include "scanner/ScannerLidar.hh"
 #include "object_characterization/IObjectCharacterizator.hh"
 #include "object_characterization/ObjectCharacterizator.hh"
@@ -43,45 +43,46 @@ class App {
      * @param frameDuration Milisegundos que debe durar un frame en el caracterizador de objetos
      * @param backgroundTime Milisegundos en los que los puntos tomados formarán parte del background
      * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
+     * @param backgoundDistance Distancia mínima a la que tiene que estar un punto para no pertenecer al background
      */
     App(const std::string &filename, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime,
-        float minReflectivity, float backgroundDistance)
-        : timerMode(timerMode), backgroundTime(backgroundTime), minReflectivity(minReflectivity) {
-        scanner = new ScannerFile(filename);                                 // Creamos escaner
+        float minReflectivity, float backgroundDistance) {
+        this->timerMode = timerMode;              // timerMode
+        this->backgroundTime = backgroundTime;    // backgroundTime
+        this->minReflectivity = minReflectivity;  // minReflectivity
+
+        scanner = new ScannerCSV(filename);                                // Creamos escaner
         oc = new ObjectCharacterizator(frameDuration, backgroundDistance);  // Creamos caracterizador
         // ad =
 
-        this->start();
-        this->wait();
-        this->stop();
+        this->start();  // Iniciamos app
+        this->wait();   // Esperamos a recibir una señal de salida
+        this->stop();   // Finalizamos app
     }
 
     /**
      * Constructor de la app para input de sensor lidar
-     * @param broadcast_code Codigo de broadcast del sensor lidar
+     * @param broadcastCode Codigo de broadcast del sensor lidar
      * @param filename Nombre de la ruta completa o relativa al archivo de datos
      * @param timerMode Tipo de mediciones de tiempo a tomar
      * @param backgroundTime Milisegundos en los que los puntos tomados formarán parte del background
      * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
+     * @param backgoundDistance Distancia mínima a la que tiene que estar un punto para no pertenecer al background
      */
-    App(const char *broadcast_code, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime,
-        float minReflectivity, float background_distance)
-        : timerMode(timerMode), backgroundTime(backgroundTime), minReflectivity(minReflectivity) {
-        scanner = new ScannerLidar(broadcast_code);                          // Creamos escaner
-        oc = new ObjectCharacterizator(frameDuration, background_distance);  // Creamos caracterizador
+    App(const char *broadcastCode, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime,
+        float minReflectivity, float backgroundDistance) {
+        this->timerMode = timerMode;              // timerMode
+        this->backgroundTime = backgroundTime;    // backgroundTime
+        this->minReflectivity = minReflectivity;  // minReflectivity
+
+        scanner = new ScannerLidar(broadcastCode);                          // Creamos escaner
+        oc = new ObjectCharacterizator(frameDuration, backgroundDistance);  // Creamos caracterizador
         // ad =
 
-        this->start();
-        this->wait();
-        this->stop();
+        this->start();  // Iniciamos app
+        this->wait();   // Esperamos a recibir una señal de salida
+        this->stop();   // Finalizamos app
     }
-
-    /**
-     * Constructor de la app para input de lidar
-     * @param timerMode Tipo de mediciones de tiempo a tomar
-     * @param id Id del lidar
-     */
-    // App(TimerMode timerMode, const std::string &id);
 
     /**
      * Destructor de la app
