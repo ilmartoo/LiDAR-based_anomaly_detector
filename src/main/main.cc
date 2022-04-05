@@ -11,7 +11,7 @@
 #include <string>
 #include <stdlib.h>
 
-#include "livox_def.h"
+#include "livox_sdk/livox_def.h"
 
 #include "app/App.hh"
 #include "app/InputParser.hh"
@@ -47,6 +47,9 @@ struct ParsedInput {
     float background_distance;  ///< Distancia mínima a la que tiene que estar un punto para no pertenecer al background
 };
 
+/* Constants */
+std::string exec_name;
+
 /* Declarations */
 void help();                            // Command line help
 void usage();                           // Command line usage
@@ -55,6 +58,8 @@ ParsedInput parseInput(int, char **);   // Command line input parser
 
 // Main function
 int main(int argc, char *argv[]) {
+    exec_name.assign(argv[0]);  // Nombre del ejecutable
+
     ParsedInput pi = parseInput(argc, argv);  // Parse input
 
     if (pi.is_ok) {
@@ -255,15 +260,14 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
 // Command line usage
 void usage() {
-    std::cout
-        << std::endl
-        << "Usage:" << std::endl
-        << " anomaly_detection <-b broadcast_code> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]"
-        << std::endl
-        << " anomaly_detection <-f filename> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]"
-        << std::endl
-        << " anomaly_detection <-h | --help>" << std::endl
-        << std::endl;
+    std::cout << std::endl
+              << "Usage:" << std::endl
+              << exec_name << " <-b broadcast_code> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]"
+              << std::endl
+              << exec_name << " <-f filename> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]"
+              << std::endl
+              << exec_name << " <-h | --help>" << std::endl
+              << std::endl;
 }
 
 // Command line help
