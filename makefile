@@ -12,12 +12,18 @@ OBJDIR		:= bin
 TARGETDIR	:= build
 
 # Flags, librerias e includes
+
+LIVOX_LIB := lib/sdk_core/lib
+LIVOX_INC := lib/sdk_core/include
+READLVX_LIB := lib/read_lvx/lib
+READLVX_INC := lib/read_lvx/include
+
 LIBPATH		:= /usr/local/lib
-LIBS		:= -L$(LIBPATH) -lm -lpthread -llivox_sdk_static -lread_lvx
+LIBS		  := -L$(LIVOX_LIB) -L$(READLVX_LIB) -lm -lpthread -llivox_sdk_static -lread_lvx
 TEST_LIBS	:= -lgtest -lgmock
 
 INCPATH		:= /usr/local/include
-INC			:= -I$(INCDIR) -I$(INCPATH)
+INC			:= -I$(INCDIR) -I$(INCPATH) -I$(LIVOX_INC) -I$(READLVX_INC)
 
 DEBUG_FLAG	:= -DDEBUG_LBAD
 FLAGS		:= -Wall -g3
