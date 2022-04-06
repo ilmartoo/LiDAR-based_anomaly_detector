@@ -21,7 +21,7 @@
 #define DEFAULT_TIMER_MODE          kUntimed  // Default timer mode
 #define DEFAULT_FRAME_TIME          100       // Default frame time (ms)
 #define DEFAULT_BACKGROUND_TIME     500       // Default background time (ms)
-#define DEFAULT_MIN_RELECTIVITY     0.f       // Default point reflectivity
+#define DEFAULT_MIN_RELECTIVITY     0.0f      // Default point reflectivity
 #define DEFAULT_BACKGROUND_DISTANCE 0.2f      // Default backgound distance (m)
 
 /* ParsedInput struct */

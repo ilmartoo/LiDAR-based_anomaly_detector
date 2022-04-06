@@ -81,7 +81,7 @@ void ScannerCSV::readData() {
     // Proceso de lectura de puntos
     std::getline(this->infile, line);  // Linea de cabecera
 
-    for (int commas, i; std::getline(this->infile, line) && !this->exit;) {
+    for (int commas, i; !exit && std::getline(infile, line);) {
         // Fallo en la lectura
         if (infile.fail()) {
             std::cout << "Fallo en la lectura de puntos" << std::endl;

@@ -60,18 +60,18 @@ LdsLvx::~LdsLvx() {
 
 void LdsLvx::PrepareExit(void) {
   lvx_file_->CloseLvxFile();
-  printf("Convert complete, Press [Ctrl+C] to exit!\n");
+  //printf("Convert complete, Press [Ctrl+C] to exit!\n");
 }
 
 int LdsLvx::InitLdsLvx(const char *lvx_path) {
   if (is_initialized_) {
-    printf("Livox file data source is already inited!\n");
+    //printf("Livox file data source is already inited!\n");
     return -1;
   }
 
   int ret = lvx_file_->Open(lvx_path, std::ios::in);
   if (ret) {
-    printf("Open %s file fail[%d]!\n", lvx_path, ret);
+    //printf("Open %s file fail[%d]!\n", lvx_path, ret);
     return ret;
   }
 
@@ -84,17 +84,17 @@ int LdsLvx::InitLdsLvx(const char *lvx_path) {
   uint32_t valid_lidar_count_ = lvx_file_->GetDeviceCount();
   if (!valid_lidar_count_ || (valid_lidar_count_ >= kMaxSourceLidar)) {
     lvx_file_->CloseLvxFile();
-    printf("Lidar count error in %s : %d\n", lvx_path, valid_lidar_count_);
+    //printf("Lidar count error in %s : %d\n", lvx_path, valid_lidar_count_);
     return -1;
   }
-  printf("LvxFile[%s] have %d lidars\n", lvx_path, valid_lidar_count_);
+  //printf("LvxFile[%s] have %d lidars\n", lvx_path, valid_lidar_count_);
 
   for (uint32_t i = 0; i < valid_lidar_count_; i++) {
     LvxFileDeviceInfo lvx_dev_info;
     lvx_file_->GetDeviceInfo(i, &lvx_dev_info);
     uint8_t handle = lvx_dev_info.device_index;
     if (handle >= kMaxSourceLidar) {
-      printf("Invalid hanle from lvx file!\n");
+      //printf("Invalid hanle from lvx file!\n");
       continue;
     }
     lidars_[handle].handle        = handle;
@@ -134,7 +134,7 @@ int LdsLvx::InitLdsLvx(const char *lvx_path) {
 /** Global function in LdsLvx for callback */
 void LdsLvx::ReadLvxFile() {
   while (!start_read_lvx_);
-  printf("Start to read lvx file.\n");
+  //printf("Start to read lvx file.\n");
 
   int file_state = kLvxFileOk;
   int progress = 0;
@@ -162,15 +162,15 @@ void LdsLvx::ReadLvxFile() {
 
         data_type = eth_packet->data_type;
         if (handle >= lvx_file_->GetDeviceCount()) {
-          printf("Raw data handle error, error handle is %d\n", handle);
+          //printf("Raw data handle error, error handle is %d\n", handle);
           break;
         }
         if (data_type >= kMaxPointDataType) {
-          printf("Raw data type error, error data_type is %d\n", data_type);
+          //printf("Raw data type error, error data_type is %d\n", data_type);
           break;
         }
         if (eth_packet->version != 5) {
-          printf("EthPacket version[%d] not supported\n", eth_packet->version);
+          //printf("EthPacket version[%d] not supported\n", eth_packet->version);
           break;
         }
         
@@ -193,19 +193,19 @@ void LdsLvx::ReadLvxFile() {
       }
     } else {
       if (file_state != kLvxFileAtEnd) {
-        printf("Exit read the lvx file, read file state[%d]!\n", file_state);
+        //printf("Exit read the lvx file, read file state[%d]!\n", file_state);
       } else {
-        printf("Read the lvx file complete!\n");
+        //printf("Read the lvx file complete!\n");
       }
       break;
     }
 
     if (progress != lvx_file_->GetLvxFileReadProgress()) {
       progress = lvx_file_->GetLvxFileReadProgress();
-      printf("Read progress : %d \n", progress);
+      //printf("Read progress : %d \n", progress);
     }
   }
-  printf("Wait for file conversion to complete!\n");
+  //printf("Wait for file conversion to complete!\n");
   int32_t wait_cnt = 5;
   while (!IsAllQueueEmpty()) {
     std::this_thread::sleep_for(std::chrono::milliseconds(40));

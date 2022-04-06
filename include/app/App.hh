@@ -15,6 +15,7 @@
 
 #include "scanner/IScanner.hh"
 #include "scanner/ScannerCSV.hh"
+#include "scanner/ScannerLVX.hh"
 #include "scanner/ScannerLidar.hh"
 #include "object_characterization/IObjectCharacterizator.hh"
 #include "object_characterization/ObjectCharacterizator.hh"
@@ -51,7 +52,19 @@ class App {
         this->backgroundTime = backgroundTime;    // backgroundTime
         this->minReflectivity = minReflectivity;  // minReflectivity
 
-        scanner = new ScannerCSV(filename);                                // Creamos escaner
+        // Obtenemos extensión del archivo
+        size_t loc = filename.find_last_of('.');
+        std::string ext = filename.substr(++loc);
+        
+        // Lectura de un archivo LVX
+        if (ext.compare("lvx") == 0) {
+            scanner = new ScannerLVX(filename);  // Creamos escaner
+        }
+        // Lectura de un archivo CSV por defecto
+        else {
+            scanner = new ScannerCSV(filename);  // Creamos escaner
+        }
+
         oc = new ObjectCharacterizator(frameDuration, backgroundDistance);  // Creamos caracterizador
         // ad =
 

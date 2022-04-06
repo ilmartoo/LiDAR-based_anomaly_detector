@@ -97,12 +97,13 @@ void ScannerLVX::readData() {
     livox_ros::LvxFilePacket *detail_packet;
     uint8_t data_type;
 
-    while (r == livox_ros::kLvxFileOk) {
+    // Recorremos el archivo
+    while (!exit && r == livox_ros::kLvxFileOk) {
         packet_base = packets_of_frame.packet;  // Data array pointer
         data_offset = 0;                        // Data offset in array
 
-        // Recorremos todo el array
-        while (data_offset < packets_of_frame.data_size) {
+        // Recorremos todo el array de paquetes
+        while (!exit && data_offset < packets_of_frame.data_size) {
             if (lvx_file.GetFileVersion() != 0) {
                 detail_packet = (livox_ros::LvxFilePacket *)&packet_base[data_offset];  // Point packet
                 eth_packet = (LivoxEthPacket *)(&detail_packet->version);               // Ethernet packet
