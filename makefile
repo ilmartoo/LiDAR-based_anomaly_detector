@@ -26,7 +26,7 @@ INCPATH		:= /usr/local/include
 INC			:= -I$(INCDIR) -I$(INCPATH) -I$(LIVOX_INC) -I$(READLVX_INC)
 
 DEBUG_FLAG	:= -DDEBUG_LBAD
-FLAGS		:= -Wall -g3
+FLAGS		:= -Wall -g3 -O2
 
 #----------------------------------------------------------------
 # REGLAS - NO EDITAR
