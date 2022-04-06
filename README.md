@@ -10,19 +10,19 @@ Science degree at University of Santiago de Compostela._
 
 ## Prerequisites
 To compile the project you need:
-- `g++` version `10.3.0` or higher[^1]
+- `g++` version `10.3.0` or higher [^1]
 - `cmake` version `14.0` or higher
 
 [^1]: May work with older versions, but has not been tested.
 
 ## Testing enviroment
-The project was developed and tested in `Ubuntu 21.04`[^2].
+The project was developed and tested in `Ubuntu 21.04` [^2].
 
 [^2]: Should work with almost every GNU/Linux distribution. Feel free to test it yourself ;)
 
 ## Setup
 ### Libraries
-To setup the necesary libraries you can use the script `setup_libraries.sh`[^3] from the **root folder** just like so:
+To setup the necesary libraries you can use the script `setup_libraries.sh` [^3] from the **root folder** just like so:
 ```bash
 $ # Setup needed libraries
 $ ./setup_libraries.sh
