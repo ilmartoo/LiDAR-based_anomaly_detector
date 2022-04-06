@@ -17,7 +17,7 @@ else
 fi
 
 # Crea la librería read_lvx
-if [ ! -r /usr/local/lib/read_lvx.a ]; then
+if [ ! -r /usr/local/lib/libread_lvx.a ]; then
 	cd read_lvx/ && mkdir -p build && cd build && cmake .. && make && sudo make install && cd ../../
 	echo -e "\e[1;34m[sdk_core] Librería read_lvx creada\e[0m"
 else
