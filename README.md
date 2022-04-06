@@ -15,13 +15,13 @@ To compile the project you need:
 
 [^1]: May work with older versions, but has not been tested.
 
-## Testing enviroment :ballot_box_with_check:
+## Testing enviroment
 The project was developed and tested in `Ubuntu 21.04`[^2].
 
 [^2]: Should work with almost every GNU/Linux distribution. Feel free to test it yourself ;)
 
-## Setup :wrench:
-### Libraries :books:
+## Setup
+### Libraries
 To setup the necesary libraries you can use the script `setup_libraries.sh`[^3] from the **root folder** just like so:
 ```bash
 $ # Setup needed libraries
@@ -36,7 +36,7 @@ $ ./setup_libraries.sh -t
 
 [^3]: This script will create and install the libraries into their corresponding `lib/` subfolder, keeping the libraries from being installed into the `/usr/local/` folder and forgotten no long after (just like we always do).
 
-### Project :sparkles:
+### Project
 To build de project execute the following from the **root folder**: 
 ```bash
 $ # Build the project
@@ -53,6 +53,6 @@ $ cmake --build build/Debug
 
 This will create the executable of the project into the corresponding `build/<cmake_build_type>/` subfolder.
 
-## Execution and parameters :nut_and_bolt:
+## Execution and parameters
 
 *...comming soon...*
