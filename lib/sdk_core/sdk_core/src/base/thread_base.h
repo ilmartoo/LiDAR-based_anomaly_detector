@@ -24,14 +24,15 @@
 
 #ifndef LIVOX_THREAD_BASE_H_
 #define LIVOX_THREAD_BASE_H_
-#include <atomic>
-#include <thread>
-#include "noncopyable.h"
+#include "noncopyable.h"
+#include <atomic>
+#include <memory>
+#include <thread>
 
 namespace livox {
 
-class ThreadBase : public noncopyable {
- public:
+class ThreadBase : public noncopyable {
+public:
   ThreadBase();
   virtual ~ThreadBase() {}
   virtual void ThreadFunc() = 0;
@@ -40,16 +41,16 @@ class ThreadBase : public noncopyable {
   virtual bool Start();
   virtual void Join();
   void Quit() { quit_ = true; }
-  bool IsQuit() { return quit_; }
-
- protected:
+  bool IsQuit() { return quit_; }
+
+protected:
   std::shared_ptr<std::thread> thread_;
-  std::atomic_bool quit_;
-  
- private:
+  std::atomic_bool quit_;
+
+private:
   std::atomic_bool is_thread_valid_;
 };
 
-}  // namespace livox
+} // namespace livox
 
-#endif  // LIVOX_THREAD_BASE_H_
+#endif // LIVOX_THREAD_BASE_H_
