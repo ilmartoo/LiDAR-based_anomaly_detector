@@ -284,9 +284,9 @@ void help() {
         << "\t                       char   - Characterizator chrono set" << std::endl
         << "\t                       anom   - Anomaly detector chrono set" << std::endl
         << "\t                       all    - All chronos set" << std::endl
-        << "\t -g                Time during which scanned points will be part of the background. Default: "
+        << "\t -g                Miliseconds during which scanned points will be part of the background. Default: "
         << DEFAULT_BACKGROUND_TIME << std::endl
-        << "\t -r                Minimum reflectivity poinst may have not to be discarded. Default: "
+        << "\t -r                Minimum reflectivity points may have not to be discarded. Default: "
         << DEFAULT_MIN_RELECTIVITY << std::endl
         << "\t -d                Minimum distance from the background a point must have not to be discarded. Default: "
         << DEFAULT_BACKGROUND_DISTANCE << std::endl
