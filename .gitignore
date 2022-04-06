@@ -1,14 +1,13 @@
 # User defined exclusions
 sample/
 schemas/
-.vscode/
 bin/
 build/
 lib/
 
-# CMake files
-CMakeFiles/
-CMakeCache.txt
+# VSCode
+.vscode/
+*.code-workspace
 
 # Prerequisites
 *.d
