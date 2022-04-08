@@ -17,7 +17,7 @@ include_directories("include/")
 
 # SDK CORE
 set(SDKCORE_LIB ${CMAKE_SOURCE_DIR}/lib/sdk_core/lib/liblivox_sdk_static.a)
-include_directories(${INSTALLED_LIBS_INC_DIR}/sdk_core/include)
+include_directories(${CMAKE_SOURCE_DIR}/sdk_core/include)
 
 # READ LVX
 set(READLVX_LIB ${CMAKE_SOURCE_DIR}/lib/read_lvx/lib/libread_lvx.a)

@@ -29,6 +29,16 @@ target_sources(
   rapidxml/rapidxml_utils.hpp
 )
 
+# SDK CORE
+set(SDKCORE_LIB ${CMAKE_SOURCE_DIR}/../sdk_core/lib/liblivox_sdk_static.a)
+include_directories(${CMAKE_SOURCE_DIR}/../sdk_core/lib/include)
+
+# Linking libraries
+target_link_libraries(
+  ${PROJECT_NAME}
+  ${SDKCORE_LIB}  # sdk_core
+)
+
 install(
   TARGETS ${PROJECT_NAME}
   PUBLIC_HEADER DESTINATION ${CMAKE_SOURCE_DIR}/lib/include/${PROJECT_NAME}
