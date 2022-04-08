@@ -27,17 +27,11 @@ void App::start() {
 }
 
 void App::wait() {
-    int sig;             // Creamos buffer de señal
-    sigset_t wset;       // Creamos set
-    sigemptyset(&wset);  // Vaciamos set
+    std::string input;
+    do {
+        std::cin >> input;        // Leemos comando
 
-    sigaddset(&wset, SIGINT);  // Añadimos señal de interrupción
-
-    sigprocmask(SIG_BLOCK, &wset, nullptr);  // Bloqueamos señal de interrupción
-
-    sigwait(&wset, &sig);  // Recibimos señal de interrupción
-
-    std::cout << "\r\r";  // Output formatting
+    } while (input.compare("q"));  // Esperamos a recibir el comando de finalización
 }
 
 void App::stop() {

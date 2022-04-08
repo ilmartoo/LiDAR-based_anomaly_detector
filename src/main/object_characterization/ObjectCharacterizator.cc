@@ -15,10 +15,17 @@
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "debug_lbad.hh"
 
+<<<<<<< Updated upstream
 ///////////////
 #include <fstream>
 #include "app/string_format.h"
 ///////////////
+=======
+///////////////////////
+// #include "app/string_format.h"
+#include <fstream>
+///////////////////////
+>>>>>>> Stashed changes
 
 // Callback a donde se recebirán los puntos escaneados
 void ObjectCharacterizator::newPoint(const Point &p) {
@@ -58,10 +65,13 @@ void ObjectCharacterizator::newPoint(const Point &p) {
 
             // Punto descartado
             case defStopped:
-                printDebug("Punto descartado:\n" + p.string());  // debug
+                printDebug("Punto descartado: " + p.string());  // debug
 
                 break;
         }
+
+    } else {
+        printDebug("Punto con reflectividad insuficiente: " + p.string());  // debug
     }
 }
 
@@ -84,6 +94,7 @@ void ObjectCharacterizator::stop() {
     exit = true;              // Comunicamos al hilo que finalice la ejecución
     executionThread->join();  // Realizamos unión del hilo de gestión de puntos
 
+<<<<<<< Updated upstream
     ////////
     // std::ofstream os("output_points.csv", std::ios::out);
     // while(!object->empty()) {
@@ -96,6 +107,17 @@ void ObjectCharacterizator::stop() {
     // for (auto &p : *background)
     //     std::cout << lightred_s(p.string()) << std::endl;
     ////////
+=======
+    //////////////////////////////////
+    std::ofstream os("output_points.csv", std::ios::out);
+    while (!object->empty()) {
+        std::cout << "-- punto --" << std::endl;
+        os << object->front().csv_string() << "\n";
+        object->pop();
+    }
+    os.close();
+    //////////////////////////////////
+>>>>>>> Stashed changes
 
     std::cout << "Finalizada caracterización." << std::endl;
 }
@@ -114,7 +136,7 @@ void ObjectCharacterizator::managePoints(uint32_t backgroundTime) {
 
             // Eliminamos si su timestamp es viejo
             if (p.getTimestamp() + frameDuration < object->getLastTimestamp()) {
-                printDebug("Punto caducado: " + p.string());  // debug
+                // printDebug("Punto caducado: " + p.string());  // debug
 
                 object->pop();  // Eliminamos punto
             }

@@ -118,7 +118,7 @@ void ScannerLVX::readData() {
             if (data_type == kExtendCartesian) {
                 const int points_in_packet = livox_ros::GetPointsPerPacket(eth_packet->data_type);
                 size_t packet_offset = 0;
-                for (int i = 0; i < points_in_packet; i++) {
+                for (int i = 0; !exit && i < points_in_packet; i++) {
                     LivoxExtendRawPoint *point =
                         reinterpret_cast<LivoxExtendRawPoint *>(eth_packet->data + packet_offset);
 
