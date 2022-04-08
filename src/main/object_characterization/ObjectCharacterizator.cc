@@ -15,8 +15,23 @@
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "debug_lbad.hh"
 
+///////////////
+#include <fstream>
+#include "app/string_format.h"
+///////////////
+
 // Callback a donde se recebirán los puntos escaneados
 void ObjectCharacterizator::newPoint(const Point &p) {
+    ////////////////
+    std::ofstream os("input_points.csv", std::ios::out);
+    while (!object->empty()) {
+        // std::cout << skyblue_s(object->front().string()) << std::endl;
+        os << object->front().csv_string() << std::endl;
+        object->pop();
+    }
+    os.close();
+    ////////////////
+
     // Comprobamos reflectividad
     if (p.getReflectivity() >= minReflectivity) {
         // Escogemos la acción adecuada respecto del estado
@@ -69,16 +84,28 @@ void ObjectCharacterizator::stop() {
     exit = true;              // Comunicamos al hilo que finalice la ejecución
     executionThread->join();  // Realizamos unión del hilo de gestión de puntos
 
+    ////////
+    // std::ofstream os("output_points.csv", std::ios::out);
+    // while(!object->empty()) {
+    //     // std::cout << skyblue_s(object->front().string()) << std::endl;
+    //     os << object->front().csv_string() << std::endl;
+    //     object->pop();
+    // }
+    // os.close();
+    //
+    // for (auto &p : *background)
+    //     std::cout << lightred_s(p.string()) << std::endl;
+    ////////
+
     std::cout << "Finalizada caracterización." << std::endl;
 }
 
 // Guarda en background y elimina los puntos del objeto fuera del frame
 void ObjectCharacterizator::managePoints(uint32_t backgroundTime) {
-    if (backgroundTime > 0) {
-        state = defBackground;  // Empezamos a obtener puntos de background
+    state = defBackground;  // Empezamos a obtener puntos de background
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(backgroundTime));
-    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(backgroundTime));
+
     state = defObject;  // Empezamos a obtener puntos del objeto
 
     while (!exit) {
