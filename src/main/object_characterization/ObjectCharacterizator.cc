@@ -15,17 +15,10 @@
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "debug_lbad.hh"
 
-<<<<<<< Updated upstream
 ///////////////
 #include <fstream>
 #include "app/string_format.h"
 ///////////////
-=======
-///////////////////////
-// #include "app/string_format.h"
-#include <fstream>
-///////////////////////
->>>>>>> Stashed changes
 
 // Callback a donde se recebirán los puntos escaneados
 void ObjectCharacterizator::newPoint(const Point &p) {
@@ -94,7 +87,6 @@ void ObjectCharacterizator::stop() {
     exit = true;              // Comunicamos al hilo que finalice la ejecución
     executionThread->join();  // Realizamos unión del hilo de gestión de puntos
 
-<<<<<<< Updated upstream
     ////////
     // std::ofstream os("output_points.csv", std::ios::out);
     // while(!object->empty()) {
@@ -107,17 +99,6 @@ void ObjectCharacterizator::stop() {
     // for (auto &p : *background)
     //     std::cout << lightred_s(p.string()) << std::endl;
     ////////
-=======
-    //////////////////////////////////
-    std::ofstream os("output_points.csv", std::ios::out);
-    while (!object->empty()) {
-        std::cout << "-- punto --" << std::endl;
-        os << object->front().csv_string() << "\n";
-        object->pop();
-    }
-    os.close();
-    //////////////////////////////////
->>>>>>> Stashed changes
 
     std::cout << "Finalizada caracterización." << std::endl;
 }
