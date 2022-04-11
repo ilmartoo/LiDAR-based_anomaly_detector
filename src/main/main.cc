@@ -56,8 +56,19 @@ void usage();                           // Command line usage
 ParsedInput &missusage(ParsedInput &);  // Treats ParsedInput when command line options are used wrong
 ParsedInput parseInput(int, char **);   // Command line input parser
 
+#include "scanner/ScannerCSV.hh"
+#include "models/Point.hh"
 // Main function
 int main(int argc, char *argv[]) {
+    
+    std::cout << argv[1] << std::endl;
+    ScannerLVX s(argv[1]);
+    s.init();
+    s.setCallback([](const Point &p){std::cout << p.csv_string() << std::endl;});
+    s.start();
+    while(true);
+    return 0;
+    
     exec_name.assign(argv[0]);  // Nombre del ejecutable
 
     ParsedInput pi = parseInput(argc, argv);  // Parse input
