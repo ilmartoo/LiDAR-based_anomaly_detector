@@ -17,7 +17,7 @@ include_directories("include/")
 
 # SDK CORE
 set(SDKCORE_LIB ${CMAKE_SOURCE_DIR}/lib/sdk_core/lib/liblivox_sdk_static.a)
-include_directories(${CMAKE_SOURCE_DIR}/lib/sdk_core/include)
+include_directories(${CMAKE_SOURCE_DIR}/sdk_core/include)
 
 # READ LVX
 set(READLVX_LIB ${CMAKE_SOURCE_DIR}/lib/read_lvx/lib/libread_lvx.a)
@@ -30,6 +30,8 @@ add_executable(${PROJECT_NAME} ${sources})
 # Linking libraries
 target_link_libraries(
   ${PROJECT_NAME}
-  ${SDKCORE_LIB}
-  ${READLVX_LIB}
+  ${SDKCORE_LIB}  # sdk_core
+  ${READLVX_LIB}  # read_lvx
+  m               # mathematical library
+  pthread         # thread library
 )

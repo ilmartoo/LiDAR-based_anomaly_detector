@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.14)
 
 project(read_lvx) # Project name
 
@@ -29,11 +29,21 @@ target_sources(
   rapidxml/rapidxml_utils.hpp
 )
 
+# SDK CORE
+set(SDKCORE_LIB ${CMAKE_SOURCE_DIR}/../sdk_core/lib/liblivox_sdk_static.a)
+include_directories(${CMAKE_SOURCE_DIR}/../sdk_core/lib/include)
+
+# Linking libraries
+target_link_libraries(
+  ${PROJECT_NAME}
+  ${SDKCORE_LIB}  # sdk_core
+)
+
 install(
   TARGETS ${PROJECT_NAME}
-  PUBLIC_HEADER DESTINATION include/${PROJECT_NAME}
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
+  PUBLIC_HEADER DESTINATION ${CMAKE_SOURCE_DIR}/lib/include/${PROJECT_NAME}
+  ARCHIVE DESTINATION ${CMAKE_SOURCE_DIR}/lib
+  LIBRARY DESTINATION ${CMAKE_SOURCE_DIR}/lib
 )
 
 install(
@@ -43,5 +53,5 @@ install(
   rapidxml/rapidxml_print.hpp
   rapidxml/rapidxml_utils.hpp
   DESTINATION
-  include/rapidxml
+  ${CMAKE_SOURCE_DIR}/lib/include/rapidxml
 )

@@ -1,9 +1,10 @@
 # User defined exclusions
-sample/
 schemas/
-bin/
 build/
-lib/
+
+# Libraries' binaries
+/anomaly_detector/lib/*/lib/
+/anomaly_detector/lib/*/build/
 
 # VSCode
 .vscode/

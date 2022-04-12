@@ -24,9 +24,9 @@ bool ScannerCSV::init() {
     printDebug("Inicializando el escaner de archivos csv.");  // debug
 
     // Abrimos stream del archivo
-    infile.open(filename, std::ios::in);
+    infile.open(filename, std::ifstream::in);
     if (infile.fail()) {
-        std::cerr << "Fallo al inicializar el escaner de archivos." << std::endl;
+        std::cerr << "Fallo al inicializar el escaner de archivos csv." << std::endl;
         return false;
     }
 

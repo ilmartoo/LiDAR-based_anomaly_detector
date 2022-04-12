@@ -56,6 +56,8 @@ void usage();                           // Command line usage
 ParsedInput &missusage(ParsedInput &);  // Treats ParsedInput when command line options are used wrong
 ParsedInput parseInput(int, char **);   // Command line input parser
 
+#include "scanner/ScannerCSV.hh"
+#include "models/Point.hh"
 // Main function
 int main(int argc, char *argv[]) {
     exec_name.assign(argv[0]);  // Nombre del ejecutable
@@ -284,11 +286,12 @@ void help() {
         << "\t                       char   - Characterizator chrono set" << std::endl
         << "\t                       anom   - Anomaly detector chrono set" << std::endl
         << "\t                       all    - All chronos set" << std::endl
-        << "\t -g                Time during which scanned points will be part of the background. Default: "
+        << "\t -g                Miliseconds during which scanned points will be part of the background. Default: "
         << DEFAULT_BACKGROUND_TIME << std::endl
-        << "\t -r                Minimum reflectivity poinst may have not to be discarded. Default: "
+        << "\t -r                Minimum reflectivity value points may have not to be discarded. Default: "
         << DEFAULT_MIN_RELECTIVITY << std::endl
-        << "\t -d                Minimum distance from the background a point must have not to be discarded. Default: "
+        << "\t -d                Minimum distance from the background in meters a point must have not to be discarded. "
+           "Default: "
         << DEFAULT_BACKGROUND_DISTANCE << std::endl
         << "\t -h,--help         Print the program help text" << std::endl
         << std::endl;

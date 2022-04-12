@@ -28,7 +28,7 @@ bool ScannerLVX::init() {
 
     // Abrimos archivo
     if (lvx_file.Open(filename.c_str(), std::ios::in) != livox_ros::kLvxFileOk) {
-        std::cerr << "Fallo al inicializar el escaner" << std::endl;
+        std::cerr << "Fallo al inicializar el escaner de archivos lvx." << std::endl;
 
         return false;
     }
@@ -118,7 +118,7 @@ void ScannerLVX::readData() {
             if (data_type == kExtendCartesian) {
                 const int points_in_packet = livox_ros::GetPointsPerPacket(eth_packet->data_type);
                 size_t packet_offset = 0;
-                for (int i = 0; i < points_in_packet; i++) {
+                for (int i = 0; !exit && i < points_in_packet; i++) {
                     LivoxExtendRawPoint *point =
                         reinterpret_cast<LivoxExtendRawPoint *>(eth_packet->data + packet_offset);
 

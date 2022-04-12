@@ -22,6 +22,16 @@
 
 // Callback a donde se recebirán los puntos escaneados
 void ObjectCharacterizator::newPoint(const Point &p) {
+    ////////////////
+    std::ofstream os("input_points.csv", std::ios::out);
+    while (!object->empty()) {
+        // std::cout << skyblue_s(object->front().string()) << std::endl;
+        os << object->front().csv_string() << std::endl;
+        object->pop();
+    }
+    os.close();
+    ////////////////
+
     // Comprobamos reflectividad
     if (p.getReflectivity() >= minReflectivity) {
         // Escogemos la acción adecuada respecto del estado
@@ -48,10 +58,13 @@ void ObjectCharacterizator::newPoint(const Point &p) {
 
             // Punto descartado
             case defStopped:
-                printDebug("Punto descartado:\n" + p.string());  // debug
+                printDebug("Punto descartado: " + p.string());  // debug
 
                 break;
         }
+
+    } else {
+        printDebug("Punto con reflectividad insuficiente: " + p.string());  // debug
     }
 }
 
@@ -75,13 +88,13 @@ void ObjectCharacterizator::stop() {
     executionThread->join();  // Realizamos unión del hilo de gestión de puntos
 
     ////////
-    std::ofstream os("output_points.csv", std::ios::out);
-    while(!object->empty()) {
-        // std::cout << skyblue_s(object->front().string()) << std::endl;
-        os << object->front().csv_string() << std::endl;
-        object->pop();
-    }
-    os.close();
+    // std::ofstream os("output_points.csv", std::ios::out);
+    // while(!object->empty()) {
+    //     // std::cout << skyblue_s(object->front().string()) << std::endl;
+    //     os << object->front().csv_string() << std::endl;
+    //     object->pop();
+    // }
+    // os.close();
     //
     // for (auto &p : *background)
     //     std::cout << lightred_s(p.string()) << std::endl;
@@ -104,7 +117,7 @@ void ObjectCharacterizator::managePoints(uint32_t backgroundTime) {
 
             // Eliminamos si su timestamp es viejo
             if (p.getTimestamp() + frameDuration < object->getLastTimestamp()) {
-                printDebug("Punto caducado: " + p.string());  // debug
+                // printDebug("Punto caducado: " + p.string());  // debug
 
                 object->pop();  // Eliminamos punto
             }
