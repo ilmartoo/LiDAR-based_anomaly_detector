@@ -8,51 +8,8 @@ _**Note:**
 This is an end-of-degree project made for my Computer 
 Science degree at University of Santiago de Compostela._
 
-## Prerequisites
-To compile the project you need:
-- `g++` version `10.3.0` or higher [^1]
-- `cmake` version `14.0` or higher
+## Projects
 
-[^1]: May work with older versions, but has not been tested.
-
-## Testing enviroment
-The project was developed and tested in `Ubuntu 21.04` [^2].
-
-[^2]: Should work with almost every GNU/Linux distribution. Feel free to test it yourself ;)
-
-## Setup
-### Libraries
-To setup the necesary libraries you can use the script `setup_libraries.sh` [^3] from the **root folder** just like so:
-```bash
-$ # Setup needed libraries
-$ ./setup_libraries.sh
-```
-
-If you want to execute the created tests, do:
-```bash
-$ # Setup needed libraries + test libraries
-$ ./setup_libraries.sh -t
-```
-
-[^3]: This script will create and install the libraries into their corresponding `lib/` subfolder, keeping the libraries from being installed into the `/usr/local/` folder and forgotten no long after (just like we always do).
-
-### Project
-To build de project execute the following from the **root folder**: 
-```bash
-$ # Build the project
-$ cmake -S . -B build/Release -D CMAKE_BUILD_TYPE=Release
-$ cmake --build build/Release
-```
-
-To build the project with debug output execute the following from the **root folder**:
-```bash
-$ # Build the project with debug output
-$ cmake -S . -B build/Debug -D CMAKE_BUILD_TYPE=Debug
-$ cmake --build build/Debug
-```
-
-This will create the executable of the project into the corresponding `build/<cmake_build_type>/` subfolder.
-
-## Execution and parameters
-
-*...comming soon...*
+The two existing subfolders contain a project each one:
+- The main project of this repository is located in the `anomaly_detector/` folder. This project uses the obtained LiDAR data to characterize objects and detect any anomalies the may have.
+- The `error_measuring/` project's goal is to measure the cuadratic error a LiDAR dataset may have using plane aproximations.

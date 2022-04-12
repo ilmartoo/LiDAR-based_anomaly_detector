@@ -28,7 +28,7 @@ bool ScannerLVX::init() {
 
     // Abrimos archivo
     if (lvx_file.Open(filename.c_str(), std::ios::in) != livox_ros::kLvxFileOk) {
-        std::cerr << "Fallo al inicializar el escaner" << std::endl;
+        std::cerr << "Fallo al inicializar el escaner de archivos lvx." << std::endl;
 
         return false;
     }

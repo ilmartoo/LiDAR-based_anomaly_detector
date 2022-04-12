@@ -1,4 +1,3 @@
-#ifdef UNINCLUDE_TEMPORAL
 #include <armadillo>
 
 class Point; // Deberias usar aqui la estructura que uses para guardar las
@@ -67,4 +66,3 @@ arma::vec computePlane(vec &normal, vec &centroid) {
 
   return plane;
 }
-#endif
