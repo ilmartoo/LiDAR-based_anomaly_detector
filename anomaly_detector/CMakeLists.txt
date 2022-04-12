@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+
+# Project name
 project(anomaly_detection)
 
-set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG_LBAD")
-set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG_LBAD")   # Debug flags
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG") # Release flags
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "-Wall -g3")
@@ -11,7 +13,9 @@ set(CMAKE_CXX_FLAGS "-Wall -g3")
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/main/*.cc)
 
 # Include directories
-include_directories("include/")
+include_directories(
+  ${CMAKE_SOURCE_DIR}/include/
+)
 
 # Libraries
 
