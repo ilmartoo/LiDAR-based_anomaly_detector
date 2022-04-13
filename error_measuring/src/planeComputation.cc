@@ -1,7 +1,6 @@
-#include <armadillo>
+#include "armadillo"
 
-class Point; // Deberias usar aqui la estructura que uses para guardar las
-             // coordenadas xyz de cada punto.
+#include "models/Point.hh"
 
 Point computeCentroid(const std::vector<Point *> &points) {
   double x{}, y{}, z{};
