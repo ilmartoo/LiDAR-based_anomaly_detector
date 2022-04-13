@@ -5,7 +5,9 @@ tmp/
 
 # Libraries' binaries
 /anomaly_detector/lib/*/lib/
+/error_measuring/lib/*/lib/
 /anomaly_detector/lib/*/build/
+/error_measuring/lib/*/build/
 
 # VSCode
 *.code-workspace
