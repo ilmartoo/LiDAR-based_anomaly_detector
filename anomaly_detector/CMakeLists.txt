@@ -21,11 +21,11 @@ include_directories(
 
 # SDK CORE
 set(SDKCORE_LIB ${CMAKE_SOURCE_DIR}/lib/sdk_core/lib/liblivox_sdk_static.a)
-include_directories(${CMAKE_SOURCE_DIR}/sdk_core/include)
+include_directories(${CMAKE_SOURCE_DIR}/lib/sdk_core/lib/include)
 
 # READ LVX
 set(READLVX_LIB ${CMAKE_SOURCE_DIR}/lib/read_lvx/lib/libread_lvx.a)
-include_directories(${CMAKE_SOURCE_DIR}/lib/read_lvx/include)
+include_directories(${CMAKE_SOURCE_DIR}/lib/read_lvx/lib/include)
 
 
 # Executable
