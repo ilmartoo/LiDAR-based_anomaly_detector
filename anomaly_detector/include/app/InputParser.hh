@@ -3,6 +3,8 @@
  * @author iain (https://stackoverflow.com/users/85381/iain)
  * @date 20/03/2022
  *
+ * Modified by: Martín Suárez (martin.suarez.garcia@rai.usc.es)
+ *
  * Parser de argumentos de linea de comandos
  *
  */
@@ -72,4 +74,4 @@ class InputParser {
     std::vector<std::string> tokens;
 };
 
-#endif  //INPUTPARSER_CLASS_H
+#endif  // INPUTPARSER_CLASS_H

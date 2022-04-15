@@ -127,9 +127,8 @@ void ScannerCSV::readData() {
 
         // Llamada al callback
         if (this->callback) {
-            this->callback(Point(Timestamp(data[0]), static_cast<uint8_t>(std::stoi(data[1])),
-                                 static_cast<uint32_t>(std::stoi(data[2])), static_cast<uint32_t>(std::stoi(data[3])),
-                                 static_cast<uint32_t>(std::stoi(data[4]))));
+            this->callback(Point(Timestamp(data[0]), static_cast<uint8_t>(std::stoi(data[1])), static_cast<uint32_t>(std::stoi(data[2])),
+                                 static_cast<uint32_t>(std::stoi(data[3])), static_cast<uint32_t>(std::stoi(data[4]))));
         }
     }
 }

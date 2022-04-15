@@ -87,9 +87,7 @@ class Timestamp {
      * @return true El Timestamp actual es igual
      * @return false El Timestamp actual es mayor o menor
      */
-    bool operator==(const Timestamp &t) const {
-        return this->seconds == t.seconds && this->nanoseconds == t.nanoseconds;
-    }
+    bool operator==(const Timestamp &t) const { return this->seconds == t.seconds && this->nanoseconds == t.nanoseconds; }
 
     /**
      * Suma nanosegundos al timestamp actual
@@ -105,13 +103,11 @@ class Timestamp {
      * Obtiene un string con los datos del timestamp
      * @return String con los datos del timestamp
      */
-    inline const std::string string() const {
-        return std::to_string(seconds) + "s " + std::to_string(nanoseconds) + "ns";
-    }
+    inline const std::string string() const { return std::to_string(seconds) + "s " + std::to_string(nanoseconds) + "ns"; }
 
    private:
     uint32_t seconds;      ///< Segundos
     uint32_t nanoseconds;  ///< Nanosegundos
 };
 
-#endif  //TIMESTAMP_CLASS_H
+#endif  // TIMESTAMP_CLASS_H

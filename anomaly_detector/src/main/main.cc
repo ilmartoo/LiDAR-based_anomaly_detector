@@ -56,8 +56,6 @@ void usage();                           // Command line usage
 ParsedInput &missusage(ParsedInput &);  // Treats ParsedInput when command line options are used wrong
 ParsedInput parseInput(int, char **);   // Command line input parser
 
-#include "scanner/ScannerCSV.hh"
-#include "models/Point.hh"
 // Main function
 int main(int argc, char *argv[]) {
     exec_name.assign(argv[0]);  // Nombre del ejecutable
@@ -66,11 +64,9 @@ int main(int argc, char *argv[]) {
 
     if (pi.is_ok) {
         if (pi.is_lidar) {
-            App app(pi.broadcast_code, pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity,
-                    pi.background_distance);
+            App app(pi.broadcast_code, pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity, pi.background_distance);
         } else {
-            App app(pi.filename, pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity,
-                    pi.background_distance);
+            App app(pi.filename, pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity, pi.background_distance);
         }
     }
 
@@ -264,10 +260,8 @@ ParsedInput parseInput(int argc, char *argv[]) {
 void usage() {
     std::cout << std::endl
               << "Usage:" << std::endl
-              << exec_name << " <-b broadcast_code> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]"
-              << std::endl
-              << exec_name << " <-f filename> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]"
-              << std::endl
+              << exec_name << " <-b broadcast_code> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]" << std::endl
+              << exec_name << " <-f filename> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]" << std::endl
               << exec_name << " <-h | --help>" << std::endl
               << std::endl;
 }
@@ -275,26 +269,24 @@ void usage() {
 // Command line help
 void help() {
     usage();  // Imprimimos usage
-    std::cout
-        << "\t -b                Broadcast code of the lidar sensor composed of " << kBroadcastCodeSize
-        << " digits maximum" << std::endl
-        << "\t -f                File with the 3D points to get the data from" << std::endl
-        << "\t -p                Amount of miliseconds to use as frame duration time. Default: " << DEFAULT_FRAME_TIME
-        << std::endl
-        << "\t -t                Type of chronometer to set up and measure time from. Default: notime" << std::endl
-        << "\t                       notime - No chrono set" << std::endl
-        << "\t                       char   - Characterizator chrono set" << std::endl
-        << "\t                       anom   - Anomaly detector chrono set" << std::endl
-        << "\t                       all    - All chronos set" << std::endl
-        << "\t -g                Miliseconds during which scanned points will be part of the background. Default: "
-        << DEFAULT_BACKGROUND_TIME << std::endl
-        << "\t -r                Minimum reflectivity value points may have not to be discarded. Default: "
-        << DEFAULT_MIN_RELECTIVITY << std::endl
-        << "\t -d                Minimum distance from the background in meters a point must have not to be discarded. "
-           "Default: "
-        << DEFAULT_BACKGROUND_DISTANCE << std::endl
-        << "\t -h,--help         Print the program help text" << std::endl
-        << std::endl;
+    std::cout << "\t -b                Broadcast code of the lidar sensor composed of " << kBroadcastCodeSize << " digits maximum"
+              << std::endl
+              << "\t -f                File with the 3D points to get the data from" << std::endl
+              << "\t -p                Amount of miliseconds to use as frame duration time. Default: " << DEFAULT_FRAME_TIME << std::endl
+              << "\t -t                Type of chronometer to set up and measure time from. Default: notime" << std::endl
+              << "\t                       notime - No chrono set" << std::endl
+              << "\t                       char   - Characterizator chrono set" << std::endl
+              << "\t                       anom   - Anomaly detector chrono set" << std::endl
+              << "\t                       all    - All chronos set" << std::endl
+              << "\t -g                Miliseconds during which scanned points will be part of the background. Default: "
+              << DEFAULT_BACKGROUND_TIME << std::endl
+              << "\t -r                Minimum reflectivity value points may have not to be discarded. Default: " << DEFAULT_MIN_RELECTIVITY
+              << std::endl
+              << "\t -d                Minimum distance from the background in meters a point must have not to be discarded. "
+                 "Default: "
+              << DEFAULT_BACKGROUND_DISTANCE << std::endl
+              << "\t -h,--help         Print the program help text" << std::endl
+              << std::endl;
 }
 
 // Exit when command line options are used wrong

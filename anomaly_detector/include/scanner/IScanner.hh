@@ -52,4 +52,4 @@ class IScanner {
     virtual void stop() = 0;
 };
 
-#endif  //SCANNER_INTERFACE_H
+#endif  // SCANNER_INTERFACE_H

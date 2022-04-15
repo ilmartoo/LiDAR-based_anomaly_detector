@@ -35,8 +35,7 @@ class Point {
      * Constructor del objeto Punto
      * @param p Punto a copiar
      */
-    Point(const Point &p)
-        : timestamp(p.timestamp), reflectivity(p.reflectivity), x(p.x), y(p.y), z(p.z) {}
+    Point(const Point &p) : timestamp(p.timestamp), reflectivity(p.reflectivity), x(p.x), y(p.y), z(p.z) {}
 
     /**
      * Devuelve el timestamp del punto
@@ -73,8 +72,8 @@ class Point {
      * @return String con los datos del punto
      */
     inline const std::string string() const {
-        return "[Time: " + this->timestamp.string() + "] [Ref: " + std::to_string(this->reflectivity) + "] " +
-               std::to_string(this->x) + ", " + std::to_string(this->y) + ", " + std::to_string(this->z);
+        return "[Time: " + this->timestamp.string() + "] [Ref: " + std::to_string(this->reflectivity) + "] " + std::to_string(this->x) +
+               ", " + std::to_string(this->y) + ", " + std::to_string(this->z);
     }
 
     /**
@@ -82,9 +81,8 @@ class Point {
      * @return String con los datos del punto en formato csv
      */
     inline const std::string csv_string() const {
-        return std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + "," +
-               std::to_string(timestamp.getSeconds()) + std::to_string(timestamp.getNanoseconds()) + "," +
-               std::to_string(reflectivity);
+        return std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + "," + std::to_string(timestamp.getSeconds()) +
+               std::to_string(timestamp.getNanoseconds()) + "," + std::to_string(reflectivity);
     }
 
     // Imprime la información del punto p

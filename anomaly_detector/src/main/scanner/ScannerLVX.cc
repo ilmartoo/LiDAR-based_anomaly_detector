@@ -109,9 +109,8 @@ void ScannerLVX::readData() {
                 eth_packet = (LivoxEthPacket *)(&detail_packet->version);               // Ethernet packet
 
             } else {
-                livox_ros::LvxFilePacketV0 *detail_packet =
-                    (livox_ros::LvxFilePacketV0 *)&packet_base[data_offset];  // V0 Point packet
-                eth_packet = (LivoxEthPacket *)(&detail_packet->version);     // Ethernet packet
+                livox_ros::LvxFilePacketV0 *detail_packet = (livox_ros::LvxFilePacketV0 *)&packet_base[data_offset];  // V0 Point packet
+                eth_packet = (LivoxEthPacket *)(&detail_packet->version);                                             // Ethernet packet
             }
 
             data_type = eth_packet->data_type;  // Packet data type
@@ -119,13 +118,11 @@ void ScannerLVX::readData() {
                 const int points_in_packet = livox_ros::GetPointsPerPacket(eth_packet->data_type);
                 size_t packet_offset = 0;
                 for (int i = 0; !exit && i < points_in_packet; i++) {
-                    LivoxExtendRawPoint *point =
-                        reinterpret_cast<LivoxExtendRawPoint *>(eth_packet->data + packet_offset);
+                    LivoxExtendRawPoint *point = reinterpret_cast<LivoxExtendRawPoint *>(eth_packet->data + packet_offset);
 
                     // Llamada al callback
                     if (this->callback) {
-                        this->callback(
-                            Point(Timestamp(eth_packet->timestamp), point->reflectivity, point->x, point->y, point->z));
+                        this->callback(Point(Timestamp(eth_packet->timestamp), point->reflectivity, point->x, point->y, point->z));
                     }
 
                     packet_offset += sizeof(LivoxExtendRawPoint);

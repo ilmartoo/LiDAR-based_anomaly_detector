@@ -154,4 +154,4 @@ class ScannerLidar : public IScanner {
     void onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type);
 };
 
-#endif  //SCANNERLIDAR_CLASS_H
+#endif  // SCANNERLIDAR_CLASS_H
