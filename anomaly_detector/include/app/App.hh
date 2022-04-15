@@ -46,16 +46,14 @@ class App {
      * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      * @param backgoundDistance Distancia mínima a la que tiene que estar un punto para no pertenecer al background
      */
-    App(const std::string &filename, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime,
-        float minReflectivity, float backgroundDistance) {
+    App(const std::string &filename, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity,
+        float backgroundDistance) {
         this->timerMode = timerMode;              // timerMode
-        this->backgroundTime = backgroundTime;    // backgroundTime
-        this->minReflectivity = minReflectivity;  // minReflectivity
 
         // Obtenemos extensión del archivo
         size_t loc = filename.find_last_of('.');
         std::string ext = filename.substr(++loc);
-        
+
         // Lectura de un archivo LVX
         if (ext.compare("lvx") == 0) {
             scanner = new ScannerLVX(filename);  // Creamos escaner
@@ -65,7 +63,7 @@ class App {
             scanner = new ScannerCSV(filename);  // Creamos escaner
         }
 
-        oc = new ObjectCharacterizator(frameDuration, backgroundDistance);  // Creamos caracterizador
+        oc = new ObjectCharacterizator(frameDuration, backgroundTime, minReflectivity, backgroundDistance);  // Creamos caracterizador
         // ad =
 
         this->start();  // Iniciamos app
@@ -82,14 +80,12 @@ class App {
      * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      * @param backgoundDistance Distancia mínima a la que tiene que estar un punto para no pertenecer al background
      */
-    App(const char *broadcastCode, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime,
-        float minReflectivity, float backgroundDistance) {
+    App(const char *broadcastCode, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity,
+        float backgroundDistance) {
         this->timerMode = timerMode;              // timerMode
-        this->backgroundTime = backgroundTime;    // backgroundTime
-        this->minReflectivity = minReflectivity;  // minReflectivity
 
-        scanner = new ScannerLidar(broadcastCode);                          // Creamos escaner
-        oc = new ObjectCharacterizator(frameDuration, backgroundDistance);  // Creamos caracterizador
+        scanner = new ScannerLidar(broadcastCode);                                                           // Creamos escaner
+        oc = new ObjectCharacterizator(frameDuration, backgroundTime, minReflectivity, backgroundDistance);  // Creamos caracterizador
         // ad =
 
         this->start();  // Iniciamos app
@@ -124,9 +120,6 @@ class App {
 
     enum InputType inputType;  ///< Tipo de input de datos
     enum TimerMode timerMode;  ///< Tipo de mediciones de tiempo a tomar
-
-    uint32_t backgroundTime;  ///< Tiempo en milisegundos en el cual los puntos tomados formarán parte del background
-    float minReflectivity;    ///< Reflectividad mínima que necesitan los puntos para no ser descartados
 
     IScanner *scanner;           ///< Escaner de puntos
     IObjectCharacterizator *oc;  ///< Caracterizador de objetos

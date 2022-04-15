@@ -19,6 +19,16 @@
 #include "models/PointMap.hh"
 
 /**
+ * Estados en los que se puede encontrar el caracterizador de objetos
+ */
+enum CharacterizatorState {
+    defStartTime,   ///< Definiendo el timestamp de inicio
+    defBackground,  ///< Definiendo el background
+    defObject,      ///< Definiendo objetos
+    defStopped,     ///< Definición parada
+};
+
+/**
  * Cararterizador de objetos que implementa la interfaz IObjectCharacterizator
  */
 class ObjectCharacterizator : public IObjectCharacterizator {
@@ -27,13 +37,14 @@ class ObjectCharacterizator : public IObjectCharacterizator {
      * Constructor
      * @param frameDuration Duración del frame de puntos en milisegundos
      */
-    ObjectCharacterizator(uint32_t frameDuration, float backgroundDistance) {
+    ObjectCharacterizator(uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity, float backgroundDistance) {
         state = defStopped;
 
         this->frameDuration = frameDuration * 1000000;
-        this->exit = true;
+        this->backgroundTime = backgroundTime * 1000000;
+        this->minReflectivity = minReflectivity;
         this->backgroundDistance = backgroundDistance;
-        this->minReflectivity = 0.0F;
+        this->exit = true;
 
         background = new std::vector<Point>();
         object = new PointMap();
@@ -56,10 +67,8 @@ class ObjectCharacterizator : public IObjectCharacterizator {
 
     /**
      * Comienza la definición de objetos
-     * @param backgroundTime Milisegundos durante los que todos los puntos recogidos formarán parte del background
-     * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      */
-    virtual void start(uint32_t backgroundTime, float minReflectivity);
+    virtual void start();
 
     /**
      * Para la caracterización de objetos
@@ -70,9 +79,11 @@ class ObjectCharacterizator : public IObjectCharacterizator {
     enum CharacterizatorState state;  ///< Estado en el que se encuentra el caracterizador de objetos
 
     uint64_t frameDuration;    ///< Duración del frame de puntos en nanosegundos
+    uint64_t backgroundTime;   ///< Tiempo en el cual los puntos formarán parte del background
     float minReflectivity;     ///< Reflectividad mínima que necesitan los puntos para no ser descartados
     float backgroundDistance;  ///< Distancia mínima a la que tiene que estar un punto para no pertenecer al background
 
+    Timestamp *startTimestamp;       ///< Timestamp del primer punto
     std::vector<Point> *background;  ///< Mapa de puntos que forman el background
     PointMap *object;                ///< Mapa de puntos que forman el objeto
 
@@ -81,9 +92,8 @@ class ObjectCharacterizator : public IObjectCharacterizator {
 
     /**
      * Guarda en background y elimina los puntos del objeto fuera del frame
-     * @param backgroundTime Milisegundos durante los que todos los puntos recogidos formarán parte del background
      */
-    void managePoints(uint32_t backgroundTime);
+    void managePoints();
 
     /**
      * Comprueba si un punto pertenece al background

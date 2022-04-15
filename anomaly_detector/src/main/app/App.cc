@@ -21,7 +21,7 @@ void App::start() {
     scanner->setCallback(([this](const Point &p) { this->oc->newPoint(p); }));  // Establecemos callback
     scanner->start();                                                           // Iniciamos el escaner
 
-    oc->start(backgroundTime, minReflectivity);  // Iniciamos el caracterizador
+    oc->start();  // Iniciamos el caracterizador
 
     // ad->start(); // Iniciamos el detector de anomalías
 }
@@ -29,7 +29,7 @@ void App::start() {
 void App::wait() {
     std::string input;
     do {
-        std::cin >> input;        // Leemos comando
+        std::cin >> input;  // Leemos comando
 
     } while (input.compare("q"));  // Esperamos a recibir el comando de finalización
 }

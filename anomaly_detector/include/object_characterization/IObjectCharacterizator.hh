@@ -16,15 +16,6 @@
 #include "models/CharacteristicsVector.hh"
 
 /**
- * Estados en los que se puede encontrar un caracterizador de objetos
- */
-enum CharacterizatorState {
-    defBackground,  ///< Definiendo el background
-    defObject,      ///< Definiendo objetos
-    defStopped,     ///< Definición parada
-};
-
-/**
  * Interfaz del cararterizador de objetos
  */
 class IObjectCharacterizator {
@@ -49,10 +40,8 @@ class IObjectCharacterizator {
     /**
      * Comienza la definición de objetos, definiendo el background durante los milisegundos
      * especificados para despues definir los objetos
-     * @param backgroundTime Milisegundos durante los que todos los puntos recogidos formarán parte del background
-     * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      */
-    virtual void start(uint32_t backgroundTime, float minReflectivity) = 0;
+    virtual void start() = 0;
 
     /**
      * Para la caracterización de objetos
@@ -60,4 +49,4 @@ class IObjectCharacterizator {
     virtual void stop() = 0;
 };
 
-#endif  //OBJECTCARACTERIZATOR_INTERFACE_H
+#endif  // OBJECTCARACTERIZATOR_INTERFACE_H
