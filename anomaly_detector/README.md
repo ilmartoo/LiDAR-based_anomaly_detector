@@ -45,6 +45,10 @@ To build the project with debug output execute the following from the **`anomaly
 $ # Build the project with debug output
 $ cmake -S . -B build/Debug -D CMAKE_BUILD_TYPE=Debug
 $ cmake --build build/Debug
+
+$ # Build the project with debug output but no point debugging
+$ cmake -S . -B build/Debug -D CMAKE_BUILD_TYPE=Debug -D DEBUG_POINTS=OFF
+$ cmake --build build/Debug
 ```
 
 This will create the executable of the project into the corresponding `build/<cmake_build_type>/` subfolder.
