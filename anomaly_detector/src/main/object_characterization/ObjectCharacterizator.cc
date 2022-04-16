@@ -35,14 +35,15 @@ void ObjectCharacterizator::newPoint(const Point &p) {
             // Punto de background
             case defBackground:
 
+                // Contador de puntos del background
+                DEBUG_CODE(static uint32_t bp_count = 0);
+
                 // Punto del background
                 if (*startTimestamp + backgroundTime > p.getTimestamp()) {
                     DEBUG_POINT_STDOUT("Punto añadido al background: " + p.string());
+                    DEBUG_CODE(++bp_count);
 
                     background->push_back(p);  // Guardamos punto
-
-                    // Contador de puntos del background
-                    DEBUG_CODE(static uint32_t count = 0; ++count;);
 
                     break;  // Finalizamos
                 }
@@ -55,7 +56,7 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                 }
 
                 // Total de puntos del background
-                DEBUG_STDOUT("Background formado por " + to_string(count) + " puntos");
+                DEBUG_STDOUT("Background formado por " + std::to_string(bp_count) + " puntos");
 
             // Punto del objeto
             case defObject:
