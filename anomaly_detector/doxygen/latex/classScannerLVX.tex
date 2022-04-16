@@ -1,0 +1,110 @@
+\hypertarget{classScannerLVX}{}\doxysection{Scanner\+L\+VX Class Reference}
+\label{classScannerLVX}\index{ScannerLVX@{ScannerLVX}}
+
+
+{\ttfamily \#include $<$Scanner\+L\+V\+X.\+hh$>$}
+
+
+
+Inheritance diagram for Scanner\+L\+VX\+:
+% FIG 0
+
+
+Collaboration diagram for Scanner\+L\+VX\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classScannerLVX_a3a88b7c9380784e59a6e348d70ccc743}{Scanner\+L\+VX}} (const std\+::string \&filename)
+\item 
+\mbox{\hyperlink{classScannerLVX_a9631bb87682da77d1d1410c199e664ea}{$\sim$\+Scanner\+L\+VX}} ()
+\item 
+bool \mbox{\hyperlink{classScannerLVX_a33b997d59223a7e55352aca850b9f86a}{init}} ()
+\item 
+bool \mbox{\hyperlink{classScannerLVX_a28889a777963d4ffed78ca021df93dcd}{start}} ()
+\item 
+bool \mbox{\hyperlink{classScannerLVX_a7756ff50b5eebcee94f6b2d57849d792}{set\+Callback}} (const std\+::function$<$ void(const \mbox{\hyperlink{classPoint}{Point}} \&p)$>$ func)
+\item 
+void \mbox{\hyperlink{classScannerLVX_abeb7a0372e79ee042a84a09eda7e167a}{stop}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implementación de la interfaz \mbox{\hyperlink{classIScanner}{I\+Scanner}} para la lectura de puntos de archivos C\+SV obtenidos del programa propietario Livox Viewer 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classScannerLVX_a3a88b7c9380784e59a6e348d70ccc743}\label{classScannerLVX_a3a88b7c9380784e59a6e348d70ccc743}} 
+\index{ScannerLVX@{ScannerLVX}!ScannerLVX@{ScannerLVX}}
+\index{ScannerLVX@{ScannerLVX}!ScannerLVX@{ScannerLVX}}
+\doxysubsubsection{\texorpdfstring{ScannerLVX()}{ScannerLVX()}}
+{\footnotesize\ttfamily Scanner\+L\+V\+X\+::\+Scanner\+L\+VX (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{filename }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructor del objeto \mbox{\hyperlink{classScannerLVX}{Scanner\+L\+VX}} 
+\begin{DoxyParams}{Parameters}
+{\em filename} & Archivo contenedor de datos \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScannerLVX_a9631bb87682da77d1d1410c199e664ea}\label{classScannerLVX_a9631bb87682da77d1d1410c199e664ea}} 
+\index{ScannerLVX@{ScannerLVX}!````~ScannerLVX@{$\sim$ScannerLVX}}
+\index{````~ScannerLVX@{$\sim$ScannerLVX}!ScannerLVX@{ScannerLVX}}
+\doxysubsubsection{\texorpdfstring{$\sim$ScannerLVX()}{~ScannerLVX()}}
+{\footnotesize\ttfamily Scanner\+L\+V\+X\+::$\sim$\+Scanner\+L\+VX (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Destructor del scanner 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classScannerLVX_a33b997d59223a7e55352aca850b9f86a}\label{classScannerLVX_a33b997d59223a7e55352aca850b9f86a}} 
+\index{ScannerLVX@{ScannerLVX}!init@{init}}
+\index{init@{init}!ScannerLVX@{ScannerLVX}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily bool Scanner\+L\+V\+X\+::init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Inicialización del escaner \begin{DoxyReturn}{Returns}
+Se devolverá true si se ha establecido el escaner correctamente 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classIScanner_aaf3d8b7c70410704054c208f4640a56a}{I\+Scanner}}.
+
+\mbox{\Hypertarget{classScannerLVX_a7756ff50b5eebcee94f6b2d57849d792}\label{classScannerLVX_a7756ff50b5eebcee94f6b2d57849d792}} 
+\index{ScannerLVX@{ScannerLVX}!setCallback@{setCallback}}
+\index{setCallback@{setCallback}!ScannerLVX@{ScannerLVX}}
+\doxysubsubsection{\texorpdfstring{setCallback()}{setCallback()}}
+{\footnotesize\ttfamily bool Scanner\+L\+V\+X\+::set\+Callback (\begin{DoxyParamCaption}\item[{const std\+::function$<$ void(const \mbox{\hyperlink{classPoint}{Point}} \&p)$>$}]{func }\end{DoxyParamCaption})}
+
+Establece la función especificada como función de callback a la que se llamará cada vez que se escanee un nuevo punto 
+\begin{DoxyParams}{Parameters}
+{\em func} & Función de callback a ser llamada por el sensor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Se devolverá true si se ha establecido el callback correctamente 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classScannerLVX_a28889a777963d4ffed78ca021df93dcd}\label{classScannerLVX_a28889a777963d4ffed78ca021df93dcd}} 
+\index{ScannerLVX@{ScannerLVX}!start@{start}}
+\index{start@{start}!ScannerLVX@{ScannerLVX}}
+\doxysubsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily bool Scanner\+L\+V\+X\+::start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Comienza la obtención de puntos \begin{DoxyReturn}{Returns}
+Se devolverá true al finalizar de leer correctamente el archivo o false si ocurre un error en el proceso 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classIScanner_ad259f0cf87ea925a88831e215799948a}{I\+Scanner}}.
+
+\mbox{\Hypertarget{classScannerLVX_abeb7a0372e79ee042a84a09eda7e167a}\label{classScannerLVX_abeb7a0372e79ee042a84a09eda7e167a}} 
+\index{ScannerLVX@{ScannerLVX}!stop@{stop}}
+\index{stop@{stop}!ScannerLVX@{ScannerLVX}}
+\doxysubsubsection{\texorpdfstring{stop()}{stop()}}
+{\footnotesize\ttfamily void Scanner\+L\+V\+X\+::stop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Finaliza el escaner 
+
+Implements \mbox{\hyperlink{classIScanner_a1c5b762bd0a4b6909743f38c614a39f7}{I\+Scanner}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/scanner/\mbox{\hyperlink{ScannerLVX_8hh}{Scanner\+L\+V\+X.\+hh}}\end{DoxyCompactItemize}

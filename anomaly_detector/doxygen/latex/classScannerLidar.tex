@@ -1,0 +1,110 @@
+\hypertarget{classScannerLidar}{}\doxysection{Scanner\+Lidar Class Reference}
+\label{classScannerLidar}\index{ScannerLidar@{ScannerLidar}}
+
+
+{\ttfamily \#include $<$Scanner\+Lidar.\+hh$>$}
+
+
+
+Inheritance diagram for Scanner\+Lidar\+:
+% FIG 0
+
+
+Collaboration diagram for Scanner\+Lidar\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classScannerLidar_a3d6c901c82fe6982868e296d899e10d3}{Scanner\+Lidar}} (const char broadcast\+\_\+code\mbox{[}k\+Broadcast\+Code\+Size\mbox{]})
+\item 
+\mbox{\hyperlink{classScannerLidar_a55caea671ea68f62cb9ebf78f039dfc5}{$\sim$\+Scanner\+Lidar}} ()
+\item 
+bool \mbox{\hyperlink{classScannerLidar_a9e4511a1367fda6796ef9618fda683d3}{init}} ()
+\item 
+bool \mbox{\hyperlink{classScannerLidar_a6d6fa1cb26ee15536b6226fb574e7593}{start}} ()
+\item 
+bool \mbox{\hyperlink{classScannerLidar_afb224c448af4c4e4b738198b7d46cfcf}{set\+Callback}} (const std\+::function$<$ void(const \mbox{\hyperlink{classPoint}{Point}} \&p)$>$ func)
+\item 
+void \mbox{\hyperlink{classScannerLidar_aae7423bf5e8740c34072021438df927f}{stop}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implementación de la interfaz \mbox{\hyperlink{classIScanner}{I\+Scanner}} para la lectura de puntos del modelo de Li\+D\+AR Livox Horizon 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classScannerLidar_a3d6c901c82fe6982868e296d899e10d3}\label{classScannerLidar_a3d6c901c82fe6982868e296d899e10d3}} 
+\index{ScannerLidar@{ScannerLidar}!ScannerLidar@{ScannerLidar}}
+\index{ScannerLidar@{ScannerLidar}!ScannerLidar@{ScannerLidar}}
+\doxysubsubsection{\texorpdfstring{ScannerLidar()}{ScannerLidar()}}
+{\footnotesize\ttfamily Scanner\+Lidar\+::\+Scanner\+Lidar (\begin{DoxyParamCaption}\item[{const char}]{broadcast\+\_\+code\mbox{[}k\+Broadcast\+Code\+Size\mbox{]} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em broadcast\+\_\+code} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScannerLidar_a55caea671ea68f62cb9ebf78f039dfc5}\label{classScannerLidar_a55caea671ea68f62cb9ebf78f039dfc5}} 
+\index{ScannerLidar@{ScannerLidar}!````~ScannerLidar@{$\sim$ScannerLidar}}
+\index{````~ScannerLidar@{$\sim$ScannerLidar}!ScannerLidar@{ScannerLidar}}
+\doxysubsubsection{\texorpdfstring{$\sim$ScannerLidar()}{~ScannerLidar()}}
+{\footnotesize\ttfamily Scanner\+Lidar\+::$\sim$\+Scanner\+Lidar (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Destructor del scanner 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classScannerLidar_a9e4511a1367fda6796ef9618fda683d3}\label{classScannerLidar_a9e4511a1367fda6796ef9618fda683d3}} 
+\index{ScannerLidar@{ScannerLidar}!init@{init}}
+\index{init@{init}!ScannerLidar@{ScannerLidar}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily bool Scanner\+Lidar\+::init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Inicialización del escaner \begin{DoxyReturn}{Returns}
+Se devolverá true si se ha establecido el escaner correctamente 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classIScanner_aaf3d8b7c70410704054c208f4640a56a}{I\+Scanner}}.
+
+\mbox{\Hypertarget{classScannerLidar_afb224c448af4c4e4b738198b7d46cfcf}\label{classScannerLidar_afb224c448af4c4e4b738198b7d46cfcf}} 
+\index{ScannerLidar@{ScannerLidar}!setCallback@{setCallback}}
+\index{setCallback@{setCallback}!ScannerLidar@{ScannerLidar}}
+\doxysubsubsection{\texorpdfstring{setCallback()}{setCallback()}}
+{\footnotesize\ttfamily bool Scanner\+Lidar\+::set\+Callback (\begin{DoxyParamCaption}\item[{const std\+::function$<$ void(const \mbox{\hyperlink{classPoint}{Point}} \&p)$>$}]{func }\end{DoxyParamCaption})}
+
+Establece la función especificada como función de callback a la que se llamará cada vez que se escanee un nuevo punto 
+\begin{DoxyParams}{Parameters}
+{\em func} & Función de callback a ser llamada por el sensor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Se devolverá true si se ha establecido el callback correctamente 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classScannerLidar_a6d6fa1cb26ee15536b6226fb574e7593}\label{classScannerLidar_a6d6fa1cb26ee15536b6226fb574e7593}} 
+\index{ScannerLidar@{ScannerLidar}!start@{start}}
+\index{start@{start}!ScannerLidar@{ScannerLidar}}
+\doxysubsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily bool Scanner\+Lidar\+::start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Comienza la obtención de puntos \begin{DoxyReturn}{Returns}
+Se devolverá true al finalizar de leer correctamente el archivo o false si ocurre un error en el proceso 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classIScanner_ad259f0cf87ea925a88831e215799948a}{I\+Scanner}}.
+
+\mbox{\Hypertarget{classScannerLidar_aae7423bf5e8740c34072021438df927f}\label{classScannerLidar_aae7423bf5e8740c34072021438df927f}} 
+\index{ScannerLidar@{ScannerLidar}!stop@{stop}}
+\index{stop@{stop}!ScannerLidar@{ScannerLidar}}
+\doxysubsubsection{\texorpdfstring{stop()}{stop()}}
+{\footnotesize\ttfamily void Scanner\+Lidar\+::stop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Finaliza el escaner 
+
+Implements \mbox{\hyperlink{classIScanner_a1c5b762bd0a4b6909743f38c614a39f7}{I\+Scanner}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/scanner/\mbox{\hyperlink{ScannerLidar_8hh}{Scanner\+Lidar.\+hh}}\end{DoxyCompactItemize}

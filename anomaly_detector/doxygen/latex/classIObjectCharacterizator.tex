@@ -1,0 +1,79 @@
+\hypertarget{classIObjectCharacterizator}{}\doxysection{I\+Object\+Characterizator Class Reference}
+\label{classIObjectCharacterizator}\index{IObjectCharacterizator@{IObjectCharacterizator}}
+
+
+{\ttfamily \#include $<$I\+Object\+Characterizator.\+hh$>$}
+
+
+
+Inheritance diagram for I\+Object\+Characterizator\+:
+% FIG 0
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{classIObjectCharacterizator_a02b954d265f6383f8a84e028cdeade12}{$\sim$\+I\+Object\+Characterizator}} ()
+\item 
+virtual void \mbox{\hyperlink{classIObjectCharacterizator_af6ad7f2d7b4bf84f208f0d0b24970608}{new\+Point}} (const \mbox{\hyperlink{classPoint}{Point}} \&p)=0
+\item 
+virtual void \mbox{\hyperlink{classIObjectCharacterizator_a2e74687e3e4b31208ae5e142fada4759}{start}} ()=0
+\item 
+virtual void \mbox{\hyperlink{classIObjectCharacterizator_a8559bb0c2fc33ad1d57dc85788590ac2}{stop}} ()=0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Interfaz del cararterizador de objetos 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classIObjectCharacterizator_a02b954d265f6383f8a84e028cdeade12}\label{classIObjectCharacterizator_a02b954d265f6383f8a84e028cdeade12}} 
+\index{IObjectCharacterizator@{IObjectCharacterizator}!````~IObjectCharacterizator@{$\sim$IObjectCharacterizator}}
+\index{````~IObjectCharacterizator@{$\sim$IObjectCharacterizator}!IObjectCharacterizator@{IObjectCharacterizator}}
+\doxysubsubsection{\texorpdfstring{$\sim$IObjectCharacterizator()}{~IObjectCharacterizator()}}
+{\footnotesize\ttfamily virtual I\+Object\+Characterizator\+::$\sim$\+I\+Object\+Characterizator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+Destructor virtual 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classIObjectCharacterizator_af6ad7f2d7b4bf84f208f0d0b24970608}\label{classIObjectCharacterizator_af6ad7f2d7b4bf84f208f0d0b24970608}} 
+\index{IObjectCharacterizator@{IObjectCharacterizator}!newPoint@{newPoint}}
+\index{newPoint@{newPoint}!IObjectCharacterizator@{IObjectCharacterizator}}
+\doxysubsubsection{\texorpdfstring{newPoint()}{newPoint()}}
+{\footnotesize\ttfamily virtual void I\+Object\+Characterizator\+::new\+Point (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classPoint}{Point}} \&}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+Callback a donde se recebirán los puntos escaneados 
+\begin{DoxyParams}{Parameters}
+{\em p} & Punto escaneado \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{classObjectCharacterizator_ac1a2b11a852d313eddaf6eed9547568b}{Object\+Characterizator}}.
+
+\mbox{\Hypertarget{classIObjectCharacterizator_a2e74687e3e4b31208ae5e142fada4759}\label{classIObjectCharacterizator_a2e74687e3e4b31208ae5e142fada4759}} 
+\index{IObjectCharacterizator@{IObjectCharacterizator}!start@{start}}
+\index{start@{start}!IObjectCharacterizator@{IObjectCharacterizator}}
+\doxysubsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily virtual void I\+Object\+Characterizator\+::start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+Callback a donde se recebirán los puntos escaneados \begin{DoxyReturn}{Returns}
+Vector con las características del objeto escaneado Comienza la definición de objetos, definiendo el background durante los milisegundos especificados para despues definir los objetos 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classObjectCharacterizator_a66f9bd7308183f270f37ae7676a4935b}{Object\+Characterizator}}.
+
+\mbox{\Hypertarget{classIObjectCharacterizator_a8559bb0c2fc33ad1d57dc85788590ac2}\label{classIObjectCharacterizator_a8559bb0c2fc33ad1d57dc85788590ac2}} 
+\index{IObjectCharacterizator@{IObjectCharacterizator}!stop@{stop}}
+\index{stop@{stop}!IObjectCharacterizator@{IObjectCharacterizator}}
+\doxysubsubsection{\texorpdfstring{stop()}{stop()}}
+{\footnotesize\ttfamily virtual void I\+Object\+Characterizator\+::stop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+Para la caracterización de objetos 
+
+Implemented in \mbox{\hyperlink{classObjectCharacterizator_a5dac3cde05bb85d4a9aa0ad48d4bf954}{Object\+Characterizator}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/object\+\_\+characterization/\mbox{\hyperlink{IObjectCharacterizator_8hh}{I\+Object\+Characterizator.\+hh}}\end{DoxyCompactItemize}

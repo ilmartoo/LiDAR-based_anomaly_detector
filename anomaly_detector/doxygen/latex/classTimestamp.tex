@@ -1,0 +1,167 @@
+\hypertarget{classTimestamp}{}\doxysection{Timestamp Class Reference}
+\label{classTimestamp}\index{Timestamp@{Timestamp}}
+
+
+{\ttfamily \#include $<$Timestamp.\+hh$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classTimestamp_a16f44ad75ff13eb883b4f08db9b90535}{Timestamp}} (std\+::string utc)
+\item 
+\mbox{\hyperlink{classTimestamp_a382960758866267b5bfbd101952f81c6}{Timestamp}} (uint8\+\_\+t utc\mbox{[}8\mbox{]})
+\item 
+\mbox{\hyperlink{classTimestamp_a20c1e0b3781e94cb1fd2a28f5c32f271}{Timestamp}} (uint32\+\_\+t s, uint32\+\_\+t ns)
+\item 
+const uint32\+\_\+t \& \mbox{\hyperlink{classTimestamp_a98b04d0f6483fa103a933696560a9bab}{get\+Seconds}} () const
+\item 
+const uint32\+\_\+t \& \mbox{\hyperlink{classTimestamp_a50955b6b126566fe7864f8fe767e3470}{get\+Nanoseconds}} () const
+\item 
+bool \mbox{\hyperlink{classTimestamp_a5ec33cb0b7230946e02e4afa050c445c}{operator$<$}} (const \mbox{\hyperlink{classTimestamp}{Timestamp}} \&t) const
+\item 
+bool \mbox{\hyperlink{classTimestamp_ad77ef43cab29f8f588bd47d74c1a8cce}{operator$>$}} (const \mbox{\hyperlink{classTimestamp}{Timestamp}} \&t) const
+\item 
+bool \mbox{\hyperlink{classTimestamp_a42280e1193a6af2ac41362cf18a1185c}{operator==}} (const \mbox{\hyperlink{classTimestamp}{Timestamp}} \&t) const
+\item 
+\mbox{\hyperlink{classTimestamp}{Timestamp}} \mbox{\hyperlink{classTimestamp_ab2b99d0f8cd5d8bfb274a9a8e69d0c4d}{operator+}} (const uint64\+\_\+t ns) const
+\item 
+const std\+::string \mbox{\hyperlink{classTimestamp_ab8cf9483c65eaa933d866d5d07286c42}{string}} () const
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Representación de un timestamp de un punto 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classTimestamp_a16f44ad75ff13eb883b4f08db9b90535}\label{classTimestamp_a16f44ad75ff13eb883b4f08db9b90535}} 
+\index{Timestamp@{Timestamp}!Timestamp@{Timestamp}}
+\index{Timestamp@{Timestamp}!Timestamp@{Timestamp}}
+\doxysubsubsection{\texorpdfstring{Timestamp()}{Timestamp()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily Timestamp\+::\+Timestamp (\begin{DoxyParamCaption}\item[{std\+::string}]{utc }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructor del objeto \mbox{\hyperlink{classTimestamp}{Timestamp}} 
+\begin{DoxyParams}{Parameters}
+{\em utc} & U\+TC timestamp \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classTimestamp_a382960758866267b5bfbd101952f81c6}\label{classTimestamp_a382960758866267b5bfbd101952f81c6}} 
+\index{Timestamp@{Timestamp}!Timestamp@{Timestamp}}
+\index{Timestamp@{Timestamp}!Timestamp@{Timestamp}}
+\doxysubsubsection{\texorpdfstring{Timestamp()}{Timestamp()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily Timestamp\+::\+Timestamp (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{utc\mbox{[}8\mbox{]} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructor del objeto \mbox{\hyperlink{classTimestamp}{Timestamp}} 
+\begin{DoxyParams}{Parameters}
+{\em utc} & U\+TC timestamp \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classTimestamp_a20c1e0b3781e94cb1fd2a28f5c32f271}\label{classTimestamp_a20c1e0b3781e94cb1fd2a28f5c32f271}} 
+\index{Timestamp@{Timestamp}!Timestamp@{Timestamp}}
+\index{Timestamp@{Timestamp}!Timestamp@{Timestamp}}
+\doxysubsubsection{\texorpdfstring{Timestamp()}{Timestamp()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily Timestamp\+::\+Timestamp (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{s,  }\item[{uint32\+\_\+t}]{ns }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructor del objeto \mbox{\hyperlink{classTimestamp}{Timestamp}} 
+\begin{DoxyParams}{Parameters}
+{\em s} & Segundos \\
+\hline
+{\em ns} & Nanosegundos \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classTimestamp_a50955b6b126566fe7864f8fe767e3470}\label{classTimestamp_a50955b6b126566fe7864f8fe767e3470}} 
+\index{Timestamp@{Timestamp}!getNanoseconds@{getNanoseconds}}
+\index{getNanoseconds@{getNanoseconds}!Timestamp@{Timestamp}}
+\doxysubsubsection{\texorpdfstring{getNanoseconds()}{getNanoseconds()}}
+{\footnotesize\ttfamily const uint32\+\_\+t\& Timestamp\+::get\+Nanoseconds (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Devuelve los nanosegundos del timestamp \begin{DoxyReturn}{Returns}
+Negundos del timestamp 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classTimestamp_a98b04d0f6483fa103a933696560a9bab}\label{classTimestamp_a98b04d0f6483fa103a933696560a9bab}} 
+\index{Timestamp@{Timestamp}!getSeconds@{getSeconds}}
+\index{getSeconds@{getSeconds}!Timestamp@{Timestamp}}
+\doxysubsubsection{\texorpdfstring{getSeconds()}{getSeconds()}}
+{\footnotesize\ttfamily const uint32\+\_\+t\& Timestamp\+::get\+Seconds (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Devuelve los segundos del timestamp \begin{DoxyReturn}{Returns}
+Segundos del timestamp 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classTimestamp_ab2b99d0f8cd5d8bfb274a9a8e69d0c4d}\label{classTimestamp_ab2b99d0f8cd5d8bfb274a9a8e69d0c4d}} 
+\index{Timestamp@{Timestamp}!operator+@{operator+}}
+\index{operator+@{operator+}!Timestamp@{Timestamp}}
+\doxysubsubsection{\texorpdfstring{operator+()}{operator+()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classTimestamp}{Timestamp}} Timestamp\+::operator+ (\begin{DoxyParamCaption}\item[{const uint64\+\_\+t}]{ns }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Suma nanosegundos al timestamp actual 
+\begin{DoxyParams}{Parameters}
+{\em ns} & Nanosegundos a sumar \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classTimestamp}{Timestamp}} resultado 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classTimestamp_a5ec33cb0b7230946e02e4afa050c445c}\label{classTimestamp_a5ec33cb0b7230946e02e4afa050c445c}} 
+\index{Timestamp@{Timestamp}!operator$<$@{operator$<$}}
+\index{operator$<$@{operator$<$}!Timestamp@{Timestamp}}
+\doxysubsubsection{\texorpdfstring{operator$<$()}{operator<()}}
+{\footnotesize\ttfamily bool Timestamp\+::operator$<$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTimestamp}{Timestamp}} \&}]{t }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Compara si el \mbox{\hyperlink{classTimestamp}{Timestamp}} actual es menor que otro 
+\begin{DoxyParams}{Parameters}
+{\em t} & \mbox{\hyperlink{classTimestamp}{Timestamp}} a comparar con el actual \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true El \mbox{\hyperlink{classTimestamp}{Timestamp}} actual es menor 
+
+false El \mbox{\hyperlink{classTimestamp}{Timestamp}} actual es mayor o igual 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classTimestamp_a42280e1193a6af2ac41362cf18a1185c}\label{classTimestamp_a42280e1193a6af2ac41362cf18a1185c}} 
+\index{Timestamp@{Timestamp}!operator==@{operator==}}
+\index{operator==@{operator==}!Timestamp@{Timestamp}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}}
+{\footnotesize\ttfamily bool Timestamp\+::operator== (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTimestamp}{Timestamp}} \&}]{t }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Compara si el \mbox{\hyperlink{classTimestamp}{Timestamp}} es igual que otro 
+\begin{DoxyParams}{Parameters}
+{\em t} & \mbox{\hyperlink{classTimestamp}{Timestamp}} a comparar con el actual \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true El \mbox{\hyperlink{classTimestamp}{Timestamp}} actual es igual 
+
+false El \mbox{\hyperlink{classTimestamp}{Timestamp}} actual es mayor o menor 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classTimestamp_ad77ef43cab29f8f588bd47d74c1a8cce}\label{classTimestamp_ad77ef43cab29f8f588bd47d74c1a8cce}} 
+\index{Timestamp@{Timestamp}!operator$>$@{operator$>$}}
+\index{operator$>$@{operator$>$}!Timestamp@{Timestamp}}
+\doxysubsubsection{\texorpdfstring{operator$>$()}{operator>()}}
+{\footnotesize\ttfamily bool Timestamp\+::operator$>$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTimestamp}{Timestamp}} \&}]{t }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Compara si el \mbox{\hyperlink{classTimestamp}{Timestamp}} actual es mayor que otro 
+\begin{DoxyParams}{Parameters}
+{\em t} & \mbox{\hyperlink{classTimestamp}{Timestamp}} a comparar con el actual \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true El \mbox{\hyperlink{classTimestamp}{Timestamp}} actual es mayor 
+
+false El \mbox{\hyperlink{classTimestamp}{Timestamp}} actual es menor o igual 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classTimestamp_ab8cf9483c65eaa933d866d5d07286c42}\label{classTimestamp_ab8cf9483c65eaa933d866d5d07286c42}} 
+\index{Timestamp@{Timestamp}!string@{string}}
+\index{string@{string}!Timestamp@{Timestamp}}
+\doxysubsubsection{\texorpdfstring{string()}{string()}}
+{\footnotesize\ttfamily const std\+::string Timestamp\+::string (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Obtiene un string con los datos del timestamp \begin{DoxyReturn}{Returns}
+String con los datos del timestamp 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/models/\mbox{\hyperlink{Timestamp_8hh}{Timestamp.\+hh}}\end{DoxyCompactItemize}

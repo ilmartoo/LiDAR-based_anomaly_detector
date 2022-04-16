@@ -1,0 +1,110 @@
+\hypertarget{classScannerCSV}{}\doxysection{Scanner\+C\+SV Class Reference}
+\label{classScannerCSV}\index{ScannerCSV@{ScannerCSV}}
+
+
+{\ttfamily \#include $<$Scanner\+C\+S\+V.\+hh$>$}
+
+
+
+Inheritance diagram for Scanner\+C\+SV\+:
+% FIG 0
+
+
+Collaboration diagram for Scanner\+C\+SV\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classScannerCSV_a886c82b892391ce6042d3f1545c809aa}{Scanner\+C\+SV}} (const std\+::string \&filename)
+\item 
+\mbox{\hyperlink{classScannerCSV_a984201b00749c0b1ba907c28f16cc5ac}{$\sim$\+Scanner\+C\+SV}} ()
+\item 
+bool \mbox{\hyperlink{classScannerCSV_ad772a78f5d40937335b0090c7f429164}{init}} ()
+\item 
+bool \mbox{\hyperlink{classScannerCSV_a715cd17f0ce6ec215ee7a327842660f6}{start}} ()
+\item 
+bool \mbox{\hyperlink{classScannerCSV_ab44ba333f8dfcc5fde3671a83c06db56}{set\+Callback}} (const std\+::function$<$ void(const \mbox{\hyperlink{classPoint}{Point}} \&p)$>$ func)
+\item 
+void \mbox{\hyperlink{classScannerCSV_a155dcac1831680fddb113f6dc5731705}{stop}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implementación de la interfaz \mbox{\hyperlink{classIScanner}{I\+Scanner}} para la lectura de puntos de archivos C\+SV obtenidos del programa propietario Livox Viewer 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classScannerCSV_a886c82b892391ce6042d3f1545c809aa}\label{classScannerCSV_a886c82b892391ce6042d3f1545c809aa}} 
+\index{ScannerCSV@{ScannerCSV}!ScannerCSV@{ScannerCSV}}
+\index{ScannerCSV@{ScannerCSV}!ScannerCSV@{ScannerCSV}}
+\doxysubsubsection{\texorpdfstring{ScannerCSV()}{ScannerCSV()}}
+{\footnotesize\ttfamily Scanner\+C\+S\+V\+::\+Scanner\+C\+SV (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{filename }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructor del objeto \mbox{\hyperlink{classScannerCSV}{Scanner\+C\+SV}} 
+\begin{DoxyParams}{Parameters}
+{\em filename} & Archivo contenedor de datos \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScannerCSV_a984201b00749c0b1ba907c28f16cc5ac}\label{classScannerCSV_a984201b00749c0b1ba907c28f16cc5ac}} 
+\index{ScannerCSV@{ScannerCSV}!````~ScannerCSV@{$\sim$ScannerCSV}}
+\index{````~ScannerCSV@{$\sim$ScannerCSV}!ScannerCSV@{ScannerCSV}}
+\doxysubsubsection{\texorpdfstring{$\sim$ScannerCSV()}{~ScannerCSV()}}
+{\footnotesize\ttfamily Scanner\+C\+S\+V\+::$\sim$\+Scanner\+C\+SV (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Destructor del scanner 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classScannerCSV_ad772a78f5d40937335b0090c7f429164}\label{classScannerCSV_ad772a78f5d40937335b0090c7f429164}} 
+\index{ScannerCSV@{ScannerCSV}!init@{init}}
+\index{init@{init}!ScannerCSV@{ScannerCSV}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily bool Scanner\+C\+S\+V\+::init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Inicialización del escaner \begin{DoxyReturn}{Returns}
+Se devolverá true si se ha establecido el escaner correctamente 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classIScanner_aaf3d8b7c70410704054c208f4640a56a}{I\+Scanner}}.
+
+\mbox{\Hypertarget{classScannerCSV_ab44ba333f8dfcc5fde3671a83c06db56}\label{classScannerCSV_ab44ba333f8dfcc5fde3671a83c06db56}} 
+\index{ScannerCSV@{ScannerCSV}!setCallback@{setCallback}}
+\index{setCallback@{setCallback}!ScannerCSV@{ScannerCSV}}
+\doxysubsubsection{\texorpdfstring{setCallback()}{setCallback()}}
+{\footnotesize\ttfamily bool Scanner\+C\+S\+V\+::set\+Callback (\begin{DoxyParamCaption}\item[{const std\+::function$<$ void(const \mbox{\hyperlink{classPoint}{Point}} \&p)$>$}]{func }\end{DoxyParamCaption})}
+
+Establece la función especificada como función de callback a la que se llamará cada vez que se escanee un nuevo punto 
+\begin{DoxyParams}{Parameters}
+{\em func} & Función de callback a ser llamada por el sensor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Se devolverá true si se ha establecido el callback correctamente 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classScannerCSV_a715cd17f0ce6ec215ee7a327842660f6}\label{classScannerCSV_a715cd17f0ce6ec215ee7a327842660f6}} 
+\index{ScannerCSV@{ScannerCSV}!start@{start}}
+\index{start@{start}!ScannerCSV@{ScannerCSV}}
+\doxysubsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily bool Scanner\+C\+S\+V\+::start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Comienza la obtención de puntos \begin{DoxyReturn}{Returns}
+Se devolverá true al finalizar de leer correctamente el archivo o false si ocurre un error en el proceso 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classIScanner_ad259f0cf87ea925a88831e215799948a}{I\+Scanner}}.
+
+\mbox{\Hypertarget{classScannerCSV_a155dcac1831680fddb113f6dc5731705}\label{classScannerCSV_a155dcac1831680fddb113f6dc5731705}} 
+\index{ScannerCSV@{ScannerCSV}!stop@{stop}}
+\index{stop@{stop}!ScannerCSV@{ScannerCSV}}
+\doxysubsubsection{\texorpdfstring{stop()}{stop()}}
+{\footnotesize\ttfamily void Scanner\+C\+S\+V\+::stop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Finaliza el escaner 
+
+Implements \mbox{\hyperlink{classIScanner_a1c5b762bd0a4b6909743f38c614a39f7}{I\+Scanner}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/scanner/\mbox{\hyperlink{ScannerCSV_8hh}{Scanner\+C\+S\+V.\+hh}}\end{DoxyCompactItemize}

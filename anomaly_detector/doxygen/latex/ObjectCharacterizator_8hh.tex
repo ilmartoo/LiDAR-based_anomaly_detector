@@ -1,0 +1,63 @@
+\hypertarget{ObjectCharacterizator_8hh}{}\doxysection{include/object\+\_\+characterization/\+Object\+Characterizator.hh File Reference}
+\label{ObjectCharacterizator_8hh}\index{include/object\_characterization/ObjectCharacterizator.hh@{include/object\_characterization/ObjectCharacterizator.hh}}
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$thread$>$}\newline
+{\ttfamily \#include \char`\"{}object\+\_\+characterization/\+I\+Object\+Characterizator.\+hh\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}models/\+Point.\+hh\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}models/\+Characteristics\+Vector.\+hh\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}models/\+Point\+Map.\+hh\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}debug.\+hh\char`\"{}}\newline
+Include dependency graph for Object\+Characterizator.\+hh\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classObjectCharacterizator}{Object\+Characterizator}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048}{Characterizator\+State}} \{ \mbox{\hyperlink{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048a50c467ed4e24adf773b6a07167aed10d}{def\+Start\+Time}}, 
+\mbox{\hyperlink{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048a9bf51127c6134aec44249625da9783cf}{def\+Background}}, 
+\mbox{\hyperlink{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048a6730e1dad21e899dd3cc46f4c81e4b87}{def\+Object}}, 
+\mbox{\hyperlink{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048a9a398574fb7364701a9c44d91908189a}{def\+Stopped}}
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Martín Suárez (\href{mailto:martin.suarez.garcia@rai.usc.es}{\texttt{ martin.\+suarez.\+garcia@rai.\+usc.\+es}}) 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+25/03/2022
+\end{DoxyDate}
+Definición del objeto \mbox{\hyperlink{classObjectCharacterizator}{Object\+Characterizator}} 
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048}\label{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048}} 
+\index{ObjectCharacterizator.hh@{ObjectCharacterizator.hh}!CharacterizatorState@{CharacterizatorState}}
+\index{CharacterizatorState@{CharacterizatorState}!ObjectCharacterizator.hh@{ObjectCharacterizator.hh}}
+\doxysubsubsection{\texorpdfstring{CharacterizatorState}{CharacterizatorState}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048}{Characterizator\+State}}}
+
+Estados en los que se puede encontrar el caracterizador de objetos \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{defStartTime@{defStartTime}!ObjectCharacterizator.hh@{ObjectCharacterizator.hh}}\index{ObjectCharacterizator.hh@{ObjectCharacterizator.hh}!defStartTime@{defStartTime}}}\mbox{\Hypertarget{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048a50c467ed4e24adf773b6a07167aed10d}\label{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048a50c467ed4e24adf773b6a07167aed10d}} 
+def\+Start\+Time&Definiendo el timestamp de inicio. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{defBackground@{defBackground}!ObjectCharacterizator.hh@{ObjectCharacterizator.hh}}\index{ObjectCharacterizator.hh@{ObjectCharacterizator.hh}!defBackground@{defBackground}}}\mbox{\Hypertarget{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048a9bf51127c6134aec44249625da9783cf}\label{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048a9bf51127c6134aec44249625da9783cf}} 
+def\+Background&Definiendo el background. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{defObject@{defObject}!ObjectCharacterizator.hh@{ObjectCharacterizator.hh}}\index{ObjectCharacterizator.hh@{ObjectCharacterizator.hh}!defObject@{defObject}}}\mbox{\Hypertarget{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048a6730e1dad21e899dd3cc46f4c81e4b87}\label{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048a6730e1dad21e899dd3cc46f4c81e4b87}} 
+def\+Object&Definiendo objetos. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{defStopped@{defStopped}!ObjectCharacterizator.hh@{ObjectCharacterizator.hh}}\index{ObjectCharacterizator.hh@{ObjectCharacterizator.hh}!defStopped@{defStopped}}}\mbox{\Hypertarget{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048a9a398574fb7364701a9c44d91908189a}\label{ObjectCharacterizator_8hh_ae373ece3c85f34e5238907e07cc81048a9a398574fb7364701a9c44d91908189a}} 
+def\+Stopped&Definición parada. \\
+\hline
+
+\end{DoxyEnumFields}

@@ -1,0 +1,49 @@
+\hypertarget{classModelManager}{}\doxysection{Model\+Manager Class Reference}
+\label{classModelManager}\index{ModelManager@{ModelManager}}
+
+
+{\ttfamily \#include $<$Model\+Manager.\+hh$>$}
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classModel}{Model}} \mbox{\hyperlink{classModelManager_a5a6c32388cc3cf8d57d715e8e9e0c234}{create\+Model}} (std\+::string name, \mbox{\hyperlink{classCharacteristicsVector}{Characteristics\+Vector}} cv)
+\item 
+static const std\+::list$<$ \mbox{\hyperlink{classModel}{Model}} $>$ \& \mbox{\hyperlink{classModelManager_aa309f29098660182a8edbdee5eaf4834}{get\+Models}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Manager de modelos de objetos 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classModelManager_a5a6c32388cc3cf8d57d715e8e9e0c234}\label{classModelManager_a5a6c32388cc3cf8d57d715e8e9e0c234}} 
+\index{ModelManager@{ModelManager}!createModel@{createModel}}
+\index{createModel@{createModel}!ModelManager@{ModelManager}}
+\doxysubsubsection{\texorpdfstring{createModel()}{createModel()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{classModel}{Model}} Model\+Manager\+::create\+Model (\begin{DoxyParamCaption}\item[{std\+::string}]{name,  }\item[{\mbox{\hyperlink{classCharacteristicsVector}{Characteristics\+Vector}}}]{cv }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Crea un nuevo modelo 
+\begin{DoxyParams}{Parameters}
+{\em name} & Nombre del modelo \\
+\hline
+{\em cv} & Vector de características \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Devuelve el nuevo modelo creado 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classModelManager_aa309f29098660182a8edbdee5eaf4834}\label{classModelManager_aa309f29098660182a8edbdee5eaf4834}} 
+\index{ModelManager@{ModelManager}!getModels@{getModels}}
+\index{getModels@{getModels}!ModelManager@{ModelManager}}
+\doxysubsubsection{\texorpdfstring{getModels()}{getModels()}}
+{\footnotesize\ttfamily static const std\+::list$<$\mbox{\hyperlink{classModel}{Model}}$>$\& Model\+Manager\+::get\+Models (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+Obtiene la lista de modelos actualmente disponibles \begin{DoxyReturn}{Returns}
+Lista de modelos 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/models/\mbox{\hyperlink{ModelManager_8hh}{Model\+Manager.\+hh}}\end{DoxyCompactItemize}

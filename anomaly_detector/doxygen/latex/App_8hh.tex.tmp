@@ -1,0 +1,64 @@
+\hypertarget{App_8hh}{}\doxysection{include/app/\+App.hh File Reference}
+\label{App_8hh}\index{include/app/App.hh@{include/app/App.hh}}
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include \char`\"{}scanner/\+I\+Scanner.\+hh\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}scanner/\+Scanner\+C\+S\+V.\+hh\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}scanner/\+Scanner\+L\+V\+X.\+hh\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}scanner/\+Scanner\+Lidar.\+hh\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}object\+\_\+characterization/\+I\+Object\+Characterizator.\+hh\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}object\+\_\+characterization/\+Object\+Characterizator.\+hh\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}anomaly\+\_\+detection/\+I\+Anomaly\+Detector.\+hh\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}debug.\+hh\char`\"{}}\newline
+Include dependency graph for App.\+hh\+:
+% FIG 0
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classApp}{App}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5}{Timer\+Mode}} \{ \mbox{\hyperlink{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5a849ec9c158295583c9f749bc46de561a}{k\+Untimed}} = 0, 
+\mbox{\hyperlink{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5a547b0b9eed1c16a33d8a8a1102f8b0df}{k\+Timed\+Characterization}} = 0b01, 
+\mbox{\hyperlink{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5ac8edb73fb72ec4669c22366166fb18ce}{k\+Timed\+Anomaly\+Detection}} = 0b10, 
+\mbox{\hyperlink{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5a79cd62a312b461ee4207dfb314a08209}{k\+Timed}} = 0b11
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Martín Suárez (\href{mailto:martin.suarez.garcia@rai.usc.es}{\texttt{ martin.\+suarez.\+garcia@rai.\+usc.\+es}}) 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+20/03/2022
+\end{DoxyDate}
+Clase de gestión de la aplicación 
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5}\label{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5}} 
+\index{App.hh@{App.hh}!TimerMode@{TimerMode}}
+\index{TimerMode@{TimerMode}!App.hh@{App.hh}}
+\doxysubsubsection{\texorpdfstring{TimerMode}{TimerMode}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5}{Timer\+Mode}}}
+
+Tipos de mediciones de tiempo a tomar \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{kUntimed@{kUntimed}!App.hh@{App.hh}}\index{App.hh@{App.hh}!kUntimed@{kUntimed}}}\mbox{\Hypertarget{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5a849ec9c158295583c9f749bc46de561a}\label{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5a849ec9c158295583c9f749bc46de561a}} 
+k\+Untimed&Ejecución sin medida de tiempo. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{kTimedCharacterization@{kTimedCharacterization}!App.hh@{App.hh}}\index{App.hh@{App.hh}!kTimedCharacterization@{kTimedCharacterization}}}\mbox{\Hypertarget{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5a547b0b9eed1c16a33d8a8a1102f8b0df}\label{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5a547b0b9eed1c16a33d8a8a1102f8b0df}} 
+k\+Timed\+Characterization&Ejecución con medida de tiempo en la caracterización de objetos. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{kTimedAnomalyDetection@{kTimedAnomalyDetection}!App.hh@{App.hh}}\index{App.hh@{App.hh}!kTimedAnomalyDetection@{kTimedAnomalyDetection}}}\mbox{\Hypertarget{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5ac8edb73fb72ec4669c22366166fb18ce}\label{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5ac8edb73fb72ec4669c22366166fb18ce}} 
+k\+Timed\+Anomaly\+Detection&Ejecución con medida de tiempo en la detección de anomalías. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{kTimed@{kTimed}!App.hh@{App.hh}}\index{App.hh@{App.hh}!kTimed@{kTimed}}}\mbox{\Hypertarget{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5a79cd62a312b461ee4207dfb314a08209}\label{App_8hh_aed9a35f11d8cfb1d9946754d01e46ee5a79cd62a312b461ee4207dfb314a08209}} 
+k\+Timed&Ejecución con medida de tiempo en todo el programa. \\
+\hline
+
+\end{DoxyEnumFields}
