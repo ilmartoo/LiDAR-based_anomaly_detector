@@ -20,14 +20,14 @@ The project was developed and tested in `Ubuntu 21.04` [^2].
 ### Libraries
 To setup the necesary libraries you can use the script `setup_libraries.sh` [^3] from the **root folder** just like so:
 ```bash
-$ # Setup needed libraries
-$ ./setup_libraries.sh
+# Setup needed libraries
+./setup_libraries.sh
 ```
 
 If you want to execute the created tests, do:
 ```bash
-$ # Setup needed libraries + test libraries
-$ ./setup_libraries.sh -t
+# Setup needed libraries + test libraries
+./setup_libraries.sh -t
 ```
 
 [^3]: This script will create and install the libraries into their corresponding `lib/` subfolder, keeping the libraries from being installed into the `/usr/local/` folder and forgotten no long after (just like we always do).
@@ -35,20 +35,28 @@ $ ./setup_libraries.sh -t
 ### Project
 To build de project execute the following from the **`anomaly_detector/` folder**: 
 ```bash
-$ # Build the project
-$ cmake -S . -B build/Release -D CMAKE_BUILD_TYPE=Release
-$ cmake --build build/Release
+# Build the project
+cmake -S . -B build/Release -D CMAKE_BUILD_TYPE=Release
+cmake --build build/Release
 ```
 
 To build the project with debug output execute the following from the **`anomaly_detector/` folder**:
 ```bash
-$ # Build the project with debug output
-$ cmake -S . -B build/Debug -D CMAKE_BUILD_TYPE=Debug
-$ cmake --build build/Debug
+# Build the project with debug output
+cmake -S . -B build/Debug -D CMAKE_BUILD_TYPE=Debug
+cmake --build build/Debug
+```
 
-$ # Build the project with debug output but no point debugging
-$ cmake -S . -B build/Debug -D CMAKE_BUILD_TYPE=Debug -D DEBUG_POINTS=OFF
-$ cmake --build build/Debug
+If you would like to have debug info of every scanned point, execute the following from the **`anomaly_detector/` folder**:
+
+```bash
+# Build the project with debug output with point debugging
+cmake -S . -B build/Debug -D CMAKE_BUILD_TYPE=Debug -D DEBUG_POINTS=ON
+cmake --build build/Debug
+```
+*Note: if you run the last snippet be sure to delete the `CMakeCache.txt` file located into `build/Debug/`:*
+```bash
+rm -rf build/Debug
 ```
 
 This will create the executable of the project into the corresponding `build/<cmake_build_type>/` subfolder.
