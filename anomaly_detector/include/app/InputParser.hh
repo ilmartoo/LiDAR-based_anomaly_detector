@@ -16,6 +16,8 @@
 #include <vector>
 #include <algorithm>
 
+#include "debug.hh"
+
 class InputParser {
    public:
     /**

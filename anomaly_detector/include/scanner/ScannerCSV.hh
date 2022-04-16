@@ -19,6 +19,8 @@
 #include "scanner/IScanner.hh"
 #include "models/Point.hh"
 
+#include "debug.hh"
+
 /**
  * Implementación de la interfaz IScanner para la lectura de puntos de archivos CSV obtenidos del
  * programa propietario Livox Viewer

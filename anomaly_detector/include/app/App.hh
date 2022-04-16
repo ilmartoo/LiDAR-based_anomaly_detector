@@ -21,11 +21,7 @@
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "anomaly_detection/IAnomalyDetector.hh"
 
-/** Tipos de input de datos */
-enum InputType {
-    kInputFile = 0,   ///< Lectura de puntos de un archivo especificado
-    kInputLidar = 1,  ///< Lectura de puntos del sensor lidar especificado
-};
+#include "debug.hh"
 
 /** Tipos de mediciones de tiempo a tomar */
 enum TimerMode {

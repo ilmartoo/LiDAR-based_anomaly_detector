@@ -15,7 +15,8 @@
 
 #include "app/App.hh"
 #include "app/InputParser.hh"
-#include "debug_lbad.hh"
+
+#include "debug.hh"
 
 /* Defaults */
 #define DEFAULT_TIMER_MODE          kUntimed  // Default timer mode
@@ -85,7 +86,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Impresión de la ayuda */
     if (parser.optionExists("-h") || parser.optionExists("--help")) {
-        printDebug("Opción -h | --help");  // debug
+        DEBUG_STDOUT("Opción -h | --help");  
 
         help();  // Imprimimos help
         pi.exit_code = EXIT_SUCCESS;
@@ -94,7 +95,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Input por lidar */
     else if (parser.optionExists("-b")) {
-        printDebug("Opción -b");  // debug
+        DEBUG_STDOUT("Opción -b");  
 
         const std::string &option = parser.getOption("-b");
         // No se ha proporcionado valor
@@ -109,7 +110,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Input por archivo */
     else if (parser.optionExists("-f")) {
-        printDebug("Opción -f");  // debug
+        DEBUG_STDOUT("Opción -f");  
 
         const std::string &option = parser.getOption("-f");
         // No se ha proporcionado valor
@@ -124,7 +125,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* No se ha especificado una de las opciones obligatorias */
     else {
-        printDebug("No se ha especificado una opción obligatoria");  // debug
+        DEBUG_STDOUT("No se ha especificado una opción obligatoria");  
 
         usage();  // Imprimimos help
         pi.exit_code = EXIT_SUCCESS;
@@ -133,7 +134,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Duración del frame */
     if (parser.optionExists("-p")) {
-        printDebug("Opción -p");  // debug
+        DEBUG_STDOUT("Opción -p");  
 
         const std::string &option = parser.getOption("-p");
         // No se ha proporcionado valor
@@ -155,7 +156,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Tipo de cronómetro */
     if (parser.optionExists("-t")) {
-        printDebug("Opción -t");  // debug
+        DEBUG_STDOUT("Opción -t");  
 
         const std::string &option = parser.getOption("-t");
         // No se ha proporcionado valor
@@ -189,7 +190,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Duración del background */
     if (parser.optionExists("-g")) {
-        printDebug("Opción -g");  // debug
+        DEBUG_STDOUT("Opción -g");  
 
         const std::string &option = parser.getOption("-g");
         // No se ha proporcionado valor
@@ -211,7 +212,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Reflectividad mínima */
     if (parser.optionExists("-r")) {
-        printDebug("Opción -r");  // debug
+        DEBUG_STDOUT("Opción -r");  
 
         const std::string &option = parser.getOption("-r");
         // No se ha proporcionado valor
@@ -233,7 +234,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Distancia al background mínima */
     if (parser.optionExists("-d")) {
-        printDebug("Opción -d");  // debug
+        DEBUG_STDOUT("Opción -d");  
 
         const std::string &option = parser.getOption("-d");
         // No se ha proporcionado valor
@@ -291,7 +292,7 @@ void help() {
 
 // Exit when command line options are used wrong
 ParsedInput &missusage(ParsedInput &pi) {
-    printDebug("Uso incorrecto de la linea de comandos");  // debug
+    DEBUG_STDOUT("Uso incorrecto de la linea de comandos");  
 
     usage();
 

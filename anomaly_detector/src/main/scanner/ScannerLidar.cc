@@ -18,7 +18,8 @@
 #include "scanner/ScannerLidar.hh"
 #include "models/Point.hh"
 #include "models/Timestamp.hh"
-#include "debug_lbad.hh"
+
+#include "debug.hh"
 
 // Obtiene los datos del punto enviado por el sensor
 void ScannerLidar::getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void *client_data) {
@@ -27,7 +28,8 @@ void ScannerLidar::getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t d
         LivoxExtendRawPoint *p_data = (LivoxExtendRawPoint *)data->data;
 
         if (callback) {
-            callback(Point(Timestamp(data->timestamp), p_data->reflectivity, p_data->x, p_data->y, p_data->z));
+            Point p = {Timestamp(data->timestamp), p_data->reflectivity, p_data->x, p_data->y, p_data->z};
+            callback(p);
         }
     }
 }
@@ -40,7 +42,7 @@ void ScannerLidar::onDeviceBroadcast(const BroadcastDeviceInfo *info) {
         return;
     }
 
-    printDebug("Recibido código de broadcast " + std::string(info->broadcast_code));  // debug
+    DEBUG_STDOUT("Recibido código de broadcast " + std::string(info->broadcast_code));
 
     if (info->broadcast_code != lidar.info.broadcast_code) {
         std::cerr << "El código de retransmision no coincide con el almacenado." << std::endl;
@@ -107,24 +109,24 @@ void ScannerLidar::onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type) 
     if (type == kEventConnect) {
         lidarConnect(info);
 
-        printDebug("Lidar " + std::string(info->broadcast_code) + " conectado");  // debug
+        DEBUG_STDOUT("Lidar " + std::string(info->broadcast_code) + " conectado");
     }
 
     else if (type == kEventDisconnect) {
         lidarDisConnect(info);
 
-        printDebug("Lidar " + std::string(info->broadcast_code) + " desconectado");  // debug
+        DEBUG_STDOUT("Lidar " + std::string(info->broadcast_code) + " desconectado");
     }
 
     else if (type == kEventStateChange) {
         lidarStateChange(info);
 
-        printDebug("Modificado estado del lidar " + std::string(info->broadcast_code));  // debug
+        DEBUG_STDOUT("Modificado estado del lidar " + std::string(info->broadcast_code));
     }
 
     if (lidar.device_state == kDeviceStateConnect) {
-        printDebug("Estado del sensor: " + std::to_string(lidar.info.state));           // debug
-        printDebug("Funcionalidad del sensor: " + std::to_string(lidar.info.feature));  // debug
+        DEBUG_STDOUT("Estado del sensor: " + std::to_string(lidar.info.state));
+        DEBUG_STDOUT("Funcionalidad del sensor: " + std::to_string(lidar.info.feature));
 
         SetErrorMessageCallback(lidar.handle, (ErrorMessageCallback)&ScannerLidar::onLidarErrorStatusCallback);
     }
@@ -132,7 +134,7 @@ void ScannerLidar::onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type) 
 
 // Se ejecuta con el comienzo del escaneo de puntos
 void ScannerLidar::onSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data) {
-    printDebug("Comienzo del escaneo: " + std::to_string(status) + "statue" + std::to_string(response) + "response");  // debug
+    DEBUG_STDOUT("Comienzo del escaneo: " + std::to_string(status) + "statue" + std::to_string(response) + "response");
 
     if (status == kStatusSuccess) {
         if (response != 0) {
@@ -146,7 +148,7 @@ void ScannerLidar::onSampleCallback(livox_status status, uint8_t handle, uint8_t
 
 // Se ejecuta con la finalización del escaneo de puntos
 void ScannerLidar::onStopSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data) {
-    printDebug("Finalización del escaneo: " + std::to_string(status) + "statue" + std::to_string(response) + "response");  // debug
+    DEBUG_STDOUT("Finalización del escaneo: " + std::to_string(status) + "statue" + std::to_string(response) + "response");
 
     lidar.device_state = kDeviceStateDisconnect;
 }
@@ -167,7 +169,7 @@ bool ScannerLidar::init() {
         return false;
     }
 
-    printDebug("Livox SDK inicializado correctamente.");  // debug
+    DEBUG_STDOUT("Livox SDK inicializado correctamente.");
 
     return true;
 }
@@ -191,7 +193,7 @@ bool ScannerLidar::start() {
 // Establece la función especificada como función de callback a la que se llamará cada vez que
 // se escanee un nuevo punto
 bool ScannerLidar::setCallback(const std::function<void(const Point &p)> func) {
-    printDebug("Estableciendo el callback.");  // debug
+    DEBUG_STDOUT("Estableciendo el callback.");
 
     callback = func;
     return ((bool)callback);
@@ -199,7 +201,7 @@ bool ScannerLidar::setCallback(const std::function<void(const Point &p)> func) {
 
 // Finaliza el escaner
 void ScannerLidar::stop() {
-    printDebug("Finalizando Livox SDK.");  // debug
+    DEBUG_STDOUT("Finalizando Livox SDK.");
 
     LidarStopSampling(lidar.handle, (CommonCommandCallback)&ScannerLidar::onStopSampleCallback, NULL);
     Uninit();

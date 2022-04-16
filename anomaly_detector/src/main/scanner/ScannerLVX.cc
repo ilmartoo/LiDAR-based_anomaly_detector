@@ -20,11 +20,12 @@
 #include "scanner/ScannerLVX.hh"
 #include "models/Point.hh"
 #include "models/Timestamp.hh"
-#include "debug_lbad.hh"
+
+#include "debug.hh"
 
 // Inicialización del escaner
 bool ScannerLVX::init() {
-    printDebug("Inicializando el escaner de archivos lvx.");  // debug
+    DEBUG_STDOUT("Inicializando el escaner de archivos lvx.");
 
     // Abrimos archivo
     if (lvx_file.Open(filename.c_str(), std::ios::in) != livox_ros::kLvxFileOk) {
@@ -65,7 +66,7 @@ bool ScannerLVX::start() {
 // Establece la función especificada como función de callback a la que se llamará cada vez que
 // se escanee un nuevo punto
 bool ScannerLVX::setCallback(const std::function<void(const Point &p)> func) {
-    printDebug("Estableciendo el callback.");  // debug
+    DEBUG_STDOUT("Estableciendo el callback.");
 
     callback = func;
     return ((bool)callback);
@@ -73,7 +74,7 @@ bool ScannerLVX::setCallback(const std::function<void(const Point &p)> func) {
 
 // Finaliza el escaner
 void ScannerLVX::stop() {
-    printDebug("Finalizando el escaneo de puntos.");
+    DEBUG_STDOUT("Finalizando el escaneo de puntos.");
 
     exit = true;              // Comunicamos al hilo que finalice la ejecución
     executionThread->join();  // Realizamos unión del hilo de lectura
@@ -122,7 +123,8 @@ void ScannerLVX::readData() {
 
                     // Llamada al callback
                     if (this->callback) {
-                        this->callback(Point(Timestamp(eth_packet->timestamp), point->reflectivity, point->x, point->y, point->z));
+                        Point p = {Timestamp(eth_packet->timestamp), point->reflectivity, point->x, point->y, point->z};
+                        this->callback(p);
                     }
 
                     packet_offset += sizeof(LivoxExtendRawPoint);

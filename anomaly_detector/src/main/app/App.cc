@@ -16,6 +16,8 @@
 #include "app/InputParser.hh"
 #include "models/Point.hh"
 
+#include "debug.hh"
+
 void App::start() {
     scanner->init();                                                            // Inicializamos el escaner
     scanner->setCallback(([this](const Point &p) { this->oc->newPoint(p); }));  // Establecemos callback

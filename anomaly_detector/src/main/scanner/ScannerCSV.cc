@@ -17,11 +17,12 @@
 #include "scanner/ScannerCSV.hh"
 #include "models/Point.hh"
 #include "models/Timestamp.hh"
-#include "debug_lbad.hh"
+
+#include "debug.hh"
 
 // Inicialización del escaner
 bool ScannerCSV::init() {
-    printDebug("Inicializando el escaner de archivos csv.");  // debug
+    DEBUG_STDOUT("Inicializando el escaner de archivos csv.");  
 
     // Abrimos stream del archivo
     infile.open(filename, std::ifstream::in);
@@ -55,7 +56,7 @@ bool ScannerCSV::start() {
 // Establece la función especificada como función de callback a la que se llamará cada vez que
 // se escanee un nuevo punto
 bool ScannerCSV::setCallback(const std::function<void(const Point &p)> func) {
-    printDebug("Estableciendo el callback.");  // debug
+    DEBUG_STDOUT("Estableciendo el callback.");  
 
     callback = func;
     return ((bool)callback);
@@ -63,7 +64,7 @@ bool ScannerCSV::setCallback(const std::function<void(const Point &p)> func) {
 
 // Finaliza el escaner
 void ScannerCSV::stop() {
-    printDebug("Finalizando el escaneo de puntos.");
+    DEBUG_STDOUT("Finalizando el escaneo de puntos.");
 
     exit = true;              // Comunicamos al hilo que finalice la ejecución
     executionThread->join();  // Realizamos unión del hilo de lectura

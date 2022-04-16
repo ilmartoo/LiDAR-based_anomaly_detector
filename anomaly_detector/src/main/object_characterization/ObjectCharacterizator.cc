@@ -13,7 +13,8 @@
 #include <cmath>
 
 #include "object_characterization/ObjectCharacterizator.hh"
-#include "debug_lbad.hh"
+
+#include "debug.hh"
 
 ///////////////
 #include <fstream>
@@ -34,13 +35,14 @@ void ObjectCharacterizator::newPoint(const Point &p) {
             // Punto de background
             case defBackground:
 
-                static uint32_t count = 0;
-                ++count;
                 // Punto del background
                 if (*startTimestamp + backgroundTime > p.getTimestamp()) {
-                    printDebug("Punto añadido al background: " + p.string());  // debug
+                    DEBUG_POINT_STDOUT("Punto añadido al background: " + p.string());
 
                     background->push_back(p);  // Guardamos punto
+
+                    // Contador de puntos del background
+                    DEBUG_CODE(static uint32_t count = 0; ++count;);
 
                     break;  // Finalizamos
                 }
@@ -51,33 +53,30 @@ void ObjectCharacterizator::newPoint(const Point &p) {
 
                     state = defObject;  // Empezamos a obtener puntos del objeto
                 }
-                std::cout << count << std::endl;
-                ///
 
-                std::this_thread::sleep_for(std::chrono::seconds(10));
-
-                ///
+                // Total de puntos del background
+                DEBUG_STDOUT("Background formado por " + to_string(count) + " puntos");
 
             // Punto del objeto
             case defObject:
                 if (!isBackground(p)) {
-                    printDebug("Punto añadido al objeto: " + p.string());  // debug
+                    DEBUG_POINT_STDOUT("Punto añadido al objeto: " + p.string());
 
                     object->push(p);  // Guardamos punto
                 } else {
-                    printDebug("Punto enviado pertenece al background: " + p.string());  // debug
+                    DEBUG_POINT_STDOUT("Punto enviado pertenece al background: " + p.string());
                 }
 
                 break;
 
             // Punto descartado
             case defStopped:
-                printDebug("Punto descartado: " + p.string());  // debug
+                DEBUG_POINT_STDOUT("Punto descartado: " + p.string());
 
                 break;
         }
     } else {
-        printDebug("Punto con reflectividad insuficiente: " + p.string());  // debug
+        DEBUG_POINT_STDOUT("Punto con reflectividad insuficiente: " + p.string());
     }
 }
 
@@ -92,7 +91,7 @@ void ObjectCharacterizator::start() {
 
 // Para la caracterización de objetos
 void ObjectCharacterizator::stop() {
-    printDebug("Finalizando caracterización.");  // debug
+    DEBUG_STDOUT("Finalizando caracterización.");
 
     state = defStopped;  // Paramos de obtener puntos
 
@@ -130,7 +129,7 @@ void ObjectCharacterizator::managePoints() {
 
             // Eliminamos si su timestamp es viejo
             if (p.getTimestamp() + frameDuration < object->getLastTimestamp()) {
-                printDebug("Punto caducado: " + p.string());  // debug
+                DEBUG_POINT_STDOUT("Punto caducado: " + p.string());
 
                 object->pop();  // Eliminamos punto
             }

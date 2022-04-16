@@ -10,6 +10,8 @@
 #ifndef CHARACTERISTICSVECTOR_CLASS_H
 #define CHARACTERISTICSVECTOR_CLASS_H
 
+#include "debug.hh"
+
 class CharacteristicsVector {
    public:
 };

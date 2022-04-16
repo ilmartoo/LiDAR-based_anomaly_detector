@@ -3,8 +3,19 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 # Project name
 project(anomaly_detection)
 
-set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG_LBAD")   # Debug flags
-set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG") # Release flags
+# Options
+option(DEBUG_POINTS "Opción de debugging para imprimir los puntos escaneados" ON)
+
+# Release flags
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG") 
+
+# Debug flags
+set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG")   
+if(DEBUG_SCANNED_POINTS)
+set(CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG}" -DDEBUG_POINTS")   # Debug flags
+endif()
+
+
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "-Wall -g3")

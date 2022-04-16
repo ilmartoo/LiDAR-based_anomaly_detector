@@ -21,6 +21,8 @@
 #include "scanner/IScanner.hh"
 #include "models/Point.hh"
 
+#include "debug.hh"
+
 /**
  * Estados en los que puede estar el escaner LiDAR
  */

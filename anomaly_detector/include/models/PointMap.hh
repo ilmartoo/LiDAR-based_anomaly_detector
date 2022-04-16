@@ -13,10 +13,10 @@
 #include <queue>
 #include <mutex>
 
-#include <iostream>
-
 #include "models/Point.hh"
 #include "models/Timestamp.hh"
+
+#include "debug.hh"
 
 /**
  * Clase para realizar el mapping de puntos mediante una cola FIFO concurrente
