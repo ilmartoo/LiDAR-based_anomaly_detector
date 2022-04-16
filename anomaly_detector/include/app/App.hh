@@ -114,7 +114,6 @@ class App {
      */
     void stop();
 
-    enum InputType inputType;  ///< Tipo de input de datos
     enum TimerMode timerMode;  ///< Tipo de mediciones de tiempo a tomar
 
     IScanner *scanner;           ///< Escaner de puntos
