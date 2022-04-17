@@ -147,8 +147,6 @@ void onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type) {
 void onSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data) {
     DEBUG_STDOUT("Comienzo del escaneo. Status: [" + std::to_string(status) + "], Response: [" + std::to_string(response) + "]");
 
-    DEBUG_STDOUT("\n\nONSAMPLECALLBACK ROUTINE " + std::to_string(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) + "\n");
-
     // Inicio correcto
     if (status == kStatusSuccess) {
         _sl->lidar.device_state = kDeviceStateConnect;
@@ -225,8 +223,6 @@ bool ScannerLidar::start() {
     if (kStatusSuccess == LidarStartSampling(_sl->lidar.handle, onSampleCallback, NULL)) {
         lidar.device_state = kDeviceStateSampling;
 
-        DEBUG_STDOUT("\n\nSTART ROUTINE " + std::to_string(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) + "\n");
-
         return true;
 
     } else {
@@ -235,8 +231,7 @@ bool ScannerLidar::start() {
     }
 }
 
-// Establece la función especificada como función de callback a la que se llamará cada vez que
-// se escanee un nuevo punto
+// Establece la función especificada como función de callback a la que se llamará cada vez que se escanee un nuevo punto
 bool ScannerLidar::setCallback(const std::function<void(const Point &p)> func) {
     DEBUG_STDOUT("Estableciendo el callback.");
 

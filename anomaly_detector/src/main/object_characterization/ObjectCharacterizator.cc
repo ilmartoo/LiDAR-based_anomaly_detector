@@ -57,7 +57,6 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                     state = defObject;  // Empezamos a obtener puntos del objeto
                 }
 
-                // Total de puntos del background
                 DEBUG_STDOUT("Background formado por " + std::to_string(bp_count) + " puntos");
                 DEBUG_STDOUT("Timestamp del punto límite: " + p.getTimestamp().string());
 
@@ -70,7 +69,7 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                 } else {
                     DEBUG_POINT_STDOUT("Punto enviado pertenece al background: " + p.string());
                 }
-while(1);
+
                 break;
 
             // Punto descartado
