@@ -19,11 +19,12 @@
 #include "debug.hh"
 
 /* Defaults */
-#define DEFAULT_TIMER_MODE          kUntimed  // Default timer mode
-#define DEFAULT_FRAME_TIME          100       // Default frame time (ms)
-#define DEFAULT_BACKGROUND_TIME     500       // Default background time (ms)
-#define DEFAULT_MIN_RELECTIVITY     0.0f      // Default point reflectivity
-#define DEFAULT_BACKGROUND_DISTANCE 0.2f      // Default backgound distance (m)
+#define DEFAULT_BROADCAST_CODE      "3WEDH7600101621"  // Broadcast code of the Livox Horizon scanner
+#define DEFAULT_TIMER_MODE          kUntimed           // Default timer mode
+#define DEFAULT_FRAME_TIME          100                // Default frame time (ms)
+#define DEFAULT_BACKGROUND_TIME     500                // Default background time (ms)
+#define DEFAULT_MIN_RELECTIVITY     0.0f               // Default point reflectivity
+#define DEFAULT_BACKGROUND_DISTANCE 0.2f               // Default backgound distance (m)
 
 /* ParsedInput struct */
 struct ParsedInput {
@@ -33,29 +34,32 @@ struct ParsedInput {
           frame_time(DEFAULT_FRAME_TIME),
           background_time(DEFAULT_BACKGROUND_TIME),
           min_reflectivity(DEFAULT_MIN_RELECTIVITY),
-          background_distance(DEFAULT_BACKGROUND_DISTANCE){};
+          background_distance(DEFAULT_BACKGROUND_DISTANCE){
+
+          };
 
     bool is_ok;     ///< Variable para comprobar si se ha introducido el input necesario
     int exit_code;  ///< Exit code to return when is_ok is false
 
-    bool is_lidar;              ///< Tipo de escanner a usar: true si es mediante lidar
-    std::string filename;       ///< Nombre del archivo de datos
-    char *broadcast_code;       ///< Codigo de broadcast del sensor lidar
-    TimerMode time_mode;        ///< Tipo de métricas a tomar
-    uint32_t frame_time;        ///< Tiempo que duraran los puntos en el frame
-    uint32_t background_time;   ///< Tiempo en el cual los puntos formarán parte del background
-    float min_reflectivity;     ///< Reflectividad mínima que necesitan los puntos para no ser descartados
-    float background_distance;  ///< Distancia mínima a la que tiene que estar un punto para no pertenecer al background
+    bool is_lidar;               ///< Tipo de escanner a usar: true si es mediante lidar
+    std::string filename;        ///< Nombre del archivo de datos
+    std::string broadcast_code;  ///< Codigo de broadcast del sensor lidar
+    TimerMode time_mode;         ///< Tipo de métricas a tomar
+    uint32_t frame_time;         ///< Tiempo que duraran los puntos en el frame
+    uint32_t background_time;    ///< Tiempo en el cual los puntos formarán parte del background
+    float min_reflectivity;      ///< Reflectividad mínima que necesitan los puntos para no ser descartados
+    float background_distance;   ///< Distancia mínima a la que tiene que estar un punto para no pertenecer al background
 };
 
 /* Constants */
 std::string exec_name;
 
 /* Declarations */
-void help();                            // Command line help
-void usage();                           // Command line usage
-ParsedInput &missusage(ParsedInput &);  // Treats ParsedInput when command line options are used wrong
-ParsedInput parseInput(int, char **);   // Command line input parser
+void help();                               // Command line help
+void usage();                              // Command line usage
+ParsedInput &missusage(ParsedInput &);     // Treats ParsedInput when command line options are used wrong
+ParsedInput parseInput(int, char **);      // Command line input parser
+inline bool is_alphanumeric(std::string);  // Checks if string is alphanumeric
 
 // Main function
 int main(int argc, char *argv[]) {
@@ -63,12 +67,14 @@ int main(int argc, char *argv[]) {
 
     ParsedInput pi = parseInput(argc, argv);  // Parse input
 
-    if (pi.is_ok) {
-        if (pi.is_lidar) {
-            App app(pi.broadcast_code, pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity, pi.background_distance);
-        } else {
-            App app(pi.filename, pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity, pi.background_distance);
-        }
+    if (!pi.is_ok) {
+        return pi.exit_code;  // Exit
+    }
+
+    if (pi.is_lidar) {
+        App app(pi.broadcast_code.c_str(), pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity, pi.background_distance);
+    } else {
+        App app(pi.filename, pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity, pi.background_distance);
     }
 
     return EXIT_SUCCESS;  // Exit
@@ -86,7 +92,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Impresión de la ayuda */
     if (parser.optionExists("-h") || parser.optionExists("--help")) {
-        DEBUG_STDOUT("Opción -h | --help");  
+        DEBUG_STDOUT("Opción -h | --help");
 
         help();  // Imprimimos help
         pi.exit_code = EXIT_SUCCESS;
@@ -95,22 +101,27 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Input por lidar */
     else if (parser.optionExists("-b")) {
-        DEBUG_STDOUT("Opción -b");  
+        DEBUG_STDOUT("Opción -b");
 
-        const std::string &option = parser.getOption("-b");
-        // No se ha proporcionado valor
-        if (option.empty() || option.length() > kBroadcastCodeSize) {
+        std::string &option = const_cast<std::string &>(parser.getOption("-b"));
+        // Valor por defecto
+        if (option.empty()) {
+            option.clear();
+            option.append(DEFAULT_BROADCAST_CODE);
+        }
+        // Valor inválido
+        else if (option.length() > kBroadcastCodeSize || !is_alphanumeric(option)) {
             return missusage(pi);  // Salimos
         }
 
-        pi.is_ok = true;                                         // Input correcto
-        pi.is_lidar = true;                                      // Sensor lidar
-        pi.broadcast_code = const_cast<char *>(option.c_str());  // Código de broadcast
+        pi.is_ok = true;             // Input correcto
+        pi.is_lidar = true;          // Sensor lidar
+        pi.broadcast_code = option;  // Código de broadcast
     }
 
     /* Input por archivo */
     else if (parser.optionExists("-f")) {
-        DEBUG_STDOUT("Opción -f");  
+        DEBUG_STDOUT("Opción -f");
 
         const std::string &option = parser.getOption("-f");
         // No se ha proporcionado valor
@@ -125,7 +136,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* No se ha especificado una de las opciones obligatorias */
     else {
-        DEBUG_STDOUT("No se ha especificado una opción obligatoria");  
+        DEBUG_STDOUT("No se ha especificado una opción obligatoria");
 
         usage();  // Imprimimos help
         pi.exit_code = EXIT_SUCCESS;
@@ -134,7 +145,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Duración del frame */
     if (parser.optionExists("-p")) {
-        DEBUG_STDOUT("Opción -p");  
+        DEBUG_STDOUT("Opción -p");
 
         const std::string &option = parser.getOption("-p");
         // No se ha proporcionado valor
@@ -156,7 +167,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Tipo de cronómetro */
     if (parser.optionExists("-t")) {
-        DEBUG_STDOUT("Opción -t");  
+        DEBUG_STDOUT("Opción -t");
 
         const std::string &option = parser.getOption("-t");
         // No se ha proporcionado valor
@@ -190,7 +201,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Duración del background */
     if (parser.optionExists("-g")) {
-        DEBUG_STDOUT("Opción -g");  
+        DEBUG_STDOUT("Opción -g");
 
         const std::string &option = parser.getOption("-g");
         // No se ha proporcionado valor
@@ -212,7 +223,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Reflectividad mínima */
     if (parser.optionExists("-r")) {
-        DEBUG_STDOUT("Opción -r");  
+        DEBUG_STDOUT("Opción -r");
 
         const std::string &option = parser.getOption("-r");
         // No se ha proporcionado valor
@@ -234,7 +245,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 
     /* Distancia al background mínima */
     if (parser.optionExists("-d")) {
-        DEBUG_STDOUT("Opción -d");  
+        DEBUG_STDOUT("Opción -d");
 
         const std::string &option = parser.getOption("-d");
         // No se ha proporcionado valor
@@ -261,7 +272,7 @@ ParsedInput parseInput(int argc, char *argv[]) {
 void usage() {
     std::cout << std::endl
               << "Usage:" << std::endl
-              << exec_name << " <-b broadcast_code> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]" << std::endl
+              << exec_name << " <-b [broadcast_code]> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]" << std::endl
               << exec_name << " <-f filename> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]" << std::endl
               << exec_name << " <-h | --help>" << std::endl
               << std::endl;
@@ -270,21 +281,21 @@ void usage() {
 // Command line help
 void help() {
     usage();  // Imprimimos usage
-    std::cout << "\t -b                Broadcast code of the lidar sensor composed of " << kBroadcastCodeSize << " digits maximum"
-              << std::endl
+    std::cout << "\t -b                Broadcast code of the lidar sensor composed of " << kBroadcastCodeSize
+              << " digits maximum. If no code is specified, defaults to " << DEFAULT_BROADCAST_CODE << std::endl
               << "\t -f                File with the 3D points to get the data from" << std::endl
-              << "\t -p                Amount of miliseconds to use as frame duration time. Default: " << DEFAULT_FRAME_TIME << std::endl
-              << "\t -t                Type of chronometer to set up and measure time from. Default: notime" << std::endl
+              << "\t -p                Amount of miliseconds to use as frame duration time. Defaults to " << DEFAULT_FRAME_TIME << std::endl
+              << "\t -t                Type of chronometer to set up and measure time from. Defaults to notime" << std::endl
               << "\t                       notime - No chrono set" << std::endl
               << "\t                       char   - Characterizator chrono set" << std::endl
               << "\t                       anom   - Anomaly detector chrono set" << std::endl
               << "\t                       all    - All chronos set" << std::endl
-              << "\t -g                Miliseconds during which scanned points will be part of the background. Default: "
+              << "\t -g                Miliseconds during which scanned points will be part of the background. Defaults too "
               << DEFAULT_BACKGROUND_TIME << std::endl
-              << "\t -r                Minimum reflectivity value points may have not to be discarded. Default: " << DEFAULT_MIN_RELECTIVITY
-              << std::endl
+              << "\t -r                Minimum reflectivity value points may have not to be discarded. Defaults to "
+              << DEFAULT_MIN_RELECTIVITY << std::endl
               << "\t -d                Minimum distance from the background in meters a point must have not to be discarded. "
-                 "Default: "
+                 "Defaults to "
               << DEFAULT_BACKGROUND_DISTANCE << std::endl
               << "\t -h,--help         Print the program help text" << std::endl
               << std::endl;
@@ -292,7 +303,7 @@ void help() {
 
 // Exit when command line options are used wrong
 ParsedInput &missusage(ParsedInput &pi) {
-    DEBUG_STDOUT("Uso incorrecto de la linea de comandos");  
+    DEBUG_STDOUT("Uso incorrecto de la linea de comandos");
 
     usage();
 
@@ -300,4 +311,13 @@ ParsedInput &missusage(ParsedInput &pi) {
     pi.exit_code = EXIT_FAILURE;  // Mal input
 
     return pi;
+}
+
+inline bool is_alphanumeric(std::string s) {
+    for (const char &c : s) {
+        if (isalnum(c)) {
+            return true;
+        }
+    }
+    return false;
 }
