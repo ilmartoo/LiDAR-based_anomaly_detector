@@ -1,6 +1,7 @@
 # User defined exclusions
 schemas/
 build/
+tmp/
 
 # Libraries' binaries
 /anomaly_detector/lib/*/lib/
