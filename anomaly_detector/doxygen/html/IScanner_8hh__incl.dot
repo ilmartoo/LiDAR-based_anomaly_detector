@@ -21,11 +21,11 @@ digraph "include/scanner/IScanner.hh"
   Node7 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node8 [label="cmath",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
   Node7 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node9 [label="debug.hh",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$debug_8hh_source.html",tooltip=" "];
+  Node9 [label="logging/debug.hh",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$debug_8hh_source.html",tooltip=" "];
   Node9 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node10 [label="iostream",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
   Node9 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node9 -> Node11 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node11 [label="app/string_format.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$string__format_8h.html",tooltip=" "];
+  Node11 [label="logging/string_format.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$string__format_8h.html",tooltip=" "];
   Node4 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
 }

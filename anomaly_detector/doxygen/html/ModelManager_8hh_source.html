@@ -9,6 +9,10 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
@@ -23,7 +27,6 @@
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Lidar-based Anomaly Detector
    </div>
-   <div id="projectbrief">Using LiDAR data to detect any anomalies an object of a kind may have in comparison to a predefined model.</div>
   </td>
  </tr>
  </tbody>
@@ -46,6 +49,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('ModelManager_8hh_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -60,11 +80,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_828b612f8450ccb3091aade92090c8e3.html">models</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">ModelManager.hh</div>  </div>
@@ -80,7 +95,7 @@ $(function() {
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Model_8hh.html">models/Model.hh</a>&quot;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="CharacteristicsVector_8hh.html">models/CharacteristicsVector.hh</a>&quot;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;debug.hh&quot;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;logging/debug.hh&quot;</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
 <div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classModelManager.html">   24</a></span>&#160;<span class="keyword">class </span><a class="code" href="classModelManager.html">ModelManager</a> {</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;   <span class="keyword">public</span>:</div>
@@ -94,6 +109,7 @@ $(function() {
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#endif  //MODELMANAGER_CLASS_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <div class="ttc" id="aclassModelManager_html_a5a6c32388cc3cf8d57d715e8e9e0c234"><div class="ttname"><a href="classModelManager.html#a5a6c32388cc3cf8d57d715e8e9e0c234">ModelManager::createModel</a></div><div class="ttdeci">static Model createModel(std::string name, CharacteristicsVector cv)</div></div>
 <div class="ttc" id="aclassModelManager_html"><div class="ttname"><a href="classModelManager.html">ModelManager</a></div><div class="ttdef"><b>Definition:</b> ModelManager.hh:24</div></div>
 <div class="ttc" id="aModel_8hh_html"><div class="ttname"><a href="Model_8hh.html">Model.hh</a></div></div>
@@ -102,10 +118,13 @@ $(function() {
 <div class="ttc" id="aclassModel_html"><div class="ttname"><a href="classModel.html">Model</a></div><div class="ttdef"><b>Definition:</b> Model.hh:22</div></div>
 <div class="ttc" id="aclassModelManager_html_aa309f29098660182a8edbdee5eaf4834"><div class="ttname"><a href="classModelManager.html#aa309f29098660182a8edbdee5eaf4834">ModelManager::getModels</a></div><div class="ttdeci">static const std::list&lt; Model &gt; &amp; getModels()</div><div class="ttdef"><b>Definition:</b> ModelManager.hh:38</div></div>
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by &#160;<a href="http://www.doxygen.org/index.html">
-<img class="footer" src="doxygen.png" alt="doxygen"/>
-</a> 1.8.17
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_828b612f8450ccb3091aade92090c8e3.html">models</a></li><li class="navelem"><a class="el" href="ModelManager_8hh.html">ModelManager.hh</a></li>
+    <li class="footer">Generated by
+    <a href="http://www.doxygen.org/index.html">
+    <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17 </li>
+  </ul>
+</div>
 </body>
 </html>

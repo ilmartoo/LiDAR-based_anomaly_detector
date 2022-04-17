@@ -2,7 +2,7 @@
 
 Using LiDAR data to detect any anomalies an object of a kind may have in comparison to a predefined model.
 
-*...in-depth explanation to come...*
+_...in-depth explanation to come..._
 
 ## Prerequisites
 To compile the project you will need:
@@ -59,4 +59,4 @@ This will create the executable of the project into the corresponding `build/<cm
 
 ## Execution and parameters
 
-*...comming soon...*
+_...comming soon..._

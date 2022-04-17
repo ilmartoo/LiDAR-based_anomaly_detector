@@ -9,6 +9,10 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
@@ -23,7 +27,6 @@
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Lidar-based Anomaly Detector
    </div>
-   <div id="projectbrief">Using LiDAR data to detect any anomalies an object of a kind may have in comparison to a predefined model.</div>
   </td>
  </tr>
  </tbody>
@@ -46,6 +49,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('ScannerLidar_8hh_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -60,11 +80,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_e89ff169d3e8e77f69d16b855fc26496.html">scanner</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">ScannerLidar.hh</div>  </div>
@@ -85,7 +100,7 @@ $(function() {
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="IScanner_8hh.html">scanner/IScanner.hh</a>&quot;</span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Point_8hh.html">models/Point.hh</a>&quot;</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;debug.hh&quot;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;logging/debug.hh&quot;</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
 <div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="ScannerLidar_8hh.html#a0c10345a5a61ea917f59a0437ad481a0">   29</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span> {</div>
 <div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="ScannerLidar_8hh.html#a0c10345a5a61ea917f59a0437ad481a0a6429cdfcb7e488325b916be41c088182">   30</a></span>&#160;    <a class="code" href="ScannerLidar_8hh.html#a0c10345a5a61ea917f59a0437ad481a0a6429cdfcb7e488325b916be41c088182">kDeviceStateDisconnect</a> = 0,  </div>
@@ -101,8 +116,8 @@ $(function() {
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
 <div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classScannerLidar.html">   47</a></span>&#160;<span class="keyword">class </span><a class="code" href="classScannerLidar.html">ScannerLidar</a> : <span class="keyword">public</span> <a class="code" href="classIScanner.html">IScanner</a> {</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;   <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classScannerLidar.html#a3d6c901c82fe6982868e296d899e10d3">   53</a></span>&#160;    <a class="code" href="classScannerLidar.html#a3d6c901c82fe6982868e296d899e10d3">ScannerLidar</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> broadcast_code[kBroadcastCodeSize]) {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        memcpy(this-&gt;lidar.<a class="code" href="structDeviceItem.html#ae80d7042e0420fd6414c7106cd5310dd">info</a>.broadcast_code, broadcast_code, kBroadcastCodeSize);</div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classScannerLidar.html#a3d6c901c82fe6982868e296d899e10d3">   53</a></span>&#160;    <a class="code" href="classScannerLidar.html#a3d6c901c82fe6982868e296d899e10d3">ScannerLidar</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> broadcast_code[kBroadcastCodeSize]) : exit(true) {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        strncpy(this-&gt;lidar.<a class="code" href="structDeviceItem.html#ae80d7042e0420fd6414c7106cd5310dd">info</a>.broadcast_code, broadcast_code, kBroadcastCodeSize);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    }</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
 <div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="classScannerLidar.html#a55caea671ea68f62cb9ebf78f039dfc5">   60</a></span>&#160;    <a class="code" href="classScannerLidar.html#a55caea671ea68f62cb9ebf78f039dfc5">~ScannerLidar</a>() {}</div>
@@ -120,27 +135,31 @@ $(function() {
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    std::function&lt;void(<span class="keyword">const</span> <a class="code" href="classPoint.html">Point</a> &amp;p)&gt; callback;  </div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">void</span> getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, <span class="keywordtype">void</span> *client_data);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keywordtype">void</span> onDeviceBroadcast(<span class="keyword">const</span> BroadcastDeviceInfo *info);</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordtype">void</span> onLidarErrorStatusCallback(livox_status status, uint8_t handle, ErrorMessage *message);</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordtype">void</span> onSampleCallback(livox_status status, uint8_t handle, uint8_t response, <span class="keywordtype">void</span> *data);</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordtype">void</span> onStopSampleCallback(livox_status status, uint8_t handle, uint8_t response, <span class="keywordtype">void</span> *data);</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keywordtype">void</span> lidarConnect(<span class="keyword">const</span> DeviceInfo *info);</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <span class="keywordtype">void</span> lidarDisConnect(<span class="keyword">const</span> DeviceInfo *info);</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordtype">void</span> lidarStateChange(<span class="keyword">const</span> DeviceInfo *info);</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordtype">void</span> onDeviceInfoChange(<span class="keyword">const</span> DeviceInfo *info, DeviceEvent type);</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;};</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="preprocessor">#endif  // SCANNERLIDAR_CLASS_H</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordtype">bool</span> exit;  </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;   <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keyword">friend</span> <span class="keywordtype">void</span> <a class="code" href="classScannerLidar.html#ac51c16f8320f8a7d906f48fe39219862">getLidarData</a>(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, <span class="keywordtype">void</span> *client_data);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keyword">friend</span> <span class="keywordtype">void</span> <a class="code" href="classScannerLidar.html#a5bb7964f163737641dbdc53a4b4e5996">onDeviceBroadcast</a>(<span class="keyword">const</span> BroadcastDeviceInfo *info);</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keyword">friend</span> <span class="keywordtype">void</span> <a class="code" href="classScannerLidar.html#adf9e6375f181f4be2a3699ccfd5d0e24">onLidarErrorStatusCallback</a>(livox_status status, uint8_t handle, ErrorMessage *message);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keyword">friend</span> <span class="keywordtype">void</span> <a class="code" href="classScannerLidar.html#aeb7bee9e9f273a0fbf8f9e93d7397a06">onSampleCallback</a>(livox_status status, uint8_t handle, uint8_t response, <span class="keywordtype">void</span> *data);</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keyword">friend</span> <span class="keywordtype">void</span> <a class="code" href="classScannerLidar.html#a760fad626d593a9f9772c60800f30a67">onStopSampleCallback</a>(livox_status status, uint8_t handle, uint8_t response, <span class="keywordtype">void</span> *data);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keyword">friend</span> <span class="keywordtype">void</span> <a class="code" href="classScannerLidar.html#a4a569d4577d01a8cd080c1a4f7aa75c9">lidarConnect</a>(<span class="keyword">const</span> DeviceInfo *info);</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keyword">friend</span> <span class="keywordtype">void</span> <a class="code" href="classScannerLidar.html#a972f1ae9d97118346187d329dec3a9d7">lidarDisConnect</a>(<span class="keyword">const</span> DeviceInfo *info);</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keyword">friend</span> <span class="keywordtype">void</span> <a class="code" href="classScannerLidar.html#a7aff0339f353ec52ee6db5cce398b083">lidarStateChange</a>(<span class="keyword">const</span> DeviceInfo *info);</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keyword">friend</span> <span class="keywordtype">void</span> <a class="code" href="classScannerLidar.html#ab5a54f03fd196af2bbac49f5c1937b08">onDeviceInfoChange</a>(<span class="keyword">const</span> DeviceInfo *info, DeviceEvent type);</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;};</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="preprocessor">#endif  // SCANNERLIDAR_CLASS_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <div class="ttc" id="astructDeviceItem_html"><div class="ttname"><a href="structDeviceItem.html">DeviceItem</a></div><div class="ttdef"><b>Definition:</b> ScannerLidar.hh:38</div></div>
 <div class="ttc" id="aScannerLidar_8hh_html_a0c10345a5a61ea917f59a0437ad481a0a6429cdfcb7e488325b916be41c088182"><div class="ttname"><a href="ScannerLidar_8hh.html#a0c10345a5a61ea917f59a0437ad481a0a6429cdfcb7e488325b916be41c088182">kDeviceStateDisconnect</a></div><div class="ttdeci">@ kDeviceStateDisconnect</div><div class="ttdoc">Desconectado.</div><div class="ttdef"><b>Definition:</b> ScannerLidar.hh:30</div></div>
 <div class="ttc" id="aScannerLidar_8hh_html_a0c10345a5a61ea917f59a0437ad481a0a3e7a94fbd180b4b70d66c5c0310419fb"><div class="ttname"><a href="ScannerLidar_8hh.html#a0c10345a5a61ea917f59a0437ad481a0a3e7a94fbd180b4b70d66c5c0310419fb">kDeviceStateSampling</a></div><div class="ttdeci">@ kDeviceStateSampling</div><div class="ttdoc">Retransmitiendo puntos.</div><div class="ttdef"><b>Definition:</b> ScannerLidar.hh:32</div></div>
@@ -149,22 +168,34 @@ $(function() {
 <div class="ttc" id="aclassScannerLidar_html_aae7423bf5e8740c34072021438df927f"><div class="ttname"><a href="classScannerLidar.html#aae7423bf5e8740c34072021438df927f">ScannerLidar::stop</a></div><div class="ttdeci">void stop()</div></div>
 <div class="ttc" id="aIScanner_8hh_html"><div class="ttname"><a href="IScanner_8hh.html">IScanner.hh</a></div></div>
 <div class="ttc" id="astructDeviceItem_html_a42dbb7dc9a11c170e5dc72840479a6ec"><div class="ttname"><a href="structDeviceItem.html#a42dbb7dc9a11c170e5dc72840479a6ec">DeviceItem::device_state</a></div><div class="ttdeci">DeviceState device_state</div><div class="ttdoc">Estado del sensor.</div><div class="ttdef"><b>Definition:</b> ScannerLidar.hh:40</div></div>
+<div class="ttc" id="aclassScannerLidar_html_ab5a54f03fd196af2bbac49f5c1937b08"><div class="ttname"><a href="classScannerLidar.html#ab5a54f03fd196af2bbac49f5c1937b08">ScannerLidar::onDeviceInfoChange</a></div><div class="ttdeci">friend void onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type)</div></div>
+<div class="ttc" id="aclassScannerLidar_html_a972f1ae9d97118346187d329dec3a9d7"><div class="ttname"><a href="classScannerLidar.html#a972f1ae9d97118346187d329dec3a9d7">ScannerLidar::lidarDisConnect</a></div><div class="ttdeci">friend void lidarDisConnect(const DeviceInfo *info)</div></div>
 <div class="ttc" id="aScannerLidar_8hh_html_a0c10345a5a61ea917f59a0437ad481a0"><div class="ttname"><a href="ScannerLidar_8hh.html#a0c10345a5a61ea917f59a0437ad481a0">DeviceState</a></div><div class="ttdeci">DeviceState</div><div class="ttdef"><b>Definition:</b> ScannerLidar.hh:29</div></div>
 <div class="ttc" id="astructDeviceItem_html_ae80d7042e0420fd6414c7106cd5310dd"><div class="ttname"><a href="structDeviceItem.html#ae80d7042e0420fd6414c7106cd5310dd">DeviceItem::info</a></div><div class="ttdeci">DeviceInfo info</div><div class="ttdoc">Propiedades del sensor.</div><div class="ttdef"><b>Definition:</b> ScannerLidar.hh:41</div></div>
 <div class="ttc" id="aclassScannerLidar_html"><div class="ttname"><a href="classScannerLidar.html">ScannerLidar</a></div><div class="ttdef"><b>Definition:</b> ScannerLidar.hh:47</div></div>
+<div class="ttc" id="aclassScannerLidar_html_aeb7bee9e9f273a0fbf8f9e93d7397a06"><div class="ttname"><a href="classScannerLidar.html#aeb7bee9e9f273a0fbf8f9e93d7397a06">ScannerLidar::onSampleCallback</a></div><div class="ttdeci">friend void onSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data)</div></div>
 <div class="ttc" id="aclassScannerLidar_html_a6d6fa1cb26ee15536b6226fb574e7593"><div class="ttname"><a href="classScannerLidar.html#a6d6fa1cb26ee15536b6226fb574e7593">ScannerLidar::start</a></div><div class="ttdeci">bool start()</div></div>
 <div class="ttc" id="aPoint_8hh_html"><div class="ttname"><a href="Point_8hh.html">Point.hh</a></div></div>
+<div class="ttc" id="aclassScannerLidar_html_adf9e6375f181f4be2a3699ccfd5d0e24"><div class="ttname"><a href="classScannerLidar.html#adf9e6375f181f4be2a3699ccfd5d0e24">ScannerLidar::onLidarErrorStatusCallback</a></div><div class="ttdeci">friend void onLidarErrorStatusCallback(livox_status status, uint8_t handle, ErrorMessage *message)</div></div>
+<div class="ttc" id="aclassScannerLidar_html_a4a569d4577d01a8cd080c1a4f7aa75c9"><div class="ttname"><a href="classScannerLidar.html#a4a569d4577d01a8cd080c1a4f7aa75c9">ScannerLidar::lidarConnect</a></div><div class="ttdeci">friend void lidarConnect(const DeviceInfo *info)</div></div>
 <div class="ttc" id="aclassScannerLidar_html_a3d6c901c82fe6982868e296d899e10d3"><div class="ttname"><a href="classScannerLidar.html#a3d6c901c82fe6982868e296d899e10d3">ScannerLidar::ScannerLidar</a></div><div class="ttdeci">ScannerLidar(const char broadcast_code[kBroadcastCodeSize])</div><div class="ttdef"><b>Definition:</b> ScannerLidar.hh:53</div></div>
 <div class="ttc" id="aclassScannerLidar_html_a9e4511a1367fda6796ef9618fda683d3"><div class="ttname"><a href="classScannerLidar.html#a9e4511a1367fda6796ef9618fda683d3">ScannerLidar::init</a></div><div class="ttdeci">bool init()</div></div>
 <div class="ttc" id="aScannerLidar_8hh_html_a0c10345a5a61ea917f59a0437ad481a0a692f0fa5960f4896a883c366889918b2"><div class="ttname"><a href="ScannerLidar_8hh.html#a0c10345a5a61ea917f59a0437ad481a0a692f0fa5960f4896a883c366889918b2">kDeviceStateConnect</a></div><div class="ttdeci">@ kDeviceStateConnect</div><div class="ttdoc">Conectado.</div><div class="ttdef"><b>Definition:</b> ScannerLidar.hh:31</div></div>
+<div class="ttc" id="aclassScannerLidar_html_a5bb7964f163737641dbdc53a4b4e5996"><div class="ttname"><a href="classScannerLidar.html#a5bb7964f163737641dbdc53a4b4e5996">ScannerLidar::onDeviceBroadcast</a></div><div class="ttdeci">friend void onDeviceBroadcast(const BroadcastDeviceInfo *info)</div></div>
 <div class="ttc" id="aclassPoint_html"><div class="ttname"><a href="classPoint.html">Point</a></div><div class="ttdef"><b>Definition:</b> Point.hh:23</div></div>
+<div class="ttc" id="aclassScannerLidar_html_a760fad626d593a9f9772c60800f30a67"><div class="ttname"><a href="classScannerLidar.html#a760fad626d593a9f9772c60800f30a67">ScannerLidar::onStopSampleCallback</a></div><div class="ttdeci">friend void onStopSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data)</div></div>
+<div class="ttc" id="aclassScannerLidar_html_a7aff0339f353ec52ee6db5cce398b083"><div class="ttname"><a href="classScannerLidar.html#a7aff0339f353ec52ee6db5cce398b083">ScannerLidar::lidarStateChange</a></div><div class="ttdeci">friend void lidarStateChange(const DeviceInfo *info)</div></div>
 <div class="ttc" id="aclassScannerLidar_html_afb224c448af4c4e4b738198b7d46cfcf"><div class="ttname"><a href="classScannerLidar.html#afb224c448af4c4e4b738198b7d46cfcf">ScannerLidar::setCallback</a></div><div class="ttdeci">bool setCallback(const std::function&lt; void(const Point &amp;p)&gt; func)</div></div>
 <div class="ttc" id="aclassIScanner_html"><div class="ttname"><a href="classIScanner.html">IScanner</a></div><div class="ttdef"><b>Definition:</b> IScanner.hh:21</div></div>
+<div class="ttc" id="aclassScannerLidar_html_ac51c16f8320f8a7d906f48fe39219862"><div class="ttname"><a href="classScannerLidar.html#ac51c16f8320f8a7d906f48fe39219862">ScannerLidar::getLidarData</a></div><div class="ttdeci">friend void getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void *client_data)</div></div>
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by &#160;<a href="http://www.doxygen.org/index.html">
-<img class="footer" src="doxygen.png" alt="doxygen"/>
-</a> 1.8.17
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_e89ff169d3e8e77f69d16b855fc26496.html">scanner</a></li><li class="navelem"><a class="el" href="ScannerLidar_8hh.html">ScannerLidar.hh</a></li>
+    <li class="footer">Generated by
+    <a href="http://www.doxygen.org/index.html">
+    <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17 </li>
+  </ul>
+</div>
 </body>
 </html>

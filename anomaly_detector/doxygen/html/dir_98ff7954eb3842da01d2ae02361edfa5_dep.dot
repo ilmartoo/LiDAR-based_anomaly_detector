@@ -8,6 +8,6 @@ digraph "include/app" {
   }
   dir_e6a46eaf5f0c8c3e11609743177702c5 [shape=box label="object_characterization" URL="dir_e6a46eaf5f0c8c3e11609743177702c5.html"];
   dir_e89ff169d3e8e77f69d16b855fc26496 [shape=box label="scanner" URL="dir_e89ff169d3e8e77f69d16b855fc26496.html"];
-  dir_98ff7954eb3842da01d2ae02361edfa5->dir_e6a46eaf5f0c8c3e11609743177702c5 [headlabel="2", labeldistance=1.5 headhref="dir_000002_000004.html"];
-  dir_98ff7954eb3842da01d2ae02361edfa5->dir_e89ff169d3e8e77f69d16b855fc26496 [headlabel="4", labeldistance=1.5 headhref="dir_000002_000005.html"];
+  dir_98ff7954eb3842da01d2ae02361edfa5->dir_e6a46eaf5f0c8c3e11609743177702c5 [headlabel="2", labeldistance=1.5 headhref="dir_000002_000005.html"];
+  dir_98ff7954eb3842da01d2ae02361edfa5->dir_e89ff169d3e8e77f69d16b855fc26496 [headlabel="4", labeldistance=1.5 headhref="dir_000002_000006.html"];
 }

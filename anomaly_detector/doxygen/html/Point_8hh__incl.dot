@@ -16,11 +16,11 @@ digraph "include/models/Point.hh"
   Node4 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node6 [label="cmath",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
   Node4 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node7 [label="debug.hh",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$debug_8hh_source.html",tooltip=" "];
+  Node7 [label="logging/debug.hh",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$debug_8hh_source.html",tooltip=" "];
   Node7 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node8 [label="iostream",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
   Node7 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node7 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node9 [label="app/string_format.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$string__format_8h.html",tooltip=" "];
+  Node9 [label="logging/string_format.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$string__format_8h.html",tooltip=" "];
   Node1 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
 }

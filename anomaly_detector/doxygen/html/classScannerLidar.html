@@ -9,6 +9,10 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
@@ -23,7 +27,6 @@
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Lidar-based Anomaly Detector
    </div>
-   <div id="projectbrief">Using LiDAR data to detect any anomalies an object of a kind may have in comparison to a predefined model.</div>
   </td>
  </tr>
  </tbody>
@@ -46,6 +49,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classScannerLidar.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -60,10 +80,10 @@ $(function() {
 </iframe>
 </div>
 
-</div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a>  </div>
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a>  </div>
   <div class="headertitle">
 <div class="title">ScannerLidar Class Reference</div>  </div>
 </div><!--header-->
@@ -74,14 +94,12 @@ $(function() {
 Inheritance diagram for ScannerLidar:</div>
 <div class="dyncontent">
 <div class="center"><img src="classScannerLidar__inherit__graph.png" border="0" usemap="#ScannerLidar_inherit__map" alt="Inheritance graph"/></div>
-<!-- MAP 0 -->
-<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for ScannerLidar:</div>
 <div class="dyncontent">
 <div class="center"><img src="classScannerLidar__coll__graph.png" border="0" usemap="#ScannerLidar_coll__map" alt="Collaboration graph"/></div>
-<!-- MAP 1 -->
-<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -102,6 +120,27 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a45a7bb2da3646ceac41f910f7a4e6e6a inherit pub_methods_classIScanner"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2711cea46a3c0335c57df7d852569a7a inherit pub_methods_classIScanner"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIScanner.html#a2711cea46a3c0335c57df7d852569a7a">setCallback</a> (std::function&lt; void(const <a class="el" href="classPoint.html">Point</a> &amp;p)&gt; func)=0</td></tr>
 <tr class="separator:a2711cea46a3c0335c57df7d852569a7a inherit pub_methods_classIScanner"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:ac51c16f8320f8a7d906f48fe39219862"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScannerLidar.html#ac51c16f8320f8a7d906f48fe39219862">getLidarData</a> (uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void *client_data)</td></tr>
+<tr class="separator:ac51c16f8320f8a7d906f48fe39219862"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bb7964f163737641dbdc53a4b4e5996"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScannerLidar.html#a5bb7964f163737641dbdc53a4b4e5996">onDeviceBroadcast</a> (const BroadcastDeviceInfo *info)</td></tr>
+<tr class="separator:a5bb7964f163737641dbdc53a4b4e5996"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf9e6375f181f4be2a3699ccfd5d0e24"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScannerLidar.html#adf9e6375f181f4be2a3699ccfd5d0e24">onLidarErrorStatusCallback</a> (livox_status status, uint8_t handle, ErrorMessage *message)</td></tr>
+<tr class="separator:adf9e6375f181f4be2a3699ccfd5d0e24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb7bee9e9f273a0fbf8f9e93d7397a06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScannerLidar.html#aeb7bee9e9f273a0fbf8f9e93d7397a06">onSampleCallback</a> (livox_status status, uint8_t handle, uint8_t response, void *data)</td></tr>
+<tr class="separator:aeb7bee9e9f273a0fbf8f9e93d7397a06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a760fad626d593a9f9772c60800f30a67"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScannerLidar.html#a760fad626d593a9f9772c60800f30a67">onStopSampleCallback</a> (livox_status status, uint8_t handle, uint8_t response, void *data)</td></tr>
+<tr class="separator:a760fad626d593a9f9772c60800f30a67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a569d4577d01a8cd080c1a4f7aa75c9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScannerLidar.html#a4a569d4577d01a8cd080c1a4f7aa75c9">lidarConnect</a> (const DeviceInfo *info)</td></tr>
+<tr class="separator:a4a569d4577d01a8cd080c1a4f7aa75c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a972f1ae9d97118346187d329dec3a9d7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScannerLidar.html#a972f1ae9d97118346187d329dec3a9d7">lidarDisConnect</a> (const DeviceInfo *info)</td></tr>
+<tr class="separator:a972f1ae9d97118346187d329dec3a9d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7aff0339f353ec52ee6db5cce398b083"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScannerLidar.html#a7aff0339f353ec52ee6db5cce398b083">lidarStateChange</a> (const DeviceInfo *info)</td></tr>
+<tr class="separator:a7aff0339f353ec52ee6db5cce398b083"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5a54f03fd196af2bbac49f5c1937b08"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScannerLidar.html#ab5a54f03fd196af2bbac49f5c1937b08">onDeviceInfoChange</a> (const DeviceInfo *info, DeviceEvent type)</td></tr>
+<tr class="separator:ab5a54f03fd196af2bbac49f5c1937b08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementación de la interfaz <a class="el" href="classIScanner.html">IScanner</a> para la lectura de puntos del modelo de LiDAR Livox Horizon </p>
@@ -274,15 +313,411 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<h2 class="groupheader">Friends And Related Function Documentation</h2>
+<a id="ac51c16f8320f8a7d906f48fe39219862"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac51c16f8320f8a7d906f48fe39219862">&#9670;&nbsp;</a></span>getLidarData</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void getLidarData </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>handle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">LivoxEthPacket *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>data_num</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>client_data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Obtiene los datos del punto enviado por el sensor </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>Paquete contenedor de datos </td></tr>
+    <tr><td class="paramname">data_num</td><td>Número de paquete </td></tr>
+    <tr><td class="paramname">client_data</td><td>Cliente al que pertenece </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4a569d4577d01a8cd080c1a4f7aa75c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a569d4577d01a8cd080c1a4f7aa75c9">&#9670;&nbsp;</a></span>lidarConnect</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lidarConnect </td>
+          <td>(</td>
+          <td class="paramtype">const DeviceInfo *&#160;</td>
+          <td class="paramname"><em>info</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Conecta el sensor </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">info</td><td>Información del sensor </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a972f1ae9d97118346187d329dec3a9d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a972f1ae9d97118346187d329dec3a9d7">&#9670;&nbsp;</a></span>lidarDisConnect</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lidarDisConnect </td>
+          <td>(</td>
+          <td class="paramtype">const DeviceInfo *&#160;</td>
+          <td class="paramname"><em>info</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Desconecta el sensor </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">info</td><td>Información del sensor </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a7aff0339f353ec52ee6db5cce398b083"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7aff0339f353ec52ee6db5cce398b083">&#9670;&nbsp;</a></span>lidarStateChange</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lidarStateChange </td>
+          <td>(</td>
+          <td class="paramtype">const DeviceInfo *&#160;</td>
+          <td class="paramname"><em>info</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Cambia el la información de estado del sensor </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">info</td><td>Información del sensor </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5bb7964f163737641dbdc53a4b4e5996"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bb7964f163737641dbdc53a4b4e5996">&#9670;&nbsp;</a></span>onDeviceBroadcast</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void onDeviceBroadcast </td>
+          <td>(</td>
+          <td class="paramtype">const BroadcastDeviceInfo *&#160;</td>
+          <td class="paramname"><em>info</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Callback para recepción de información del sensor </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">info</td><td>Información del sensor de broadcast </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ab5a54f03fd196af2bbac49f5c1937b08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5a54f03fd196af2bbac49f5c1937b08">&#9670;&nbsp;</a></span>onDeviceInfoChange</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void onDeviceInfoChange </td>
+          <td>(</td>
+          <td class="paramtype">const DeviceInfo *&#160;</td>
+          <td class="paramname"><em>info</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">DeviceEvent&#160;</td>
+          <td class="paramname"><em>type</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Callback para cambiar el estado del sensor </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">info</td><td>Información del sensor </td></tr>
+    <tr><td class="paramname">type</td><td>Tipo de dispositivo </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="adf9e6375f181f4be2a3699ccfd5d0e24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf9e6375f181f4be2a3699ccfd5d0e24">&#9670;&nbsp;</a></span>onLidarErrorStatusCallback</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void onLidarErrorStatusCallback </td>
+          <td>(</td>
+          <td class="paramtype">livox_status&#160;</td>
+          <td class="paramname"><em>status</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>handle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ErrorMessage *&#160;</td>
+          <td class="paramname"><em>message</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Recepción de mensajes de error </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">status</td><td>Estatus del sensor </td></tr>
+    <tr><td class="paramname">handle</td><td>Handler del sensor </td></tr>
+    <tr><td class="paramname">message</td><td>Mensaje de error </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aeb7bee9e9f273a0fbf8f9e93d7397a06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb7bee9e9f273a0fbf8f9e93d7397a06">&#9670;&nbsp;</a></span>onSampleCallback</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void onSampleCallback </td>
+          <td>(</td>
+          <td class="paramtype">livox_status&#160;</td>
+          <td class="paramname"><em>status</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>handle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>response</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Se ejecuta con el comienzo del escaneo de puntos </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">status</td><td>Estatus del sensor </td></tr>
+    <tr><td class="paramname">handle</td><td>Handler del sensor </td></tr>
+    <tr><td class="paramname">response</td><td>Respuesta del sensor </td></tr>
+    <tr><td class="paramname">data</td><td>Datos enviador por el sensor </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a760fad626d593a9f9772c60800f30a67"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a760fad626d593a9f9772c60800f30a67">&#9670;&nbsp;</a></span>onStopSampleCallback</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void onStopSampleCallback </td>
+          <td>(</td>
+          <td class="paramtype">livox_status&#160;</td>
+          <td class="paramname"><em>status</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>handle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>response</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Se ejecuta con la finalización del escaneo de puntos </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">status</td><td>Estatus del sensor </td></tr>
+    <tr><td class="paramname">handle</td><td>Handler del sensor </td></tr>
+    <tr><td class="paramname">response</td><td>Respuesta del sensor </td></tr>
+    <tr><td class="paramname">data</td><td>Datos enviador por el sensor </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/scanner/<a class="el" href="ScannerLidar_8hh_source.html">ScannerLidar.hh</a></li>
 </ul>
 </div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by &#160;<a href="http://www.doxygen.org/index.html">
-<img class="footer" src="doxygen.png" alt="doxygen"/>
-</a> 1.8.17
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="classScannerLidar.html">ScannerLidar</a></li>
+    <li class="footer">Generated by
+    <a href="http://www.doxygen.org/index.html">
+    <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17 </li>
+  </ul>
+</div>
 </body>
 </html>
