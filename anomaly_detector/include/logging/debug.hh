@@ -13,16 +13,16 @@
 #include <iostream>
 #include <string>
 
-#include "app/string_format.h"
+#include "logging/string_format.h"
 
 #ifdef DEBUG
-#define DEBUG_CODE(x) x
-#define DEBUG_STDOUT(x) do { std::cout << yellow_s("[DEBUG] " + std::string(x)) << std::endl; } while (0)
-#define DEBUG_STDERR(x) do { std::cerr << red_s("[DEBUG] " + std::string(x)) << std::endl; } while (0)
+#define DEBUG_CODE(code) code
+#define DEBUG_STDOUT(msg) do { std::cout << "[" yellow("DEBUG") "] " << msg << std::endl; } while (0)
+#define DEBUG_STDERR(msg) do { std::cerr << "[" red("DEBUG") "] " << msg << std::endl; } while (0)
 
 #ifdef DEBUG_POINTS
-#define DEBUG_POINT_STDOUT(x) do { std::cout << yellow_s("[DEBUG] " + std::string(x)) << std::endl; } while (0)
-#define DEBUG_POINT_STDERR(x) do { std::cerr << red_s("[DEBUG] " + std::string(x)) << std::endl; } while (0)
+#define DEBUG_POINT_STDOUT(msg) do { std::cout << "[" yellow("DEBUG") "] " << msg << std::endl; } while (0)
+#define DEBUG_POINT_STDERR(msg) do { std::cerr << "[" red("DEBUG") "] " << msg << std::endl; } while (0)
 #else // DEBUG_POINTS
 #define DEBUG_POINT_STDOUT(x)
 #define DEBUG_POINT_STDERR(x)

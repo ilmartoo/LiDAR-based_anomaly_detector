@@ -19,7 +19,7 @@
 #include "scanner/IScanner.hh"
 #include "models/Point.hh"
 
-#include "debug.hh"
+#include "logging/debug.hh"
 
 /**
  * Implementación de la interfaz IScanner para la lectura de puntos de archivos CSV obtenidos del

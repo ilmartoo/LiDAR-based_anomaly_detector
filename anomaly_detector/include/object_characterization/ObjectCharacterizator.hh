@@ -18,7 +18,7 @@
 #include "models/CharacteristicsVector.hh"
 #include "models/PointMap.hh"
 
-#include "debug.hh"
+#include "logging/debug.hh"
 
 /**
  * Estados en los que se puede encontrar el caracterizador de objetos

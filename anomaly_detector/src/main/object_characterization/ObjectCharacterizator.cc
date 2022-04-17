@@ -14,11 +14,11 @@
 
 #include "object_characterization/ObjectCharacterizator.hh"
 
-#include "debug.hh"
+#include "logging/debug.hh"
+#include "logging/logging.hh"
 
 ///////////////
 #include <fstream>
-#include "app/string_format.h"
 ///////////////
 
 // Callback a donde se recebirán los puntos escaneados
@@ -31,6 +31,8 @@ void ObjectCharacterizator::newPoint(const Point &p) {
             case defStartTime:
                 startTimestamp = new Timestamp(p.getTimestamp());
                 state = defBackground;  // Comenzamos la definicion del background
+
+                DEBUG_STDOUT("Start Timestamp: " + startTimestamp->string());
 
             // Punto de background
             case defBackground:
@@ -57,6 +59,7 @@ void ObjectCharacterizator::newPoint(const Point &p) {
 
                 // Total de puntos del background
                 DEBUG_STDOUT("Background formado por " + std::to_string(bp_count) + " puntos");
+                DEBUG_STDOUT("Timestamp del punto límite: " + p.getTimestamp().string());
 
             // Punto del objeto
             case defObject:
@@ -67,7 +70,7 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                 } else {
                     DEBUG_POINT_STDOUT("Punto enviado pertenece al background: " + p.string());
                 }
-
+while(1);
                 break;
 
             // Punto descartado
@@ -83,7 +86,7 @@ void ObjectCharacterizator::newPoint(const Point &p) {
 
 // Comienza la definición de objetos
 void ObjectCharacterizator::start() {
-    std::cout << "Iniciando caracterización." << std::endl;
+    LOG_INFO("Iniciando caracterización.");
 
     exit = false;  // Permitimos la ejecución del hilo
 
@@ -102,16 +105,14 @@ void ObjectCharacterizator::stop() {
     ////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////
-    std::ofstream os("object.csv", std::ios::out);
+    std::ofstream os("tmp/object.csv", std::ios::out);
     while (!object->empty()) {
-        // std::cout << skyblue_s(object->front().string()) << std::endl;
         os << object->front().csv_string() << std::endl;
         object->pop();
     }
     os.close();
 
-    os.open("background.csv", std::ios::out);
-    std::cout << "BG size END: " << background->size() << std::endl;
+    os.open("tmp/background.csv", std::ios::out);
     for (auto &p : *background)
         os << p.csv_string() << std::endl;
     os.close();
@@ -119,7 +120,7 @@ void ObjectCharacterizator::stop() {
     ////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////
 
-    std::cout << "Finalizada caracterización." << std::endl;
+    LOG_INFO("Finalizada caracterización.");
 }
 
 // Guarda en background y elimina los puntos del objeto fuera del frame
@@ -129,7 +130,8 @@ void ObjectCharacterizator::managePoints() {
             Point &p = object->front();
 
             // Eliminamos si su timestamp es viejo
-            if (p.getTimestamp() + frameDuration < object->getLastTimestamp()) {
+            const std::pair<bool, Timestamp *> lp = object->getLastTimestamp();
+            if (lp.first && p.getTimestamp() + frameDuration < *lp.second) {
                 DEBUG_POINT_STDOUT("Punto caducado: " + p.string());
 
                 object->pop();  // Eliminamos punto

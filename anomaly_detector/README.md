@@ -47,16 +47,12 @@ cmake -S . -B build/Debug -D CMAKE_BUILD_TYPE=Debug
 cmake --build build/Debug
 ```
 
-If you would like to have debug info of every scanned point, execute the following from the **`anomaly_detector/` folder**:
+If you would like to have debug info of every scanned point, execute the following instead:
 
 ```bash
 # Build the project with debug output with point debugging
 cmake -S . -B build/Debug -D CMAKE_BUILD_TYPE=Debug -D DEBUG_POINTS=ON
 cmake --build build/Debug
-```
-*Note: if you run the last snippet be sure to delete the `CMakeCache.txt` file located into `build/Debug/`:*
-```bash
-rm -rf build/Debug
 ```
 
 This will create the executable of the project into the corresponding `build/<cmake_build_type>/` subfolder.

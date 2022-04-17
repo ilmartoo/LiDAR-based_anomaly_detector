@@ -16,7 +16,7 @@
 #include "models/Model.hh"
 #include "models/CharacteristicsVector.hh"
 
-#include "debug.hh"
+#include "logging/debug.hh"
 
 /**
  * Manager de modelos de objetos

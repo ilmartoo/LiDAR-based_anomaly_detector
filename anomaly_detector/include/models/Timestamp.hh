@@ -14,7 +14,7 @@
 #include <string>
 #include <cmath>
 
-#include "debug.hh"
+#include "logging/debug.hh"
 
 #define NANO_DIGITS 1000000000U
 

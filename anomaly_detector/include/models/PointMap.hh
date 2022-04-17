@@ -16,7 +16,7 @@
 #include "models/Point.hh"
 #include "models/Timestamp.hh"
 
-#include "debug.hh"
+#include "logging/debug.hh"
 
 /**
  * Clase para realizar el mapping de puntos mediante una cola FIFO concurrente
@@ -26,7 +26,7 @@ class PointMap {
     /**
      * Constructor del objero PointMap
      */
-    PointMap() { lastTimestamp = nullptr; }
+    PointMap() : lastTimestamp(false, nullptr) {}
 
     /**
      * Introduce un punto al final de la cola
@@ -35,8 +35,8 @@ class PointMap {
     void push(const Point &p) {
         mutexMaps.lock();  // Bloqueamos el mutex
 
-        map.push(p);                                                          // Guardamos punto
-        lastTimestamp = const_cast<Timestamp *>(&map.back().getTimestamp());  // Guardamos último timestamp
+        map.push(p);                                                                  // Guardamos punto
+        lastTimestamp = {true, const_cast<Timestamp *>(&map.back().getTimestamp())};  // Guardamos último timestamp
 
         mutexMaps.unlock();  // Desbloqueamos el mutex
     }
@@ -67,9 +67,10 @@ class PointMap {
 
     /**
      * Devuelve el último timestamp introducido
-     * @return Timestamp timestamp introducido
+     * @return Devuelve un elemento std::pair con true si existe ultimo timestamp y un puntero al último Timestamp.
+     * El puntero es nulo si el primer elemento es false.
      */
-    const Timestamp getLastTimestamp() const { return *this->lastTimestamp; }
+    const std::pair<bool, Timestamp *> getLastTimestamp() const { return lastTimestamp; }
 
     /**
      * Devuelve la cola correspondiente al mapa de puntos
@@ -78,9 +79,9 @@ class PointMap {
     const std::queue<Point> &getMap() const { return this->map; }
 
    private:
-    std::mutex mutexMaps;      ///< Mutex de acceso a los mapas de puntos
-    std::queue<Point> map;     ///< Mapa de puntos
-    Timestamp *lastTimestamp;  ///< Ultimo timestamp obtenido
+    std::mutex mutexMaps;                        ///< Mutex de acceso a los mapas de puntos
+    std::queue<Point> map;                       ///< Mapa de puntos
+    std::pair<bool, Timestamp *> lastTimestamp;  ///< Ultimo timestamp obtenido
 };
 
 #endif  // POINTMAP_CLASS_H

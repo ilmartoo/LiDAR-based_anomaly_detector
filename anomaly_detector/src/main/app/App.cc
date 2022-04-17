@@ -16,7 +16,7 @@
 #include "app/InputParser.hh"
 #include "models/Point.hh"
 
-#include "debug.hh"
+#include "logging/debug.hh"
 
 void App::start() {
     scanner->init();                                                            // Inicializamos el escaner

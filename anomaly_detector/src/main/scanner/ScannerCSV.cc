@@ -18,7 +18,8 @@
 #include "models/Point.hh"
 #include "models/Timestamp.hh"
 
-#include "debug.hh"
+#include "logging/debug.hh"
+#include "logging/logging.hh"
 
 // Inicialización del escaner
 bool ScannerCSV::init() {
@@ -27,18 +28,18 @@ bool ScannerCSV::init() {
     // Abrimos stream del archivo
     infile.open(filename, std::ifstream::in);
     if (infile.fail()) {
-        std::cerr << "Fallo al inicializar el escaner de archivos csv." << std::endl;
+        LOG_ERROR("Fallo al inicializar el escaner de archivos csv.");
         return false;
     }
 
-    std::cout << "Escaner de archivos csv inicializado correctamente." << std::endl;
+    LOG_INFO("Escaner de archivos csv inicializado correctamente.");
 
     return true;
 }
 
 // Comienza la obtención de puntos
 bool ScannerCSV::start() {
-    std::cout << "Inicio del escaneo de puntos." << std::endl;
+    LOG_INFO("Inicio del escaneo de puntos.");
 
     if (infile.is_open()) {
         exit = false;                                                    // Permitimos la ejecución del hilo
@@ -46,7 +47,7 @@ bool ScannerCSV::start() {
     }
     // Fallo de apertura
     else {
-        std::cerr << "Fallo de apertura del archivo de puntos." << std::endl;
+        LOG_ERROR("Fallo de apertura del archivo de puntos.");
         return false;
     }
 
@@ -71,7 +72,7 @@ void ScannerCSV::stop() {
 
     infile.close();  // Cerramos stream del archivo
 
-    std::cout << "Finalizado el escaneo de puntos." << std::endl;
+    LOG_INFO("Finalizado el escaneo de puntos.");
 }
 
 // Lectura de puntos del archivo
@@ -85,7 +86,7 @@ void ScannerCSV::readData() {
     for (int commas, i; !exit && std::getline(infile, line);) {
         // Fallo en la lectura
         if (infile.fail()) {
-            std::cout << "Fallo en la lectura de puntos" << std::endl;
+            LOG_INFO("Fallo en la lectura de puntos");
             return;
         }
 

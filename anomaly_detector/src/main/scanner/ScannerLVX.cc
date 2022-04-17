@@ -21,7 +21,8 @@
 #include "models/Point.hh"
 #include "models/Timestamp.hh"
 
-#include "debug.hh"
+#include "logging/debug.hh"
+#include "logging/logging.hh"
 
 // Inicialización del escaner
 bool ScannerLVX::init() {
@@ -29,7 +30,7 @@ bool ScannerLVX::init() {
 
     // Abrimos archivo
     if (lvx_file.Open(filename.c_str(), std::ios::in) != livox_ros::kLvxFileOk) {
-        std::cerr << "Fallo al inicializar el escaner de archivos lvx." << std::endl;
+        LOG_ERROR("Fallo al inicializar el escaner de archivos lvx.");
 
         return false;
     }
@@ -39,14 +40,14 @@ bool ScannerLVX::init() {
     packets_of_frame.buffer_capacity = kMaxPacketsNumOfFrame * sizeof(livox_ros::LvxFilePacket);
     packets_of_frame.packet = new uint8_t[kMaxPacketsNumOfFrame * sizeof(livox_ros::LvxFilePacket)];
 
-    std::cout << "Escaner de archivos lvx inicializado correctamente." << std::endl;
+    LOG_INFO("Escaner de archivos lvx inicializado correctamente.");
 
     return true;
 }
 
 // Comienza la obtención de puntos
 bool ScannerLVX::start() {
-    std::cout << "Inicio del escaneo de puntos." << std::endl;
+    LOG_INFO("Inicio del escaneo de puntos.");
 
     packets_of_frame.data_size = 0;  // Borramos total de puntos guardados
 
@@ -56,7 +57,7 @@ bool ScannerLVX::start() {
     }
     // Fallo de apertura
     else {
-        std::cerr << "Fallo de apertura del archivo de puntos." << std::endl;
+        LOG_ERROR("Fallo de apertura del archivo de puntos.");
         return false;
     }
 
@@ -83,7 +84,7 @@ void ScannerLVX::stop() {
 
     delete packets_of_frame.packet;  // Array de paquetes
 
-    std::cout << "Finalizado el escaneo de puntos." << std::endl;
+    LOG_INFO("Finalizado el escaneo de puntos.");
 }
 
 // Lectura de puntos del archivo

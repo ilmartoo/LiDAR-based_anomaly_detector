@@ -21,7 +21,7 @@
 #include "scanner/IScanner.hh"
 #include "models/Point.hh"
 
-#include "debug.hh"
+#include "logging/debug.hh"
 
 /**
  * Estados en los que puede estar el escaner LiDAR
@@ -50,8 +50,8 @@ class ScannerLidar : public IScanner {
      *
      * @param broadcast_code
      */
-    ScannerLidar(const char broadcast_code[kBroadcastCodeSize]) {
-        memcpy(this->lidar.info.broadcast_code, broadcast_code, kBroadcastCodeSize);
+    ScannerLidar(const char broadcast_code[kBroadcastCodeSize]) : exit(true) {
+        strncpy(this->lidar.info.broadcast_code, broadcast_code, kBroadcastCodeSize);
     }
 
     /**
@@ -90,19 +90,22 @@ class ScannerLidar : public IScanner {
 
     std::function<void(const Point &p)> callback;  ///< Función de callback
 
+    bool exit;  ///< Variable para la finalización del escaneo de puntos
+
+   public:
     /**
      * Obtiene los datos del punto enviado por el sensor
      * @param data Paquete contenedor de datos
      * @param data_num Número de paquete
      * @param client_data Cliente al que pertenece
      */
-    void getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void *client_data);
+    friend void getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void *client_data);
 
     /**
      * Callback para recepción de información del sensor
      * @param info Información del sensor de broadcast
      */
-    void onDeviceBroadcast(const BroadcastDeviceInfo *info);
+    friend void onDeviceBroadcast(const BroadcastDeviceInfo *info);
 
     /**
      * Recepción de mensajes de error
@@ -110,7 +113,7 @@ class ScannerLidar : public IScanner {
      * @param handle Handler del sensor
      * @param message Mensaje de error
      */
-    void onLidarErrorStatusCallback(livox_status status, uint8_t handle, ErrorMessage *message);
+    friend void onLidarErrorStatusCallback(livox_status status, uint8_t handle, ErrorMessage *message);
 
     /**
      * Se ejecuta con el comienzo del escaneo de puntos
@@ -119,7 +122,7 @@ class ScannerLidar : public IScanner {
      * @param response Respuesta del sensor
      * @param data Datos enviador por el sensor
      */
-    void onSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data);
+    friend void onSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data);
 
     /**
      * Se ejecuta con la finalización del escaneo de puntos
@@ -128,32 +131,32 @@ class ScannerLidar : public IScanner {
      * @param response Respuesta del sensor
      * @param data Datos enviador por el sensor
      */
-    void onStopSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data);
+    friend void onStopSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data);
 
     /**
      * Conecta el sensor
      * @param info Información del sensor
      */
-    void lidarConnect(const DeviceInfo *info);
+    friend void lidarConnect(const DeviceInfo *info);
 
     /**
      * Desconecta el sensor
      * @param info Información del sensor
      */
-    void lidarDisConnect(const DeviceInfo *info);
+    friend void lidarDisConnect(const DeviceInfo *info);
 
     /**
      * Cambia el la información de estado del sensor
      * @param info Información del sensor
      */
-    void lidarStateChange(const DeviceInfo *info);
+    friend void lidarStateChange(const DeviceInfo *info);
 
     /**
      * Callback para cambiar el estado del sensor
      * @param info Información del sensor
      * @param type Tipo de dispositivo
      */
-    void onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type);
+    friend void onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type);
 };
 
 #endif  // SCANNERLIDAR_CLASS_H

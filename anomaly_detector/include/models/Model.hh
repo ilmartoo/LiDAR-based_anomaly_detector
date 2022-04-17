@@ -14,7 +14,7 @@
 
 #include "models/CharacteristicsVector.hh"
 
-#include "debug.hh"
+#include "logging/debug.hh"
 
 /**
  * Modelo de un objeto

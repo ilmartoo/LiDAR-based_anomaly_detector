@@ -10,9 +10,10 @@ option(DEBUG_POINTS "Opción de debugging para imprimir los puntos escaneados" O
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG") 
 
 # Debug flags
-set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG")   
 if(DEBUG_SCANNED_POINTS)
-set(CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG}" -DDEBUG_POINTS")   # Debug flags
+set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG -DDEBUG_POINTS")
+else()
+set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG")
 endif()
 
 set(CMAKE_CXX_STANDARD 11)

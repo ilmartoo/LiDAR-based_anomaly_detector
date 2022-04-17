@@ -21,7 +21,7 @@
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "anomaly_detection/IAnomalyDetector.hh"
 
-#include "debug.hh"
+#include "logging/debug.hh"
 
 /** Tipos de mediciones de tiempo a tomar */
 enum TimerMode {
