@@ -1,0 +1,47 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "CMake create",
+            "command": "cmake ",
+            "args": [
+                "-S",
+                ".",
+                "-B",
+                "build/Debug",
+                "-D",
+                "CMAKE_BUILD_TYPE=Debug",
+                "-D",
+                "DEBUG_SCANNED_POINTS=ON"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Tarea generada por el depurador."
+        },
+        {
+            "type": "cppbuild",
+            "label": "CMake compile",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "build/Debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "dependsOn": [
+                "CMake create"
+            ]
+        }
+    ],
+    "version": "2.0.0"
+}

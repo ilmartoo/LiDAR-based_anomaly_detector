@@ -8,7 +8,6 @@ tmp/
 /anomaly_detector/lib/*/build/
 
 # VSCode
-.vscode/
 *.code-workspace
 
 # Prerequisites
