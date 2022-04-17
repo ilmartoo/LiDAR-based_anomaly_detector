@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Crea la librería sdk_core
 if [ ! -r lib/sdk_core/lib/liblivox_sdk_static.a ]; then
 	echo -e "\e[1;33m[sdk_core] Creando...\e[0m"
