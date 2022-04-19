@@ -44,7 +44,7 @@ class App {
      */
     App(const std::string &filename, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity,
         float backgroundDistance) {
-        this->timerMode = timerMode;              // timerMode
+        this->timerMode = timerMode;  // timerMode
 
         // Obtenemos extensión del archivo
         size_t loc = filename.find_last_of('.');
@@ -62,9 +62,9 @@ class App {
         oc = new ObjectCharacterizator(frameDuration, backgroundTime, minReflectivity, backgroundDistance);  // Creamos caracterizador
         // ad =
 
-        this->start();  // Iniciamos app
-        this->wait();   // Esperamos a recibir una señal de salida
-        this->stop();   // Finalizamos app
+        this->init();   // Inicializamos componentes
+        this->cli();    // Comenzamos CLI
+        this->close();  // Finalizamos app
     }
 
     /**
@@ -78,15 +78,15 @@ class App {
      */
     App(const char *broadcastCode, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity,
         float backgroundDistance) {
-        this->timerMode = timerMode;              // timerMode
+        this->timerMode = timerMode;  // timerMode
 
         scanner = new ScannerLidar(broadcastCode);                                                           // Creamos escaner
         oc = new ObjectCharacterizator(frameDuration, backgroundTime, minReflectivity, backgroundDistance);  // Creamos caracterizador
         // ad =
 
-        this->start();  // Iniciamos app
-        this->wait();   // Esperamos a recibir una señal de salida
-        this->stop();   // Finalizamos app
+        this->init();  // Iniciamos app
+        this->cli();   // Esperamos a recibir una señal de salida
+        this->close();   // Finalizamos app
     }
 
     /**
@@ -100,6 +100,11 @@ class App {
 
    private:
     /**
+     * Inicializa la aplicación
+     */
+    void init();
+
+    /**
      * Inicia la aplicación
      */
     void start();
@@ -107,12 +112,12 @@ class App {
     /**
      * Espera la llegada de una señal SIGINT
      */
-    void wait();
+    void cli();
 
     /**
      * Finaliza la aplicación
      */
-    void stop();
+    void close();
 
     enum TimerMode timerMode;  ///< Tipo de mediciones de tiempo a tomar
 

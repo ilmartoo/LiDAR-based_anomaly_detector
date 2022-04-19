@@ -28,21 +28,23 @@ ScannerLidar *_sl;
 
 // Obtiene los datos del punto enviado por el sensor
 void getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void *client_data) {
-    // Obtenemos datos
-    if (data && data->data_type == kExtendCartesian) {
-        LivoxExtendRawPoint *p_data = (LivoxExtendRawPoint *)data->data;
+    if (_sl->lidar.device_state == kDeviceStateSampling) {
+        // Obtenemos datos
+        if (data && data->data_type == kExtendCartesian) {
+            LivoxExtendRawPoint *p_data = (LivoxExtendRawPoint *)data->data;
 
-        DEBUG_POINT_STDOUT("Obtenido paquete de datos de tipo [" + std::to_string(data->data_type) + "]");
+            DEBUG_POINT_STDOUT("Obtenido paquete de datos de tipo [" + std::to_string(data->data_type) + "]");
 
-        for (uint32_t i = 0; !_sl->exit && i < data_num; ++i)
-            if (_sl->callback) {
-                Point p = {Timestamp(data->timestamp), p_data[i].reflectivity, p_data[i].x, p_data[i].y, p_data[i].z};
-                _sl->callback(p);
-            }
-    }
-    // Dato de tipo incorrecto
-    else {
-        DEBUG_POINT_STDOUT("Paquete de datos de tipo [" + std::to_string(data->data_type) + "] no tratado");
+            for (uint32_t i = 0; !_sl->exit && i < data_num; ++i)
+                if (_sl->callback) {
+                    Point p = {Timestamp(data->timestamp), p_data[i].reflectivity, p_data[i].x, p_data[i].y, p_data[i].z};
+                    _sl->callback(p);
+                }
+        }
+        // Dato de tipo incorrecto
+        else {
+            DEBUG_POINT_STDOUT("Paquete de datos de tipo [" + std::to_string(data->data_type) + "] no tratado");
+        }
     }
 }
 
@@ -150,6 +152,8 @@ void onSampleCallback(livox_status status, uint8_t handle, uint8_t response, voi
     // Inicio correcto
     if (status == kStatusSuccess) {
         _sl->lidar.device_state = kDeviceStateConnect;
+        _sl->lidar.device_state = kDeviceStateSampling;
+
     }
     // Fallo
     else {
@@ -221,7 +225,7 @@ bool ScannerLidar::start() {
 
     /* Comenzamos el muestreo */
     if (kStatusSuccess == LidarStartSampling(_sl->lidar.handle, onSampleCallback, NULL)) {
-        lidar.device_state = kDeviceStateSampling;
+        // lidar.device_state = kDeviceStateSampling;
 
         return true;
 

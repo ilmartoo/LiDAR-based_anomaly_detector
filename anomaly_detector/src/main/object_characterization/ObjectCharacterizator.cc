@@ -59,6 +59,7 @@ void ObjectCharacterizator::newPoint(const Point &p) {
 
                 DEBUG_STDOUT("Background formado por " + std::to_string(bp_count) + " puntos");
                 DEBUG_STDOUT("Timestamp del punto límite: " + p.getTimestamp().string());
+                while(1);
 
             // Punto del objeto
             case defObject:

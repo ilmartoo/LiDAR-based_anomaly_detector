@@ -8,36 +8,50 @@
  */
 
 #include <iostream>
-#include <stdint.h>
 #include <functional>
-#include <signal.h>
+#include <string>
 
 #include "app/App.hh"
 #include "app/InputParser.hh"
 #include "models/Point.hh"
+#include "models/Command.hh"
 
 #include "logging/debug.hh"
+#include "logging/logging.hh"
+
+void App::init() {
+    scanner->init();                                                            // Inicializamos el escaner
+    scanner->setCallback(([this](const Point &p) { this->oc->newPoint(p); }));  // Establecemos callbacks
+}
 
 void App::start() {
-    scanner->init();                                                            // Inicializamos el escaner
-    scanner->setCallback(([this](const Point &p) { this->oc->newPoint(p); }));  // Establecemos callback
-    scanner->start();                                                           // Iniciamos el escaner
-
-    oc->start();  // Iniciamos el caracterizador
-
-    // ad->start(); // Iniciamos el detector de anomalías
+    // ad->start();       // Iniciamos el detector de anomalías
+    oc->start();       // Iniciamos el caracterizador
+    scanner->start();  // Iniciamos el escaner
 }
 
-void App::wait() {
+void App::cli() {
     std::string input;
-    do {
-        std::cin >> input;  // Leemos comando
+    bool exit = false;
 
-    } while (input.compare("q"));  // Esperamos a recibir el comando de finalización
+    do {
+        std::getline(std::cin, input);  // Leemos comando
+
+        Command command = Command::parse(input);  // Parseamos comando
+
+        switch (command[0]) {
+
+            case ""
+            default:
+                // Ayuda o uso de comandos
+                break;
+        }
+
+    } while (!exit);  // Esperamos a recibir el comando de finalización
 }
 
-void App::stop() {
+void App::close() {
     scanner->stop();  // Finalizamos el escaner
-
-    oc->stop();  // Finalizamos el caracterizador
+    oc->stop();       // Finalizamos el caracterizador
+    // ad->stop();       // Finalizamos el detector de anomalias
 }
