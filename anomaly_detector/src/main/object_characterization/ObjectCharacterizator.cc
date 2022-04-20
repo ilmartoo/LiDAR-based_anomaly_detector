@@ -59,7 +59,6 @@ void ObjectCharacterizator::newPoint(const Point &p) {
 
                 DEBUG_STDOUT("Background formado por " + std::to_string(bp_count) + " puntos");
                 DEBUG_STDOUT("Timestamp del punto límite: " + p.getTimestamp().string());
-                while(1);
 
             // Punto del objeto
             case defObject:
@@ -67,6 +66,7 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                     DEBUG_POINT_STDOUT("Punto añadido al objeto: " + p.string());
 
                     object->push(p);  // Guardamos punto
+
                 } else {
                     DEBUG_POINT_STDOUT("Punto enviado pertenece al background: " + p.string());
                 }
@@ -105,17 +105,17 @@ void ObjectCharacterizator::stop() {
     ////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////
-    std::ofstream os("tmp/object.csv", std::ios::out);
-    while (!object->empty()) {
-        os << object->front().csv_string() << std::endl;
-        object->pop();
-    }
-    os.close();
+    // std::ofstream os("tmp/object.csv", std::ios::out);
+    // while (!object->empty()) {
+    //     os << object->front().csv_string() << std::endl;
+    //     object->pop();
+    // }
+    // os.close();
 
-    os.open("tmp/background.csv", std::ios::out);
-    for (auto &p : *background)
-        os << p.csv_string() << std::endl;
-    os.close();
+    // os.open("tmp/background.csv", std::ios::out);
+    // for (auto &p : *background)
+    //     os << p.csv_string() << std::endl;
+    // os.close();
     ////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////
@@ -130,7 +130,7 @@ void ObjectCharacterizator::managePoints() {
             Point &p = object->front();
 
             // Eliminamos si su timestamp es viejo
-            const std::pair<bool, Timestamp *> lp = object->getLastTimestamp();
+            const std::pair<bool, Timestamp *> &lp = object->getLastTimestamp();
             if (lp.first && p.getTimestamp() + frameDuration < *lp.second) {
                 DEBUG_POINT_STDOUT("Punto caducado: " + p.string());
 

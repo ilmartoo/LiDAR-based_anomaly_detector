@@ -70,7 +70,7 @@ class PointMap {
      * @return Devuelve un elemento std::pair con true si existe ultimo timestamp y un puntero al último Timestamp.
      * El puntero es nulo si el primer elemento es false.
      */
-    const std::pair<bool, Timestamp *> getLastTimestamp() const { return lastTimestamp; }
+    const std::pair<bool, Timestamp *> &getLastTimestamp() const { return lastTimestamp; }
 
     /**
      * Devuelve la cola correspondiente al mapa de puntos
