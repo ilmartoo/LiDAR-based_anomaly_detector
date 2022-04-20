@@ -9,9 +9,15 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/build/Debug/anomaly_detection",
+			// "args": [
+			// 	"-b",
+			// 	"default"
+			// ],
 			"args": [
-				"-b",
-				"default"
+				"-f",
+				"data/caja_cerca.lvx",
+				// "-g",
+				// "1000"
 			],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",
