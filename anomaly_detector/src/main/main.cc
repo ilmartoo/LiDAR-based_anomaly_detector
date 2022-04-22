@@ -25,6 +25,7 @@
 #define DEFAULT_BACKGROUND_TIME     500                // Default background time (ms)
 #define DEFAULT_MIN_RELECTIVITY     0.0f               // Default point reflectivity
 #define DEFAULT_BACKGROUND_DISTANCE 0.2f               // Default backgound distance (m)
+#define DEFAULT_ITERATIVE_MODE      false              // Default iterative mode indicator
 
 /* ParsedInput struct */
 struct ParsedInput {
@@ -34,14 +35,14 @@ struct ParsedInput {
           frame_time(DEFAULT_FRAME_TIME),
           background_time(DEFAULT_BACKGROUND_TIME),
           min_reflectivity(DEFAULT_MIN_RELECTIVITY),
-          background_distance(DEFAULT_BACKGROUND_DISTANCE){
-
-          };
+          background_distance(DEFAULT_BACKGROUND_DISTANCE),
+          iterative_mode(DEFAULT_ITERATIVE_MODE){};
 
     bool is_ok;     ///< Variable para comprobar si se ha introducido el input necesario
     int exit_code;  ///< Exit code to return when is_ok is false
 
     bool is_lidar;               ///< Tipo de escanner a usar: true si es mediante lidar
+    bool iterative_mode;         ///< Indicador de ejecución en modo iterativo
     std::string filename;        ///< Nombre del archivo de datos
     std::string broadcast_code;  ///< Codigo de broadcast del sensor lidar
     TimerMode time_mode;         ///< Tipo de métricas a tomar
@@ -72,9 +73,11 @@ int main(int argc, char *argv[]) {
     }
 
     if (pi.is_lidar) {
-        App app(pi.broadcast_code.c_str(), pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity, pi.background_distance);
+        App app(pi.broadcast_code.c_str(), pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity, pi.background_distance,
+                pi.iterative_mode);
     } else {
-        App app(pi.filename, pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity, pi.background_distance);
+        App app(pi.filename, pi.time_mode, pi.frame_time, pi.background_time, pi.min_reflectivity, pi.background_distance,
+                pi.iterative_mode);
     }
 
     return EXIT_SUCCESS;  // Exit
@@ -283,6 +286,13 @@ ParsedInput parseInput(int argc, char *argv[]) {
         }
     }
 
+    /* Modo iterativo */
+    if (parser.optionExists("-i")) {
+        DEBUG_STDOUT("Opción [-i]: Modo iterativo.");
+
+        pi.iterative_mode = true;
+    }
+
     return pi;
 }
 
@@ -290,8 +300,8 @@ ParsedInput parseInput(int argc, char *argv[]) {
 void usage() {
     std::cout << std::endl
               << "Usage:" << std::endl
-              << exec_name << " <-b [broadcast_code]> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]" << std::endl
-              << exec_name << " <-f filename> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance]" << std::endl
+              << exec_name << " <-b broadcast_code> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance] [-i]" << std::endl
+              << exec_name << " <-f filename> [-p duration] [-t mode] [-g time] [-r reflectivity] [-d distance] [-i]" << std::endl
               << exec_name << " <-h | --help>" << std::endl
               << std::endl;
 }
@@ -308,13 +318,14 @@ void help() {
               << "\t                       char   - Characterizator chrono set" << std::endl
               << "\t                       anom   - Anomaly detector chrono set" << std::endl
               << "\t                       all    - All chronos set" << std::endl
-              << "\t -g                Miliseconds during which scanned points will be part of the background. Defaults too "
+              << "\t -g                Miliseconds during which scanned points will be part of the background. Defaults to "
               << DEFAULT_BACKGROUND_TIME << std::endl
               << "\t -r                Minimum reflectivity value points may have not to be discarded. Defaults to "
               << DEFAULT_MIN_RELECTIVITY << std::endl
               << "\t -d                Minimum distance from the background in meters a point must have not to be discarded. "
                  "Defaults to "
               << DEFAULT_BACKGROUND_DISTANCE << std::endl
+              << "\t -i                Activates the iterative execution mode. It is disabled by default." << std::endl
               << "\t -h,--help         Print the program help text" << std::endl
               << std::endl;
 }

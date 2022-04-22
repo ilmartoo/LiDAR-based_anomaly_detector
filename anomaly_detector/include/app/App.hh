@@ -43,7 +43,7 @@ class App {
      * @param backgoundDistance Distancia mínima a la que tiene que estar un punto para no pertenecer al background
      */
     App(const std::string &filename, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity,
-        float backgroundDistance) {
+        float backgroundDistance, bool iterativeMode) {
         this->timerMode = timerMode;  // timerMode
 
         // Obtenemos extensión del archivo
@@ -63,7 +63,15 @@ class App {
         // ad =
 
         this->init();   // Inicializamos componentes
-        this->cli();    // Comenzamos CLI
+        // Modo iterativo
+        if (iterativeMode) {
+            this->cli();  // Comenzamos modo iterativo
+        }
+        // Modo secuencial
+        else {
+            this->start();  // Iniciamos la ejecución
+            this->wait();   // Esperamos a recibir una señal de salida
+        }
         this->close();  // Finalizamos app
     }
 
@@ -77,16 +85,24 @@ class App {
      * @param backgoundDistance Distancia mínima a la que tiene que estar un punto para no pertenecer al background
      */
     App(const char *broadcastCode, TimerMode timerMode, uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity,
-        float backgroundDistance) {
+        float backgroundDistance, bool iterativeMode) {
         this->timerMode = timerMode;  // timerMode
 
         scanner = new ScannerLidar(broadcastCode);                                                           // Creamos escaner
         oc = new ObjectCharacterizator(frameDuration, backgroundTime, minReflectivity, backgroundDistance);  // Creamos caracterizador
         // ad =
 
-        this->init();  // Iniciamos app
-        this->cli();   // Esperamos a recibir una señal de salida
-        this->close();   // Finalizamos app
+        this->init();  // Inicializamos app
+        // Modo iterativo
+        if (iterativeMode) {
+            this->cli();  // Comenzamos modo iterativo
+        }
+        // Modo secuencial
+        else {
+            this->start();  // Iniciamos la ejecución
+            this->wait();   // Esperamos a recibir una señal de salida
+        }
+        this->close();  // Finalizamos app
     }
 
     /**
@@ -105,12 +121,17 @@ class App {
     void init();
 
     /**
-     * Inicia la aplicación
+     * Inicia la aplicación secuencialmente
      */
     void start();
 
     /**
-     * Espera la llegada de una señal SIGINT
+     * Espera la llegada de un comando de salida
+     */
+    void wait();
+
+    /**
+     * Command line interface
      */
     void cli();
 

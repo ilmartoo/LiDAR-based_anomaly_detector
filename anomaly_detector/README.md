@@ -41,7 +41,7 @@ If you want to execute the created tests, do:
 
 ### Project
 
-To build de project execute the following from the **`anomaly_detector/` folder**: 
+To build de project execute the following from the **`anomaly_detector/` folder**:
 
 ```bash
 # Build the project

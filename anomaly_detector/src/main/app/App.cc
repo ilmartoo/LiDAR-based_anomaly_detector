@@ -85,6 +85,14 @@ void App::cli() {
     } while (!exit);  // Esperamos a recibir el comando de finalización
 }
 
+void App::wait() {
+    std::string input;
+    do {
+        std::cin >> input;  // Esperamos señal de salida
+
+    } while (input.compare("q") != 0);
+}
+
 void App::close() {
     scanner->stop();  // Finalizamos el escaner
     oc->stop();       // Finalizamos el caracterizador
