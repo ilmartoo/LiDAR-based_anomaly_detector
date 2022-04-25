@@ -1,1 +1,0 @@
-Temporal file to include `data/` folder into the git repository
