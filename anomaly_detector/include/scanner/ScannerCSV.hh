@@ -16,7 +16,7 @@
 #include <functional>
 #include <thread>
 
-#include "scanner/IScanner.hh"
+#include "scanner/IFileScanner.hh"
 #include "models/Point.hh"
 
 #include "logging/debug.hh"
@@ -25,7 +25,7 @@
  * Implementación de la interfaz IScanner para la lectura de puntos de archivos CSV obtenidos del
  * programa propietario Livox Viewer
  */
-class ScannerCSV : public IScanner {
+class ScannerCSV : public IFileScanner {
    public:
     /**
      * Constructor del objeto ScannerCSV
@@ -69,6 +69,11 @@ class ScannerCSV : public IScanner {
      */
     void stop();
 
+    /**
+     * Non-busy wait hasta la finalización del escaner
+     */
+    void wait();
+
    private:
     const std::string &filename;  ///< Nombre del archivo de datos
     std::ifstream infile;         ///< Stream del archivo de datos
@@ -84,4 +89,4 @@ class ScannerCSV : public IScanner {
     void readData();
 };
 
-#endif  //SCANNERCSV_CLASS_H
+#endif  // SCANNERCSV_CLASS_H

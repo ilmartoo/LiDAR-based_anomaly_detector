@@ -75,6 +75,17 @@ void ScannerCSV::stop() {
     LOG_INFO("Finalizado el escaneo de puntos.");
 }
 
+// Non-busy wait hasta la finalización del escaner
+void ScannerCSV::wait() {
+    DEBUG_STDOUT("Esperamos hasta la finalización del escaneo de puntos.");
+
+    executionThread->join();  // Realizamos unión del hilo de lectura
+
+    infile.close();  // Cerramos stream del archivo
+
+    LOG_INFO("Finalizado el escaneo de puntos.");
+}
+
 // Lectura de puntos del archivo
 void ScannerCSV::readData() {
     std::string line;     // String de la linea
@@ -133,4 +144,6 @@ void ScannerCSV::readData() {
                                  static_cast<uint32_t>(std::stoi(data[3])), static_cast<uint32_t>(std::stoi(data[4]))));
         }
     }
+
+    exit = true;  // Finalización
 }

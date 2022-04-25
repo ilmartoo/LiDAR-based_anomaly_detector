@@ -87,6 +87,19 @@ void ScannerLVX::stop() {
     LOG_INFO("Finalizado el escaneo de puntos.");
 }
 
+// Non-busy wait hasta la finalización del escaner
+void ScannerLVX::wait() {
+    DEBUG_STDOUT("Esperamos hasta la finalización del escaneo de puntos.");
+
+    executionThread->join();  // Realizamos unión del hilo de lectura
+
+    lvx_file.CloseLvxFile();  // Cerramos stream del archivo
+
+    delete packets_of_frame.packet;  // Array de paquetes
+
+    LOG_INFO("Finalizado el escaneo de puntos.");
+}
+
 // Lectura de puntos del archivo
 void ScannerLVX::readData() {
     int r = livox_ros::kLvxFileOk;  // Estado del archivo
@@ -136,4 +149,6 @@ void ScannerLVX::readData() {
 
         r = lvx_file.GetPacketsOfFrame(&packets_of_frame);  // Recuperamos paquetes del archivo
     }
+
+    exit = true;  // Finalización
 }

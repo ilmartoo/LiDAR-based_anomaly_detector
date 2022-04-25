@@ -1,34 +1,34 @@
 #include "armadillo"
 
-#include "models/Point.hh"
+#include "FloatPoint.hh"
 
-Point computeCentroid(const std::vector<Point *> &points) {
+FloatPoint computeCentroid(const std::vector<FloatPoint> &points) {
   double x{}, y{}, z{};
   size_t numPoints = points.size();
 
   for (const auto &p : points) {
-    x += p->getX();
-    y += p->getY();
-    z += p->getZ();
+    x += p.getX();
+    y += p.getY();
+    z += p.getZ();
   }
 
   x /= numPoints;
   y /= numPoints;
   z /= numPoints;
 
-  return Point(x, y, z);
+  return FloatPoint(x, y, z);
 }
 
-void computeSVD(const std::vector<Point *> &points, arma::mat &U, arma::vec &s,
+void computeSVD(const std::vector<FloatPoint> &points, arma::mat &U, arma::vec &s,
                 arma::mat &V) {
-  mat P(3, points.size());
+  arma::mat P(3, points.size());
 
   size_t idx = 0;
 
   for (const auto &p : points) {
-    P(0, idx) = p->getX();
-    P(1, idx) = p->getY();
-    P(2, idx) = p->getZ();
+    P(0, idx) = p.getX();
+    P(1, idx) = p.getY();
+    P(2, idx) = p.getZ();
     ++idx;
   }
 

@@ -1,0 +1,32 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+			{
+				"name": "build and debug project",
+				"type": "cppdbg",
+				"request": "launch",
+				"program": "${workspaceFolder}/build/Debug/anomaly_detection",
+				"args": [
+					"-f",
+					"data/esfera_cerca.lvx"
+				],
+				"stopAtEntry": false,
+				"cwd": "${workspaceFolder}",
+				"environment": [],
+				"externalConsole": false, //set to true to see output in cmd instead
+				"MIMode": "gdb",
+				"miDebuggerPath": "gdb",
+				"setupCommands": [
+					{
+						"description": "Enable pretty-printing for gdb",
+						"text": "-enable-pretty-printing",
+						"ignoreFailures": true
+					}
+				],
+				"preLaunchTask": "build project"
+			}
+	]
+}
