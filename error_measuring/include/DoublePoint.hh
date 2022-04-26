@@ -1,5 +1,5 @@
 /**
- * @file FloatPoint.hh
+ * @file DoublePoint.hh
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 25/04/2022
  *
@@ -7,18 +7,18 @@
  *
  */
 
-#ifndef FLOATPOINT_CLASS_H
-#define FLOATPOINT_CLASS_H
+#ifndef DOUBLEPOINT_CLASS_H
+#define DOUBLEPOINT_CLASS_H
 
 #include "models/Point.hh"
 
-class FloatPoint {
+class DoublePoint {
    public:
     /**
      * Constructor a partir de un objeto Point
      * @param p Punto de una nube de puntos a usar como base
      */
-    FloatPoint(const Point &p) : x(p.getX()), y(p.getY()), z(p.getZ()){};
+    DoublePoint(const Point &p) : coords{(double)p.getX(), (double)p.getY(), (double)p.getZ()}{};
 
     /**
      * Constructor a partir de unas coordenadas de un punto en un espacio tridimensional
@@ -26,26 +26,35 @@ class FloatPoint {
      * @param y Coordenada y
      * @param z Coordenada z
      */
-    FloatPoint(float x, float y, float z) : x(x), y(y), z(z){};
+    DoublePoint(double x, double y, double z) : coords{x, y, z}{};
 
     /**
      * Devuelve la localización en el eje X del punto
      * @return Coordenada x
      */
-    const float getX() const { return x; }
+    const double getX() const { return coords[0]; }
+
     /**
      * Devuelve la localización en el eje Y del punto
      * @return Coordenada y
      */
-    const float getY() const { return y; }
+    const double getY() const { return coords[1]; }
+
     /**
      * Devuelve la localización en el eje Z del punto
      * @return Coordenada z
      */
-    const float getZ() const { return z; }
+    const double getZ() const { return coords[2]; }
+
+    /**
+     * Obtiene el valor de la dimensión especificada
+     * @param i Dimensión del valor a recuperar
+     * @return Valor de la dimensión especificada o 0 si sobrepasa la tercera dimensión
+     */
+    const double operator[](unsigned int i) const { return i > 2 ? 0 : coords[i]; }
 
    private:
-    float x, y, z;  ///< Coordenadas cartesianas en metros
+    double coords[3];  ///< Coordenadas cartesianas
 };
 
-#endif  // FLOATPOINT_CLASS_H
+#endif  // DOUBLEPOINT_CLASS_H
