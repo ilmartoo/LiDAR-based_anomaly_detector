@@ -20,7 +20,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "-Wall -g3")
 
 # Gather all source files
-file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/main/*.cc)
+file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/*.cc)
 
 # Include directories
 include_directories(
