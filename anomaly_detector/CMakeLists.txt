@@ -7,7 +7,7 @@ project(anomaly_detection)
 option(DEBUG_POINTS "Opción de debugging para imprimir los puntos escaneados" OFF)
 
 # Release flags
-set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG") 
+set(CMAKE_CXX_FLAGS_RELEASE "-O1 -DNDEBUG") 
 
 # Debug flags
 if(DEBUG_SCANNED_POINTS)
