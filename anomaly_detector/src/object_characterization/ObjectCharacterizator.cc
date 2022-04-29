@@ -102,23 +102,17 @@ void ObjectCharacterizator::stop() {
     exit = true;              // Comunicamos al hilo que finalice la ejecución
     executionThread->join();  // Realizamos unión del hilo de gestión de puntos
 
-    ////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////
-    // std::ofstream os("tmp/object.csv", std::ios::out);
-    // while (!object->empty()) {
-    //     os << object->front().csv_string() << std::endl;
-    //     object->pop();
-    // }
-    // os.close();
-
-    // os.open("tmp/background.csv", std::ios::out);
-    // for (auto &p : *background)
-    //     os << p.csv_string() << std::endl;
-    // os.close();
-    ////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////
+    DEBUG_CODE(
+        std::ofstream os("tmp/object.csv", std::ios::out);
+        while (!object->empty()) {
+            os << object->front().csv_string() << td::endl;
+            object->pop();
+        }
+        os.close();
+        os.open("tmp/background.csv", std::ios::out);
+        for (auto &p : *background) os << p.csv_string() << std::endl;
+        os.close();
+    )
 
     LOG_INFO("Finalizada caracterización.");
 }
