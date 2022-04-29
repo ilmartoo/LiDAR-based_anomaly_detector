@@ -1,1 +1,0 @@
-Temporal file to include `include/` folder into the git repository

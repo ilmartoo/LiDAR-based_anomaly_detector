@@ -10,6 +10,6 @@ Science degree at University of Santiago de Compostela._
 
 ## Projects
 
-The main project of this repository is located in the `anomaly_detector/` folder. This project uses the obtained LiDAR data to characterize objects and detect any anomalies they may have. [[link](anomaly_detector/)]
+The main project of this repository is the **Anomaly Detector**. This project uses the obtained LiDAR data to characterize objects and detect any anomalies they may have. [[Project README.md](src/anomaly_detector/README.md)]
 
-The `error_measuring/` project's goal is to measure the cuadratic error a LiDAR dataset may have using plane aproximations. [[link](error_measuring/)]
+The **Error Measuring** project's goal is to measure the cuadratic error a LiDAR dataset may have using plane aproximations. [[Project README.md](src/error_measuring/README.md)]

@@ -1,13 +1,9 @@
-# User defined exclusions
-schemas/
+# Excluded folders
 build/
 tmp/
+lib/
 
-# Libraries' binaries
-/anomaly_detector/lib/*/lib/
-/anomaly_detector/lib/*/build/
-
-# VSCode
+# vscode files
 *.code-workspace
 
 # Prerequisites
