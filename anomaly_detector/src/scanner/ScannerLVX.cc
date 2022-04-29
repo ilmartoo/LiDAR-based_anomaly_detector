@@ -136,4 +136,7 @@ void ScannerLVX::readData() {
 
         r = lvx_file.GetPacketsOfFrame(&packets_of_frame);  // Recuperamos paquetes del archivo
     }
+
+    DEBUG_STDOUT("Se ha terminado el escaneo del archivo de puntos");
+    exit = true;
 }

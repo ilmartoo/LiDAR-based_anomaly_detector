@@ -23,7 +23,7 @@
 
 // Inicialización del escaner
 bool ScannerCSV::init() {
-    DEBUG_STDOUT("Inicializando el escaner de archivos csv.");  
+    DEBUG_STDOUT("Inicializando el escaner de archivos csv.");
 
     // Abrimos stream del archivo
     infile.open(filename, std::ifstream::in);
@@ -57,7 +57,7 @@ bool ScannerCSV::start() {
 // Establece la función especificada como función de callback a la que se llamará cada vez que
 // se escanee un nuevo punto
 bool ScannerCSV::setCallback(const std::function<void(const Point &p)> func) {
-    DEBUG_STDOUT("Estableciendo el callback.");  
+    DEBUG_STDOUT("Estableciendo el callback.");
 
     callback = func;
     return ((bool)callback);
@@ -133,4 +133,7 @@ void ScannerCSV::readData() {
                                  static_cast<uint32_t>(std::stoi(data[3])), static_cast<uint32_t>(std::stoi(data[4]))));
         }
     }
+
+    DEBUG_STDOUT("Se ha terminado el escaneo del archivo de puntos");
+    exit = true;
 }
