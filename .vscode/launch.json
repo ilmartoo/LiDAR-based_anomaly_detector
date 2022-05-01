@@ -5,10 +5,10 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Debug anomaly_detector",
+			"name": "Debug anomaly_detector DEBUG",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/Debug/anomaly_detection",
+			"program": "${workspaceFolder}/build/anomaly_detection/anomaly_detector",
 			// "args": [
 			// 	"-b",
 			// 	"default"
@@ -36,7 +36,41 @@
 					"ignoreFailures": true
 				}
 			],
-			"preLaunchTask": "CMake compile"
+			"preLaunchTask": "CMake compile DEBUG"
+		},
+		{
+			"name": "Debug anomaly_detector RELEASE",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/anomaly_detection/anomaly_detector",
+			// "args": [
+			// 	"-b",
+			// 	"default"
+			// ],
+			"args": [
+				"-f",
+				"data/caja_cerca.lvx",
+				// "-g",
+				// "1000"
+			],
+			"stopAtEntry": false,
+			"cwd": "${workspaceFolder}",
+			"environment": [],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Habilitar la impresión con sangría para gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Establecer tipo de desensamblado en Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
+			],
+			"preLaunchTask": "CMake compile RELEASE"
 		}
 	]
 }

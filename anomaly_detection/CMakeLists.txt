@@ -8,13 +8,12 @@ option(CMAKE_BUILD_TYPE "Tipo de build" Release)
 option(DEBUG_POINTS "Opción de debugging para imprimir los puntos escaneados" OFF)
 
 # Release flags
-set(CMAKE_CXX_FLAGS_RELEASE "-O1 -DNDEBUG") 
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG") 
 
 # Debug flags
-if(DEBUG_SCANNED_POINTS)
-set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG -DDEBUG_POINTS")
-else()
 set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG")
+if(DEBUG_SCANNED_POINTS)
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_POINTS")
 endif()
 
 set(CMAKE_CXX_STANDARD 11)
@@ -25,7 +24,7 @@ set(PROJECT_ROOT "${PROJECT_SOURCE_DIR}/..")
 
 # Gather all source files
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS
-  ${PROJECT_ROOT}/anomaly_detector/src/*.cc
+  ${PROJECT_ROOT}/anomaly_detection/src/*.cc
 )
 
 # Include directories

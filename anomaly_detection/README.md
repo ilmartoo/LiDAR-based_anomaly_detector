@@ -34,7 +34,7 @@ To setup the necesary libraries you can use the script `setup_libraries.sh` from
 # Uncompress modified libraries from zip
 unzip libraries.zip –d /lib
 # Setup needed libraries
-./anomaly_detector/setup_libraries.sh
+./anomaly_detection/setup_libraries.sh
 ```
 
 This script will create and install the needed libraries into their corresponding `lib/` subfolder, keeping the libraries from being installed into the `/usr/local/`.
@@ -44,27 +44,27 @@ To build de project execute the following from the **project root folder**:
 
 ```bash
 # Build the project
-cmake -S anomaly_detector -B build/anomaly_detector
-cmake --build build/anomaly_detector
+cmake -S anomaly_detection -B build/anomaly_detection
+cmake --build build/anomaly_detection
 ```
 
 To build the project with debug output build it with `CMAKE_BUILD_TYPE` option set to `Debug`:
 
 ```bash
 # Build the project with debug output
-cmake -S anomaly_detector -B build/anomaly_detector -D CMAKE_BUILD_TYPE=Debug
-cmake --build build/anomaly_detector
+cmake -S anomaly_detection -B build/anomaly_detection -D CMAKE_BUILD_TYPE=Debug
+cmake --build build/anomaly_detection
 ```
 
 If you also would like to have debug info of every scanned point add the `DEBUG_SCANNED_POINTS=ON` option:
 
 ```bash
 # Build the project with debug output with point debugging
-cmake -S anomaly_detector -B build/anomaly_detector -D CMAKE_BUILD_TYPE=Debug -D DEBUG_SCANNED_POINTS=ON
-cmake --build build/anomaly_detector
+cmake -S anomaly_detection -B build/anomaly_detection -D CMAKE_BUILD_TYPE=Debug -D DEBUG_SCANNED_POINTS=ON
+cmake --build build/anomaly_detection
 ```
 
-This will create the executable of the project into `build/anomaly_detector/`.
+This will create the executable of the project into `build/anomaly_detection/`.
 
 ## Execution and parameters
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Project root directory
-root="$(dirname $0)/../.."
+root="$(dirname $0)/.."
 
 # Crea la librería sdk_core
 if [ ! -r "${root}//lib/sdk_core/lib/liblivox_sdk_static.a" ]; then

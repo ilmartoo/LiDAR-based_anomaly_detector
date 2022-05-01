@@ -110,13 +110,17 @@ void ObjectCharacterizator::stop() {
         }
         os.close();
         os.open("tmp/background.csv", std::ios::out);
-        for (auto &p : *background) os << p.csv_string() << std::endl;
+        for (auto &p : *background) {
+            os << p.csv_string() << std::endl;
+        }
         os.close();
     )
 
     LOG_INFO("Finalizada caracterización.");
 }
 
+#pragma GCC push_options
+#pragma GCC optimize("O1")
 // Guarda en background y elimina los puntos del objeto fuera del frame
 void ObjectCharacterizator::managePoints() {
     while (!exit) {
@@ -133,6 +137,7 @@ void ObjectCharacterizator::managePoints() {
         }
     }
 }
+#pragma GCC pop_options
 
 // Comprueba si un punto pertenece al background
 bool ObjectCharacterizator::isBackground(const Point &p) const {
@@ -146,4 +151,4 @@ bool ObjectCharacterizator::isBackground(const Point &p) const {
         }
     }
     return false;  // No pertenece al background
-};
+}

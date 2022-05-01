@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Project root directory
-root="$(dirname $0)/../.."
+root="$(dirname $0)/.."
 
 # Librerias sdk_core y read_lvx
 ${root}/src/anomaly_detector/setup_libraries.sh
 
-# Instala las librerías OpenBLAS y LAPACK
+# Instala la librería OpenBLAS
 echo "int main(){}" | g++ -o /dev/null -x c - -lopenblas 2>/dev/null
 if [ $? -eq 1 ]; then
     sudo apt-get install libopenblas-dev
