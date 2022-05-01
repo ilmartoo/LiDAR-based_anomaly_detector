@@ -332,8 +332,8 @@ void InputParams::usage() const {
 // Command line help
 void InputParams::help() const {
     this->usage();  // Imprimimos usage
-    std::cout << "\t -b                Broadcast code of the lidar sensor composed of " << kBroadcastCodeSize
-              << " digits maximum. With 'default' as value it defaults to " << DEFAULT_BROADCAST_CODE << std::endl
+    std::cout << "\t -b                Broadcast code of the lidar sensor composed of " << kBroadcastCodeSize - 1
+              << " symbols maximum. With 'default' as value it defaults to " << DEFAULT_BROADCAST_CODE << std::endl
               << "\t -f                File with the 3D points to get the data from" << std::endl
               << "\t -t                Miliseconds to use as frame duration time. Defaults to " << DEFAULT_FRAME_TIME << std::endl
               << "\t -c                Type of chronometer to set up and measure time from. Defaults to notime" << std::endl

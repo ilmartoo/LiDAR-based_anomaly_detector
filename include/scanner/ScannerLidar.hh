@@ -36,7 +36,7 @@ typedef enum {
  * Datos del sensor LiDAR
  */
 struct DeviceItem {
-    DeviceItem(const char broadcast_code[kBroadcastCodeSize]) { strncpy(info.broadcast_code, broadcast_code, kBroadcastCodeSize); }
+    DeviceItem(const char broadcast_code[kBroadcastCodeSize]) { strncpy(info.broadcast_code, broadcast_code, kBroadcastCodeSize - 1); }
 
     uint8_t handle;            ///< Handler
     DeviceState device_state;  ///< Estado del sensor
