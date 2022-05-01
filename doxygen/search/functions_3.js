@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['front_135',['front',['../classPointMap.html#afa4e235729976f248698adf0e91eac4b',1,'PointMap']]]
+  ['empty_163',['empty',['../classPointMap.html#ab936efc0582c5fdc41f6638632100f8b',1,'PointMap']]]
 ];

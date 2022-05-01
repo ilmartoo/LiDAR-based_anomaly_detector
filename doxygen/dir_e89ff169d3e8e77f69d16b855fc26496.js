@@ -1,5 +1,8 @@
 var dir_e89ff169d3e8e77f69d16b855fc26496 =
 [
+    [ "IFileScanner.hh", "IFileScanner_8hh.html", [
+      [ "IFileScanner", "classIFileScanner.html", "classIFileScanner" ]
+    ] ],
     [ "IScanner.hh", "IScanner_8hh.html", [
       [ "IScanner", "classIScanner.html", "classIScanner" ]
     ] ],

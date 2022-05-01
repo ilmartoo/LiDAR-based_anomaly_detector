@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['scannercsv_2ehh_126',['ScannerCSV.hh',['../ScannerCSV_8hh.html',1,'']]],
-  ['scannerlidar_2ehh_127',['ScannerLidar.hh',['../ScannerLidar_8hh.html',1,'']]],
-  ['scannerlvx_2ehh_128',['ScannerLVX.hh',['../ScannerLVX_8hh.html',1,'']]],
-  ['string_5fformat_2eh_129',['string_format.h',['../string__format_8h.html',1,'']]]
+  ['point_2ehh_152',['Point.hh',['../Point_8hh.html',1,'']]],
+  ['pointmap_2ehh_153',['PointMap.hh',['../PointMap_8hh.html',1,'']]]
 ];

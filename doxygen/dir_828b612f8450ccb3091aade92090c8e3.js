@@ -3,6 +3,10 @@ var dir_828b612f8450ccb3091aade92090c8e3 =
     [ "CharacteristicsVector.hh", "CharacteristicsVector_8hh.html", [
       [ "CharacteristicsVector", "classCharacteristicsVector.html", null ]
     ] ],
+    [ "Command.hh", "Command_8hh.html", "Command_8hh" ],
+    [ "DoublePoint.hh", "DoublePoint_8hh.html", [
+      [ "DoublePoint", "classDoublePoint.html", "classDoublePoint" ]
+    ] ],
     [ "Model.hh", "Model_8hh.html", [
       [ "Model", "classModel.html", "classModel" ]
     ] ],

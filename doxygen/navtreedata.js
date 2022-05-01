@@ -25,7 +25,7 @@ var NAVTREE =
   [ "Lidar-based Anomaly Detector", "index.html", [
     [ "Anomaly Detector", "index.html", [
       [ "Prerequisites", "index.html#autotoc_md1", null ],
-      [ "Testing enviroment", "index.html#autotoc_md2", null ],
+      [ "Developing enviroment", "index.html#autotoc_md2", null ],
       [ "Setup", "index.html#autotoc_md3", [
         [ "Libraries", "index.html#autotoc_md4", null ],
         [ "Project", "index.html#autotoc_md5", null ]
@@ -57,7 +57,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "App_8hh.html",
-"string__format_8h.html#aea9690ec7583bb234653d1de0754a699"
+"string__format_8h.html#a8d23feea868a983c8c2b661e1e16972f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

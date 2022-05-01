@@ -90,16 +90,16 @@ $(document).ready(function(){initNavTree('classApp.html',''); initResizable(); }
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac6f8e5b836053f639f078533bccee861"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classApp.html#ac6f8e5b836053f639f078533bccee861">App</a> (const std::string &amp;filename, <a class="el" href="App_8hh.html#aed9a35f11d8cfb1d9946754d01e46ee5">TimerMode</a> timerMode, uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity, float backgroundDistance)</td></tr>
-<tr class="separator:ac6f8e5b836053f639f078533bccee861"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac775d9b156a218d89406f91074b6daf5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classApp.html#ac775d9b156a218d89406f91074b6daf5">App</a> (const char *broadcastCode, <a class="el" href="App_8hh.html#aed9a35f11d8cfb1d9946754d01e46ee5">TimerMode</a> timerMode, uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity, float backgroundDistance)</td></tr>
-<tr class="separator:ac775d9b156a218d89406f91074b6daf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18ac8ab0f01ef05bda3dbd7dc1b889e2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classApp.html#a18ac8ab0f01ef05bda3dbd7dc1b889e2">App</a> (const std::string &amp;filename, <a class="el" href="App_8hh.html#aed9a35f11d8cfb1d9946754d01e46ee5">TimerMode</a> timerMode, uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity, float backgroundDistance, bool iterativeMode)</td></tr>
+<tr class="separator:a18ac8ab0f01ef05bda3dbd7dc1b889e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa529c88bbbf206ed195360a0e98a1bf3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classApp.html#aa529c88bbbf206ed195360a0e98a1bf3">App</a> (const char *broadcastCode, <a class="el" href="App_8hh.html#aed9a35f11d8cfb1d9946754d01e46ee5">TimerMode</a> timerMode, uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity, float backgroundDistance, bool iterativeMode)</td></tr>
+<tr class="separator:aa529c88bbbf206ed195360a0e98a1bf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34f1f253b1cef5f4ecbac66eaf6964ec"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classApp.html#a34f1f253b1cef5f4ecbac66eaf6964ec">~App</a> ()</td></tr>
 <tr class="separator:a34f1f253b1cef5f4ecbac66eaf6964ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac6f8e5b836053f639f078533bccee861"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6f8e5b836053f639f078533bccee861">&#9670;&nbsp;</a></span>App() <span class="overload">[1/2]</span></h2>
+<a id="a18ac8ab0f01ef05bda3dbd7dc1b889e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18ac8ab0f01ef05bda3dbd7dc1b889e2">&#9670;&nbsp;</a></span>App() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -141,7 +141,13 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>backgroundDistance</em>&#160;</td>
+          <td class="paramname"><em>backgroundDistance</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>iterativeMode</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -169,8 +175,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ac775d9b156a218d89406f91074b6daf5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac775d9b156a218d89406f91074b6daf5">&#9670;&nbsp;</a></span>App() <span class="overload">[2/2]</span></h2>
+<a id="aa529c88bbbf206ed195360a0e98a1bf3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa529c88bbbf206ed195360a0e98a1bf3">&#9670;&nbsp;</a></span>App() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -212,7 +218,13 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>backgroundDistance</em>&#160;</td>
+          <td class="paramname"><em>backgroundDistance</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>iterativeMode</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

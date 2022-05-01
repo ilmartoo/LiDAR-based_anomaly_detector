@@ -5,5 +5,6 @@ var classScannerCSV =
     [ "init", "classScannerCSV.html#ad772a78f5d40937335b0090c7f429164", null ],
     [ "setCallback", "classScannerCSV.html#ab44ba333f8dfcc5fde3671a83c06db56", null ],
     [ "start", "classScannerCSV.html#a715cd17f0ce6ec215ee7a327842660f6", null ],
-    [ "stop", "classScannerCSV.html#a155dcac1831680fddb113f6dc5731705", null ]
+    [ "stop", "classScannerCSV.html#a155dcac1831680fddb113f6dc5731705", null ],
+    [ "wait", "classScannerCSV.html#ac3acc3e807814da4e400851a06787e38", null ]
 ];

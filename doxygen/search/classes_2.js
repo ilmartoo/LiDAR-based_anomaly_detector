@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['deviceitem_101',['DeviceItem',['../structDeviceItem.html',1,'']]]
+  ['deviceitem_124',['DeviceItem',['../structDeviceItem.html',1,'']]],
+  ['doublepoint_125',['DoublePoint',['../classDoublePoint.html',1,'']]]
 ];

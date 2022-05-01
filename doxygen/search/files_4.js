@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['model_2ehh_121',['Model.hh',['../Model_8hh.html',1,'']]],
-  ['modelmanager_2ehh_122',['ModelManager.hh',['../ModelManager_8hh.html',1,'']]]
+  ['logging_2ehh_148',['logging.hh',['../logging_8hh.html',1,'']]]
 ];

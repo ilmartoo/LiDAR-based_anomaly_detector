@@ -89,37 +89,46 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <p>_...in-depth explanation to come..._</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
 Prerequisites</h1>
-<p>To compile the project you will need:</p><ul>
-<li><code>g++</code> version <code>10.3.0</code> or higher [^1]</li>
+<p>To compile the project you will need:</p>
+<ul>
+<li><code>g++</code> version <code>9.4.0</code> or higher</li>
 <li><code>cmake</code> version <code>14.0</code> or higher</li>
 </ul>
-<p>[^1]: May work with older versions, but has not been tested.</p>
+<p>We also need this libraries for the project to work:</p>
+<ul>
+<li><a href="https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0">livox-sdk 2.3.0</a></li>
+<li><a href="https://github.com/michalpelka/read_lvx">read_lvx</a></li>
+</ul>
+<p><em>Note: <code>read_lvx</code> repository do not have a CMakeList.txt to generate a library, but an executable, so it needs to be created.</em></p>
+<p>In the <code>libraries.zip</code> are located <b>minimalist versions of the needed libraries with some modifications</b> so they can installed without having to modify the libraries any further.</p>
 <h1><a class="anchor" id="autotoc_md2"></a>
-Testing enviroment</h1>
-<p>The project was developed and tested in <code>Ubuntu 21.04</code> [^2].</p>
-<p>[^2]: Should work with almost every GNU/Linux distribution. Feel free to test it yourself ;)</p>
+Developing enviroment</h1>
+<p>The project was developed and tested in <code>Ubuntu 20.04.4</code> and <code>Ubuntu 21.04</code>.</p>
 <h1><a class="anchor" id="autotoc_md3"></a>
 Setup</h1>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Libraries</h2>
-<p>To setup the necesary libraries you can use the script <code>setup_libraries.sh</code> [^3] from the <b>root folder</b> just like so: </p><div class="fragment"><div class="line"># Setup needed libraries</div>
-<div class="line">./setup_libraries.sh</div>
-</div><!-- fragment --><p>If you want to execute the created tests, do: </p><div class="fragment"><div class="line"># Setup needed libraries + test libraries</div>
-<div class="line">./setup_libraries.sh -t</div>
-</div><!-- fragment --><p>[^3]: This script will create and install the libraries into their corresponding <code>lib/</code> subfolder, keeping the libraries from being installed into the <code>/usr/local/</code> folder and forgotten no long after (just like we always do).</p>
+<p>To setup the necesary libraries you can use the script <code>setup_libraries.sh</code> from the <b>project root folder</b>:</p>
+<div class="fragment"><div class="line"># Uncompress modified libraries from zip</div>
+<div class="line">unzip libraries.zip –d /lib</div>
+<div class="line"># Setup needed libraries</div>
+<div class="line">./anomaly_detector/setup_libraries.sh</div>
+</div><!-- fragment --><p>This script will create and install the needed libraries into their corresponding <code>lib/</code> subfolder, keeping the libraries from being installed into the <code>/usr/local/</code>. </p>
 <h2><a class="anchor" id="autotoc_md5"></a>
 Project</h2>
-<p>To build de project execute the following from the **<code>anomaly_detector/</code> folder**: </p><div class="fragment"><div class="line"># Build the project</div>
-<div class="line">cmake -S . -B build/Release -D CMAKE_BUILD_TYPE=Release</div>
-<div class="line">cmake --build build/Release</div>
-</div><!-- fragment --><p>To build the project with debug output execute the following from the **<code>anomaly_detector/</code> folder**: </p><div class="fragment"><div class="line"># Build the project with debug output</div>
-<div class="line">cmake -S . -B build/Debug -D CMAKE_BUILD_TYPE=Debug</div>
-<div class="line">cmake --build build/Debug</div>
-</div><!-- fragment --><p>If you would like to have debug info of every scanned point, execute the following instead:</p>
+<p>To build de project execute the following from the <b>project root folder</b>:</p>
+<div class="fragment"><div class="line"># Build the project</div>
+<div class="line">cmake -S anomaly_detector -B build/anomaly_detector</div>
+<div class="line">cmake --build build/anomaly_detector</div>
+</div><!-- fragment --><p>To build the project with debug output build it with <code>CMAKE_BUILD_TYPE</code> option set to <code>Debug</code>:</p>
+<div class="fragment"><div class="line"># Build the project with debug output</div>
+<div class="line">cmake -S anomaly_detector -B build/anomaly_detector -D CMAKE_BUILD_TYPE=Debug</div>
+<div class="line">cmake --build build/anomaly_detector</div>
+</div><!-- fragment --><p>If you also would like to have debug info of every scanned point add the <code>DEBUG_SCANNED_POINTS=ON</code> option:</p>
 <div class="fragment"><div class="line"># Build the project with debug output with point debugging</div>
-<div class="line">cmake -S . -B build/Debug -D CMAKE_BUILD_TYPE=Debug -D DEBUG_POINTS=ON</div>
-<div class="line">cmake --build build/Debug</div>
-</div><!-- fragment --><p>This will create the executable of the project into the corresponding <code>build/&lt;cmake_build_type&gt;/</code> subfolder.</p>
+<div class="line">cmake -S anomaly_detector -B build/anomaly_detector -D CMAKE_BUILD_TYPE=Debug -D DEBUG_SCANNED_POINTS=ON</div>
+<div class="line">cmake --build build/anomaly_detector</div>
+</div><!-- fragment --><p>This will create the executable of the project into <code>build/anomaly_detector/</code>.</p>
 <h1><a class="anchor" id="autotoc_md6"></a>
 Execution and parameters</h1>
 <p>_...comming soon..._ </p>

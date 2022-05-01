@@ -112,13 +112,18 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a28889a777963d4ffed78ca021df93dcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7756ff50b5eebcee94f6b2d57849d792"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScannerLVX.html#a7756ff50b5eebcee94f6b2d57849d792">setCallback</a> (const std::function&lt; void(const <a class="el" href="classPoint.html">Point</a> &amp;p)&gt; func)</td></tr>
 <tr class="separator:a7756ff50b5eebcee94f6b2d57849d792"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89723af0b3f48f1a8c02c9d5280e67c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScannerLVX.html#a89723af0b3f48f1a8c02c9d5280e67c1">wait</a> ()</td></tr>
+<tr class="separator:a89723af0b3f48f1a8c02c9d5280e67c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abeb7a0372e79ee042a84a09eda7e167a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScannerLVX.html#abeb7a0372e79ee042a84a09eda7e167a">stop</a> ()</td></tr>
 <tr class="separator:abeb7a0372e79ee042a84a09eda7e167a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classIFileScanner"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classIFileScanner')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classIFileScanner.html">IFileScanner</a></td></tr>
+<tr class="memitem:aa16d8a20d2b8d4e6d05dbec3d8b3e11a inherit pub_methods_classIFileScanner"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIFileScanner.html#aa16d8a20d2b8d4e6d05dbec3d8b3e11a">~IFileScanner</a> ()</td></tr>
+<tr class="separator:aa16d8a20d2b8d4e6d05dbec3d8b3e11a inherit pub_methods_classIFileScanner"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a963647f9d4dd5fb93d093e6f7c502f70 inherit pub_methods_classIFileScanner"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIFileScanner.html#a963647f9d4dd5fb93d093e6f7c502f70">setCallback</a> (std::function&lt; void(const <a class="el" href="classPoint.html">Point</a> &amp;p)&gt; func)=0</td></tr>
+<tr class="separator:a963647f9d4dd5fb93d093e6f7c502f70 inherit pub_methods_classIFileScanner"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classIScanner"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classIScanner')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classIScanner.html">IScanner</a></td></tr>
 <tr class="memitem:a45a7bb2da3646ceac41f910f7a4e6e6a inherit pub_methods_classIScanner"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIScanner.html#a45a7bb2da3646ceac41f910f7a4e6e6a">~IScanner</a> ()</td></tr>
 <tr class="separator:a45a7bb2da3646ceac41f910f7a4e6e6a inherit pub_methods_classIScanner"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2711cea46a3c0335c57df7d852569a7a inherit pub_methods_classIScanner"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIScanner.html#a2711cea46a3c0335c57df7d852569a7a">setCallback</a> (std::function&lt; void(const <a class="el" href="classPoint.html">Point</a> &amp;p)&gt; func)=0</td></tr>
-<tr class="separator:a2711cea46a3c0335c57df7d852569a7a inherit pub_methods_classIScanner"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementación de la interfaz <a class="el" href="classIScanner.html">IScanner</a> para la lectura de puntos de archivos CSV obtenidos del programa propietario Livox Viewer </p>
@@ -206,7 +211,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Inicialización del escaner </p><dl class="section return"><dt>Returns</dt><dd>Se devolverá true si se ha establecido el escaner correctamente </dd></dl>
 
-<p>Implements <a class="el" href="classIScanner.html#aaf3d8b7c70410704054c208f4640a56a">IScanner</a>.</p>
+<p>Implements <a class="el" href="classIFileScanner.html#a9f6e83110823e4414a30004bccb947b3">IFileScanner</a>.</p>
 
 </div>
 </div>
@@ -259,7 +264,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Comienza la obtención de puntos </p><dl class="section return"><dt>Returns</dt><dd>Se devolverá true al finalizar de leer correctamente el archivo o false si ocurre un error en el proceso </dd></dl>
 
-<p>Implements <a class="el" href="classIScanner.html#ad259f0cf87ea925a88831e215799948a">IScanner</a>.</p>
+<p>Implements <a class="el" href="classIFileScanner.html#aa1eb6735fd6ab3dde30e8c54101f55a1">IFileScanner</a>.</p>
 
 </div>
 </div>
@@ -287,7 +292,35 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Finaliza el escaner </p>
 
-<p>Implements <a class="el" href="classIScanner.html#a1c5b762bd0a4b6909743f38c614a39f7">IScanner</a>.</p>
+<p>Implements <a class="el" href="classIFileScanner.html#aadab907c4be034b9fdcd89db0b9d368c">IFileScanner</a>.</p>
+
+</div>
+</div>
+<a id="a89723af0b3f48f1a8c02c9d5280e67c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89723af0b3f48f1a8c02c9d5280e67c1">&#9670;&nbsp;</a></span>wait()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ScannerLVX::wait </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Espera pasiva a la finalización del escaneo del archivo de puntos </p>
+
+<p>Implements <a class="el" href="classIFileScanner.html#a3eb578209a504b26843231f1fadab9b2">IFileScanner</a>.</p>
 
 </div>
 </div>

@@ -1,10 +1,8 @@
 var searchData=
 [
-  ['scannercsv_164',['ScannerCSV',['../classScannerCSV.html#a886c82b892391ce6042d3f1545c809aa',1,'ScannerCSV']]],
-  ['scannerlidar_165',['ScannerLidar',['../classScannerLidar.html#a3d6c901c82fe6982868e296d899e10d3',1,'ScannerLidar']]],
-  ['scannerlvx_166',['ScannerLVX',['../classScannerLVX.html#a3a88b7c9380784e59a6e348d70ccc743',1,'ScannerLVX']]],
-  ['setcallback_167',['setCallback',['../classIScanner.html#a2711cea46a3c0335c57df7d852569a7a',1,'IScanner::setCallback()'],['../classScannerCSV.html#ab44ba333f8dfcc5fde3671a83c06db56',1,'ScannerCSV::setCallback()'],['../classScannerLidar.html#afb224c448af4c4e4b738198b7d46cfcf',1,'ScannerLidar::setCallback()'],['../classScannerLVX.html#a7756ff50b5eebcee94f6b2d57849d792',1,'ScannerLVX::setCallback()']]],
-  ['start_168',['start',['../classIObjectCharacterizator.html#a2e74687e3e4b31208ae5e142fada4759',1,'IObjectCharacterizator::start()'],['../classObjectCharacterizator.html#a66f9bd7308183f270f37ae7676a4935b',1,'ObjectCharacterizator::start()'],['../classIScanner.html#ad259f0cf87ea925a88831e215799948a',1,'IScanner::start()'],['../classScannerCSV.html#a715cd17f0ce6ec215ee7a327842660f6',1,'ScannerCSV::start()'],['../classScannerLidar.html#a6d6fa1cb26ee15536b6226fb574e7593',1,'ScannerLidar::start()'],['../classScannerLVX.html#a28889a777963d4ffed78ca021df93dcd',1,'ScannerLVX::start()']]],
-  ['stop_169',['stop',['../classIObjectCharacterizator.html#a8559bb0c2fc33ad1d57dc85788590ac2',1,'IObjectCharacterizator::stop()'],['../classObjectCharacterizator.html#a5dac3cde05bb85d4a9aa0ad48d4bf954',1,'ObjectCharacterizator::stop()'],['../classIScanner.html#a1c5b762bd0a4b6909743f38c614a39f7',1,'IScanner::stop()'],['../classScannerCSV.html#a155dcac1831680fddb113f6dc5731705',1,'ScannerCSV::stop()'],['../classScannerLidar.html#aae7423bf5e8740c34072021438df927f',1,'ScannerLidar::stop()'],['../classScannerLVX.html#abeb7a0372e79ee042a84a09eda7e167a',1,'ScannerLVX::stop()']]],
-  ['string_170',['string',['../classPoint.html#a1648590bde47aa7a0fc0ba1e33a2774b',1,'Point::string()'],['../classTimestamp.html#ab8cf9483c65eaa933d866d5d07286c42',1,'Timestamp::string()']]]
+  ['parse_193',['parse',['../classCommand.html#a21b0e1ef5c58d985a6d6f10fb674eb2f',1,'Command']]],
+  ['point_194',['Point',['../classPoint.html#a18c490b091997edaf281d5a6ea2b2f34',1,'Point::Point(const Timestamp timestamp, const uint8_t reflectivity, const int32_t x, const int32_t y, const int32_t z)'],['../classPoint.html#af0c0f20db1616447bc78184ed537ef6e',1,'Point::Point(const Point &amp;p)']]],
+  ['pointmap_195',['PointMap',['../classPointMap.html#a53ae0d12b85d6c4c2d30875da9958129',1,'PointMap']]],
+  ['pop_196',['pop',['../classPointMap.html#a2e7f3035cae1b1e9ddf8a52531801190',1,'PointMap']]],
+  ['push_197',['push',['../classPointMap.html#aca84bd8d6101eee282132123906ec0e7',1,'PointMap']]]
 ];
