@@ -63,6 +63,17 @@ bool ScannerCSV::setCallback(const std::function<void(const Point &p)> func) {
     return ((bool)callback);
 }
 
+// spera pasiva a la finalización del escaneo del archivo de puntos
+void ScannerCSV::wait() {
+    DEBUG_STDOUT("Esperando a la finalización del escaneo de puntos.");
+
+    executionThread->join();  // Realizamos unión del hilo de lectura
+
+    infile.close();  // Cerramos stream del archivo
+
+    LOG_INFO("Finalizado el escaneo de puntos.");
+}
+
 // Finaliza el escaner
 void ScannerCSV::stop() {
     DEBUG_STDOUT("Finalizando el escaneo de puntos.");
@@ -134,6 +145,6 @@ void ScannerCSV::readData() {
         }
     }
 
-    DEBUG_STDOUT("Se ha terminado el escaneo del archivo de puntos");
+    DEBUG_STDOUT("Se ha terminado el escaneo del archivo de puntos CSV");
     exit = true;
 }

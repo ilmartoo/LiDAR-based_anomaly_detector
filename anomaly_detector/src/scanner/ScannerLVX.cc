@@ -73,6 +73,19 @@ bool ScannerLVX::setCallback(const std::function<void(const Point &p)> func) {
     return ((bool)callback);
 }
 
+// spera pasiva a la finalización del escaneo del archivo de puntos
+void ScannerLVX::wait() {
+    DEBUG_STDOUT("Esperando a la finalización del escaneo de puntos.");
+
+    executionThread->join();  // Realizamos unión del hilo de lectura
+
+    lvx_file.CloseLvxFile();  // Cerramos stream del archivo
+
+    delete packets_of_frame.packet;  // Array de paquetes
+
+    LOG_INFO("Finalizado el escaneo de puntos.");
+}
+
 // Finaliza el escaner
 void ScannerLVX::stop() {
     DEBUG_STDOUT("Finalizando el escaneo de puntos.");
@@ -137,6 +150,6 @@ void ScannerLVX::readData() {
         r = lvx_file.GetPacketsOfFrame(&packets_of_frame);  // Recuperamos paquetes del archivo
     }
 
-    DEBUG_STDOUT("Se ha terminado el escaneo del archivo de puntos");
+    DEBUG_STDOUT("Se ha terminado el escaneo del archivo de puntos LVX");
     exit = true;
 }

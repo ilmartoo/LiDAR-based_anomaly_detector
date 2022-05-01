@@ -13,9 +13,9 @@
 
 #include "armadillo"
 
-#include "DoublePoint.hh"
-
+#include "models/DoublePoint.hh"
 #include "scanner/ScannerLVX.hh"
+#include "scanner/ScannerCSV.hh"
 
 /* Declaraciones */
 DoublePoint computeCentroid(const std::vector<DoublePoint> &points);
@@ -51,13 +51,28 @@ int main(int argc, char **argv) {
 
     struct DoublePointData data(atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]));  // Buffer de puntos
 
-    /* Obtención de puntos del archivo */
-    ScannerLVX s = {std::string(argv[1])};                         // Creación del escaner
-    s.init();                                                      // Inicialización
-    s.setCallback([&data](const Point &p) { data.callback(p); });  // Callback
-    s.start();                                                     // Inicio
+    /* Creación del escaner */
+    // Obtenemos extensión del archivo
+    std::string filename = {argv[1]};
+    size_t loc = filename.find_last_of('.');
+    std::string ext = filename.substr(++loc);
+    IFileScanner *scanner;
 
-    s.wait();  // Non-busy wait hasta que finalize el archivo
+    // Lectura de un archivo LVX
+    if (ext.compare("lvx") == 0) {
+        scanner = new ScannerLVX(filename);  // Creamos escaner
+    }
+    // Lectura de un archivo CSV por defecto
+    else {
+        scanner = new ScannerCSV(filename);  // Creamos escaner
+    }
+
+    /* Obtención de puntos del archivo */
+    scanner->init();                                                      // Inicialización
+    scanner->setCallback([&data](const Point &p) { data.callback(p); });  // Callback
+    scanner->start();                                                     // Inicio
+
+    scanner->wait();  // Non-busy wait hasta que finalize el archivo
 
     /* Cálculo del plano */
     DoublePoint centroide = computeCentroid(*data.v);
@@ -66,6 +81,8 @@ int main(int argc, char **argv) {
 
     /* Salida de datos */
     std::cout << "[" << argv[2] << "] " << plano[0] << " " << plano[1] << " " << plano[2] << " " << plano[3] << std::endl;
+
+    delete scanner;
 
     return EXIT_SUCCESS;
 }

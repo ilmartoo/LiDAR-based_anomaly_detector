@@ -105,7 +105,7 @@ void ObjectCharacterizator::stop() {
     DEBUG_CODE(
         std::ofstream os("tmp/object.csv", std::ios::out);
         while (!object->empty()) {
-            os << object->front().csv_string() << td::endl;
+            os << object->front().csv_string() << std::endl;
             object->pop();
         }
         os.close();

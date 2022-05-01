@@ -6,6 +6,9 @@ lib/
 # vscode files
 *.code-workspace
 
+# CMake
+CMakeCache.txt
+
 # Prerequisites
 *.d
 
