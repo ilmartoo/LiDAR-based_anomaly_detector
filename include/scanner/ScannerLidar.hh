@@ -36,6 +36,8 @@ typedef enum {
  * Datos del sensor LiDAR
  */
 struct DeviceItem {
+    DeviceItem(const char broadcast_code[kBroadcastCodeSize]) { strncpy(info.broadcast_code, broadcast_code, kBroadcastCodeSize); }
+
     uint8_t handle;            ///< Handler
     DeviceState device_state;  ///< Estado del sensor
     DeviceInfo info;           ///< Propiedades del sensor
@@ -47,12 +49,10 @@ struct DeviceItem {
 class ScannerLidar : public IScanner {
    public:
     /**
-     *
-     * @param broadcast_code
+     * Constructor del objeto ScannerLidar
+     * @param broadcast_code Codigo de broadcast del sensor
      */
-    ScannerLidar(const char broadcast_code[kBroadcastCodeSize]) : exit(true) {
-        strncpy(this->lidar.info.broadcast_code, broadcast_code, kBroadcastCodeSize);
-    }
+    ScannerLidar(const char broadcast_code[kBroadcastCodeSize]) : lidar(broadcast_code) {}
 
     /**
      * Destructor del scanner
@@ -85,14 +85,6 @@ class ScannerLidar : public IScanner {
      */
     void stop();
 
-   private:
-    DeviceItem lidar;  ///< Datos del sensor LiDAR
-
-    std::function<void(const Point &p)> callback;  ///< Función de callback
-
-    bool exit;  ///< Variable para la finalización del escaneo de puntos
-
-   public:
     /**
      * Obtiene los datos del punto enviado por el sensor
      * @param data Paquete contenedor de datos
@@ -157,6 +149,9 @@ class ScannerLidar : public IScanner {
      * @param type Tipo de dispositivo
      */
     friend void onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type);
+
+   private:
+    DeviceItem lidar;  ///< Datos del sensor LiDAR
 };
 
 #endif  // SCANNERLIDAR_CLASS_H

@@ -20,6 +20,7 @@
 #include "models/Point.hh"
 
 #include "logging/debug.hh"
+#include "logging/logging.hh"
 
 /**
  * Implementación de la interfaz IScanner para la lectura de puntos de archivos CSV obtenidos del
@@ -31,7 +32,7 @@ class ScannerCSV : public IFileScanner {
      * Constructor del objeto ScannerCSV
      * @param filename Archivo contenedor de datos
      */
-    ScannerCSV(const std::string &filename) : filename(filename), exit(true) {}
+    ScannerCSV(const std::string &filename) : IFileScanner(filename) {}
 
     /**
      * Destructor del scanner
@@ -75,13 +76,7 @@ class ScannerCSV : public IFileScanner {
     void stop();
 
    private:
-    const std::string &filename;  ///< Nombre del archivo de datos
-    std::ifstream infile;         ///< Stream del archivo de datos
-
-    std::function<void(const Point &p)> callback;  ///< Función de callback
-
-    std::thread *executionThread;  ///< Hilo de ejecución del escaner
-    bool exit;                     ///< Variable para la finalización del hilo
+    std::ifstream infile;  ///< Stream del archivo de datos
 
     /**
      * Lee los puntos del archivo de input
@@ -89,4 +84,4 @@ class ScannerCSV : public IFileScanner {
     void readData();
 };
 
-#endif  //SCANNERCSV_CLASS_H
+#endif  // SCANNERCSV_CLASS_H

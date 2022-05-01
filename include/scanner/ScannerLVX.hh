@@ -33,7 +33,7 @@ class ScannerLVX : public IFileScanner {
      * Constructor del objeto ScannerLVX
      * @param filename Archivo contenedor de datos
      */
-    ScannerLVX(const std::string &filename) : filename(filename), exit(true) {}
+    ScannerLVX(const std::string &filename) : IFileScanner(filename) {}
 
     /**
      * Destructor del scanner
@@ -77,15 +77,8 @@ class ScannerLVX : public IFileScanner {
     void stop();
 
    private:
-    const std::string &filename;  ///< Nombre del archivo de datos
-
     livox_ros::LvxFileHandle lvx_file;            ///< Handler del archivo de puntos
     livox_ros::OutPacketBuffer packets_of_frame;  ///< Buffer de guardado de datos del archivo lvx
-
-    std::function<void(const Point &p)> callback;  ///< Función de callback
-
-    std::thread *executionThread;  ///< Hilo de ejecución del escaner
-    bool exit;                     ///< Variable para la finalización del hilo
 
     /**
      * Lee los puntos del archivo de input

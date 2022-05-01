@@ -50,6 +50,15 @@ class IScanner {
      * Finaliza el escaner
      */
     virtual void stop() = 0;
+
+   protected:
+    /**
+     * Constructor
+     */
+    IScanner() : exit(false) {}
+
+    std::function<void(const Point &p)> callback;  ///< Función de callback
+    bool exit;                                     ///< Variable para la finalización del escaneo de puntos
 };
 
 #endif  // SCANNER_INTERFACE_H
