@@ -8,67 +8,71 @@ _...in-depth explanation to come..._
 
 To compile the project you will need:
 
-- `g++` version `10.3.0` or higher [^1]
+- `g++` version `9.4.0` or higher
 - `cmake` version `14.0` or higher
 
-**...Add library needs...**
+We also need this libraries for the project to work:
 
-[^1]: May work with older versions, but has not been tested.
+- [livox-sdk 2.3.0](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
+- [read_lvx](https://github.com/michalpelka/read_lvx)
 
-## Testing enviroment
+_Note: `read_lvx` repository do not have a CMakeList.txt to generate a library, but an executable, so it needs to be created._
 
-The project was developed and tested in `Ubuntu 21.04` [^2].
+In the `libraries.zip` are located **minimalist versions of the needed libraries with some modifications** so they can installed without having to modify the libraries any further.
 
-[^2]: Should work with almost every GNU/Linux distribution. Feel free to test it yourself ;)
+## Developing enviroment
+
+The project was developed and tested in `Ubuntu 20.04.4` and `Ubuntu 21.04`.
 
 ## Setup
 
 ### Libraries
 
-To setup the necesary libraries you can use the script `setup_libraries.sh` [^3] from the **root folder** just like so:
+To setup the necesary libraries you can use the script `setup_libraries.sh` from the **project root folder**:
 
 ```bash
+# Uncompress modified libraries from zip
+unzip libraries.zip –d /lib
 # Setup needed libraries
-./setup_libraries.sh
+./anomaly_detector/setup_libraries.sh
 ```
 
-If you want to execute the created tests, do:
-
-```bash
-# Setup needed libraries + test libraries
-./setup_libraries.sh -t
-```
-
-[^3]: This script will create and install the libraries into their corresponding `lib/` subfolder, keeping the libraries from being installed into the `/usr/local/` folder and forgotten no long after (just like we always do).
-
+This script will create and install the needed libraries into their corresponding `lib/` subfolder, keeping the libraries from being installed into the `/usr/local/`.
 ### Project
 
-To build de project execute the following from the **`anomaly_detector/` folder**:
+To build de project execute the following from the **project root folder**:
 
 ```bash
 # Build the project
-cmake -S src/anomaly_detector/ -B build/Release -D CMAKE_BUILD_TYPE=Release
-cmake --build build/Release
+cmake -S anomaly_detector -B build/anomaly_detector
+cmake --build build/anomaly_detector
 ```
 
-To build the project with debug output execute the following from the **`anomaly_detector/` folder**:
+To build the project with debug output build it with `CMAKE_BUILD_TYPE` option set to `Debug`:
 
 ```bash
 # Build the project with debug output
-cmake -S src/anomaly_detector/ -B build/Debug -D CMAKE_BUILD_TYPE=Debug
-cmake --build build/Debug
+cmake -S anomaly_detector -B build/anomaly_detector -D CMAKE_BUILD_TYPE=Debug
+cmake --build build/anomaly_detector
 ```
 
-If you would like to have debug info of every scanned point, execute the following instead:
+If you also would like to have debug info of every scanned point add the `DEBUG_SCANNED_POINTS=ON` option:
 
 ```bash
 # Build the project with debug output with point debugging
-cmake -S src/anomaly_detector/ -B build/Debug -D CMAKE_BUILD_TYPE=Debug -D DEBUG_POINTS=ON
-cmake --build build/Debug
+cmake -S anomaly_detector -B build/anomaly_detector -D CMAKE_BUILD_TYPE=Debug -D DEBUG_SCANNED_POINTS=ON
+cmake --build build/anomaly_detector
 ```
 
-This will create the executable of the project into the corresponding `build/anomaly_detector/<cmake_build_type>/` subfolder.
+This will create the executable of the project into `build/anomaly_detector/`.
 
 ## Execution and parameters
 
 _...comming soon..._
+
+
+## Documentation
+
+Further documentation of this project can be found on the `doxygen/` folder.
+
+[Click here](doxygen/index.html) to take a peek.

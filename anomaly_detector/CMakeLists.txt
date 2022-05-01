@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 project(anomaly_detector)
 
 # Options
+option(CMAKE_BUILD_TYPE "Tipo de build" Release)
 option(DEBUG_POINTS "Opción de debugging para imprimir los puntos escaneados" OFF)
 
 # Release flags
