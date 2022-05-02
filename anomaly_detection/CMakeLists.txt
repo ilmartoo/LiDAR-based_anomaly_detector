@@ -16,7 +16,7 @@ if(DEBUG_SCANNED_POINTS)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_POINTS")
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-Wall -g3")
 
 # Root
@@ -32,6 +32,7 @@ include_directories(
   ${PROJECT_ROOT}/include/
 )
 
+# Library includes
 include_directories(${PROJECT_ROOT}/libs/include)
 
 ##### Libraries

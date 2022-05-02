@@ -17,6 +17,7 @@
 #include "models/Point.hh"
 #include "models/CharacteristicsVector.hh"
 #include "models/PointMap.hh"
+#include "models/octree.hh"
 
 #include "logging/debug.hh"
 
@@ -36,19 +37,23 @@ enum CharacterizatorState {
 class ObjectCharacterizator : public IObjectCharacterizator {
    public:
     /**
-     * Constructor
-     * @param frameDuration Duración del frame de puntos en milisegundos
+     * Constructor del objeto ObjectCharacterizator
+     * @param frameDuration Tiempo en ms que durará un frame
+     * @param backgroundTime Tiempo en ms en los que se escaneará en fondo
+     * @param minReflectivity Reflectividad mínima de los puntos
+     * @param backgroundDistance Distancia al fondo en metros
+     * @param timer Activador del cronometraje de tiempos
      */
-    ObjectCharacterizator(uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity, float backgroundDistance) {
+    ObjectCharacterizator(uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity, float backgroundDistance, bool timer)
+        : timer(timer),
+          frameDuration(frameDuration * 1000000),
+          backgroundTime(backgroundTime * 1000000),
+          minReflectivity(minReflectivity),
+          backgroundDistance(backgroundDistance),
+          exit(true) {
         state = defStopped;
 
-        this->frameDuration = frameDuration * 1000000;
-        this->backgroundTime = backgroundTime * 1000000;
-        this->minReflectivity = minReflectivity;
-        this->backgroundDistance = backgroundDistance;
-        this->exit = true;
-
-        background = new std::vector<Point>();
+        background = new Octree();
         object = new PointMap();
     }
 
@@ -77,17 +82,79 @@ class ObjectCharacterizator : public IObjectCharacterizator {
      */
     void stop();
 
+    /**
+     * Devuelve si se está cronometrando la caracterización
+     * @return Booleano conforme está activado el cronometraje
+     */
+    const bool isTimer() const { return this->timer; }
+
+    /**
+     * Setter del cronometraje
+     * @param timer Booleano para establecer el nuevo cronometraje
+     */
+    void setTimer(const bool timer) { this->timer = timer; }
+
+    /**
+     * Getter de la duración del frame
+     * @return Duración del frame
+     */
+    const uint64_t &getFrameDuration() const { return this->frameDuration; }
+
+    /**
+     * Setter de la duración del frame
+     * @param frameDuration Nueva duración del frame
+     */
+    void setFrameDuration(const uint64_t &frameDuration) { this->frameDuration = frameDuration; }
+
+    /**
+     * Getter del tiempo de escaneo del background
+     * @return Tiempo de escaneo del background
+     */
+    const uint64_t &getBackgroundTime() const { return this->backgroundTime; }
+
+    /**
+     * Setter del tiempo de escaneo del background
+     * @param backgroundTime Nuevo tiempo de escaneo del background
+     */
+    void setBackgroundTime(const uint64_t &backgroundTime) { this->backgroundTime = backgroundTime; }
+
+    /**
+     * Getter de la reflectividad minima
+     * @return Reflectividad minima
+     */
+    const float &getMinReflectivity() const { return this->minReflectivity; }
+
+    /**
+     * Setter de la reflectividad minima
+     * @param minReflectivity Nueva reflectividad minima
+     */
+    void setMinReflectivity(const float &minReflectivity) { this->minReflectivity = minReflectivity; }
+
+    /**
+     * Getter de la distancia al background
+     * @return Distancia al background
+     */
+    const float &getBackgroundDistance() const { return this->backgroundDistance; }
+
+    /**
+     * Setter de la distancia al background
+     * @param backgroundDistance Nueva distancia al background
+     */
+    void setBackgroundDistance(const float &backgroundDistance) { this->backgroundDistance = backgroundDistance; }
+
    private:
     enum CharacterizatorState state;  ///< Estado en el que se encuentra el caracterizador de objetos
+
+    bool timer;  ///< Activador de la medicion de tiempos
 
     uint64_t frameDuration;    ///< Duración del frame de puntos en nanosegundos
     uint64_t backgroundTime;   ///< Tiempo en el cual los puntos formarán parte del background
     float minReflectivity;     ///< Reflectividad mínima que necesitan los puntos para no ser descartados
     float backgroundDistance;  ///< Distancia mínima a la que tiene que estar un punto para no pertenecer al background
 
-    Timestamp *startTimestamp;       ///< Timestamp del primer punto
-    std::vector<Point> *background;  ///< Mapa de puntos que forman el background
-    PointMap *object;                ///< Mapa de puntos que forman el objeto
+    Timestamp *startTimestamp;  ///< Timestamp del primer punto
+    Octree *background;         ///< Mapa de puntos que forman el background
+    PointMap *object;           ///< Mapa de puntos que forman el objeto
 
     std::thread *executionThread;  ///< Hilo de ejecución del caracterizador
     bool exit;                     ///< Variable para la finalización del hilo

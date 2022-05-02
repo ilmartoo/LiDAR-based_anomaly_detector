@@ -55,13 +55,13 @@ class Timestamp {
      * Devuelve los segundos del timestamp
      * @return Segundos del timestamp
      */
-    inline const uint32_t &getSeconds() const { return this->seconds; };
+    inline const uint32_t &getSeconds() const { return this->seconds; }
 
     /**
      * Devuelve los nanosegundos del timestamp
      * @return Negundos del timestamp
      */
-    inline const uint32_t &getNanoseconds() const { return this->nanoseconds; };
+    inline const uint32_t &getNanoseconds() const { return this->nanoseconds; }
 
     /**
      * Compara si el Timestamp actual es menor que otro

@@ -23,7 +23,7 @@ class IScanner {
     /**
      * Destructor virtual
      */
-    virtual ~IScanner(){};
+    virtual ~IScanner() {}
 
     /**
      * Inicialización del escaner

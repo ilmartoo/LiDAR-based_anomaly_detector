@@ -17,7 +17,7 @@ else()
 set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG")
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-Wall -g3")
 
 # Root
@@ -34,15 +34,16 @@ include_directories(
   ${PROJECT_ROOT}/include/
 )
 
+# Library includes
 include_directories(${PROJECT_ROOT}/libs/include)
 
 ##### Libraries
 
 # SDK CORE
-set(SDKCORE_LIB ${PROJECT_ROOT}/libs/sdk_core/lib/liblivox_sdk.a)
+set(SDKCORE_LIB ${PROJECT_ROOT}/libs/lib/liblivox_sdk.a)
 
 # READ LVX
-set(READLVX_LIB ${PROJECT_ROOT}/libs/read_lvx/lib/libread_lvx.a)
+set(READLVX_LIB ${PROJECT_ROOT}/libs/lib/libread_lvx.a)
 
 # ARMADILLO
 set(ARMADILLO_LIB ${PROJECT_ROOT}/libs/lib/libarmadillo.so)
@@ -59,8 +60,8 @@ target_link_libraries(
   ${PROJECT_NAME}
   ${SDKCORE_LIB}    # sdk_core
   ${READLVX_LIB}    # read_lvx
-  ${ARMADILLO_LIB}  # armadillo
   ${OPENBLAS_LIB}   # openblas
+  ${ARMADILLO_LIB}  # armadillo
   m                 # mathematical library
   pthread           # thread library
 )

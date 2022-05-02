@@ -20,7 +20,6 @@
 #include "models/Point.hh"
 
 #include "logging/debug.hh"
-#include "logging/logging.hh"
 
 /**
  * Implementación de la interfaz IScanner para la lectura de puntos de archivos CSV obtenidos del
@@ -42,7 +41,7 @@ class ScannerCSV : public IFileScanner {
             this->infile.close();
         }
         delete executionThread;
-    };
+    }
 
     /**
      * Inicialización del escaner

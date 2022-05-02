@@ -59,10 +59,11 @@ class App {
             scanner = new ScannerCSV(filename);  // Creamos escaner
         }
 
-        oc = new ObjectCharacterizator(frameDuration, backgroundTime, minReflectivity, backgroundDistance);  // Creamos caracterizador
+        oc = new ObjectCharacterizator(frameDuration, backgroundTime, minReflectivity, backgroundDistance,
+                                       timerMode & kTimedCharacterization);  // Creamos caracterizador
         // ad =
 
-        this->init();   // Inicializamos componentes
+        this->init();  // Inicializamos componentes
         // Modo iterativo
         if (iterativeMode) {
             this->cli();  // Comenzamos modo iterativo
@@ -88,8 +89,9 @@ class App {
         float backgroundDistance, bool iterativeMode) {
         this->timerMode = timerMode;  // timerMode
 
-        scanner = new ScannerLidar(broadcastCode);                                                           // Creamos escaner
-        oc = new ObjectCharacterizator(frameDuration, backgroundTime, minReflectivity, backgroundDistance);  // Creamos caracterizador
+        scanner = new ScannerLidar(broadcastCode);  // Creamos escaner
+        oc = new ObjectCharacterizator(frameDuration, backgroundTime, minReflectivity, backgroundDistance,
+                                       timerMode & kTimedCharacterization);  // Creamos caracterizador
         // ad =
 
         this->init();  // Inicializamos app

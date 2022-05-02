@@ -22,6 +22,11 @@
 class IFileScanner : public IScanner {
    public:
     /**
+     * Destructor virtual
+     */
+    virtual ~IFileScanner() {}
+
+    /**
      * Espera pasiva a la finalización del escaneo del archivo de puntos
      */
     virtual void wait() = 0;

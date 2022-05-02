@@ -14,7 +14,7 @@
 #include <functional>
 #include <thread>
 
-#include "read_lvx/lvx_file.h"
+#include "lvx_file.h"
 #include "lds.h"
 
 #include "scanner/ScannerLVX.hh"

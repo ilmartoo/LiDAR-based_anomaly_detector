@@ -1,10 +1,10 @@
-/**                                                          \
- * @file ScannerLVX.hh                                       \
- * @author Martín Suárez (martin.suarez.garcia@rai.usc.es) \
- * @date 03/04/2022                                          \
- *                                                           \
- * Definicion del objeto ScannerLVX                          \
- *                                                           \
+/**
+ * @file ScannerLVX.hh
+ * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
+ * @date 03/04/2022
+ *
+ * Definicion del objeto ScannerLVX
+ *
  */
 
 #ifndef SCANNERLVX_CLASS_H
@@ -12,7 +12,6 @@
 
 #include <iostream>
 #include <string>
-#include <fstream>
 #include <functional>
 #include <thread>
 
@@ -43,7 +42,7 @@ class ScannerLVX : public IFileScanner {
             lvx_file.CloseLvxFile();
         }
         delete executionThread;
-    };
+    }
 
     /**
      * Inicialización del escaner
