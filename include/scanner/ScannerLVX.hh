@@ -16,7 +16,7 @@
 #include <functional>
 #include <thread>
 
-#include "read_lvx/lvx_file.h"
+#include "lvx_file.h"
 
 #include "scanner/IFileScanner.hh"
 #include "models/Point.hh"

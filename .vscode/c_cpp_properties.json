@@ -4,8 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/include",
-                "${workspaceFolder}/lib/read_lvx/lib/include",
-                "${workspaceFolder}/lib/sdk_core/lib/include"
+                "${workspaceFolder}/libs/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",

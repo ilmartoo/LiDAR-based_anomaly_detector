@@ -32,15 +32,15 @@ include_directories(
   ${PROJECT_ROOT}/include/
 )
 
+include_directories(${PROJECT_ROOT}/libs/include)
+
 ##### Libraries
 
 # SDK CORE
-set(SDKCORE_LIB ${PROJECT_ROOT}/lib/sdk_core/lib/liblivox_sdk_static.a)
-include_directories(${PROJECT_ROOT}/lib/sdk_core/lib/include)
+set(SDKCORE_LIB ${PROJECT_ROOT}/libs/lib/liblivox_sdk.a)
 
 # READ LVX
-set(READLVX_LIB ${PROJECT_ROOT}/lib/read_lvx/lib/libread_lvx.a)
-include_directories(${PROJECT_ROOT}/lib/read_lvx/lib/include)
+set(READLVX_LIB ${PROJECT_ROOT}/libs/lib/libread_lvx.a)
 
 
 # Executable

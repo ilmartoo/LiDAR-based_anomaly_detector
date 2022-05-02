@@ -16,7 +16,7 @@
 #include <functional>
 #include <string.h>
 
-#include "livox_sdk/livox_sdk.h"
+#include "livox_sdk.h"
 
 #include "scanner/IScanner.hh"
 #include "models/Point.hh"

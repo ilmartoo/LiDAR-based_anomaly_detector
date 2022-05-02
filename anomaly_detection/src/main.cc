@@ -11,7 +11,7 @@
 #include <string>
 #include <stdlib.h>
 
-#include "livox_sdk/livox_def.h"
+#include "livox_def.h"
 
 #include "app/App.hh"
 #include "app/InputParser.hh"

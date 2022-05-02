@@ -14,7 +14,7 @@
 #include <functional>
 #include <chrono>
 
-#include "livox_sdk/livox_sdk.h"
+#include "livox_sdk.h"
 
 #include "scanner/ScannerLidar.hh"
 #include "models/Point.hh"

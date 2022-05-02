@@ -1,7 +1,8 @@
 # Excluded folders
 build/
 tmp/
-lib/
+libs/
+bin/
 
 # vscode files
 *.code-workspace

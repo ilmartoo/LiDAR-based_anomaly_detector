@@ -15,7 +15,7 @@
 #include <thread>
 
 #include "read_lvx/lvx_file.h"
-#include "read_lvx/lds.h"
+#include "lds.h"
 
 #include "scanner/ScannerLVX.hh"
 #include "models/Point.hh"
