@@ -12,6 +12,9 @@
 #include <thread>
 #include <vector>
 #include <ctime>
+#include <chrono>
+#include <fstream>
+#include <iomanip>
 
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "models/Point.hh"
@@ -19,10 +22,6 @@
 
 #include "logging/debug.hh"
 #include "logging/logging.hh"
-
-///////////////
-#include <fstream>
-///////////////
 
 // Callback a donde se recebirán los puntos escaneados
 void ObjectCharacterizator::newPoint(const Point &p) {
@@ -38,10 +37,10 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                 DEBUG_STDOUT("Start Timestamp: " << startTimestamp->string());
 
                 static uint32_t bp_count = 0;
-                static time_t start, end;
+                static std::chrono::system_clock::time_point start, end;
 
                 if (timer) {
-                    start = std::time(NULL);
+                    start = std::chrono::high_resolution_clock::now();
                 }
 
             // Punto de background
@@ -52,7 +51,7 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                     DEBUG_POINT_STDOUT("Punto añadido al background: " << p.string());
                     ++bp_count;
 
-                    background->insertPoint(new Point(p));  // Guardamos punto
+                    background->insert(p);  // Guardamos punto
 
                     break;  // Finalizamos
                 }
@@ -64,14 +63,17 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                     state = defObject;  // Empezamos a obtener puntos del objeto
                 }
 
+                background->buildOctree();  // Insertamos los puntos del background al octree
+
                 LOG_INFO("Background formado por " << std::to_string(bp_count) << " puntos");
 
                 if (timer) {
-                    end = std::time(NULL);
+                    end = std::chrono::high_resolution_clock::now();
+                    double seconds =
+                        static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
 
-                    LOG_INFO("Velocidad de escaneo de puntos: "
-                             << std::to_string((double)(bp_count / (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1.e6)))
-                             << "puntos/s");
+                    LOG_INFO("[TIMER] " << std::fixed << seconds << "s (" << std::setprecision(2) << bp_count / seconds
+                                        << std::setprecision(6) << " puntos/s)");
                 }
 
                 DEBUG_STDOUT("Timestamp del punto límite: " + p.getTimestamp().string());
@@ -118,13 +120,19 @@ void ObjectCharacterizator::stop() {
     exit = true;              // Comunicamos al hilo que finalice la ejecución
     executionThread->join();  // Realizamos unión del hilo de gestión de puntos
 
-    DEBUG_CODE(
-        std::ofstream os("tmp/object.csv", std::ios::out); while (!object->empty()) {
+    DEBUG_CODE({
+        std::ofstream os("tmp/object.csv", std::ios::out);
+        while (!object->empty()) {
             os << object->front().csv_string() << std::endl;
             object->pop();
-        } os.close();
-        os.open("tmp/background.csv", std::ios::out); for (auto &p
-                                                           : *background) { os << p.csv_string() << std::endl; } os.close();)
+        }
+        os.close();
+        // os.open("tmp/background.csv", std::ios::out);
+        // for (auto &p : *background) {
+        //     os << p.csv_string() << std::endl;
+        // }
+        // os.close();
+    })
 
     LOG_INFO("Finalizada caracterización.");
 }
@@ -151,9 +159,9 @@ void ObjectCharacterizator::managePoints() {
 
 // Comprueba si un punto pertenece al background
 bool ObjectCharacterizator::isBackground(const Point &p) const {
-    std::vector<Point *> neighbours = background->searchNeighbors(p, backgroundDistance, Kernel_t::circle);
+    std::vector<Point *> neighbours = background->getMap().searchNeighbors(p, backgroundDistance, Kernel_t::circle);
 
-    for (Point *pb : neighbours) {
+    for (Point *&pb : neighbours) {
         if (p.distance3D(*pb) < backgroundDistance) {
             return true;  // Pertenece al background
         }

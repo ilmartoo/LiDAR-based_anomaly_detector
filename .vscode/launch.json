@@ -16,6 +16,8 @@
 			"args": [
 				"-f",
 				"data/caja_cerca.lvx",
+				"-c",
+				"char",
 				// "-g",
 				// "1000"
 			],

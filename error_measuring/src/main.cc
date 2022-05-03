@@ -13,32 +13,32 @@
 
 #include "armadillo"
 
-#include "models/DoublePoint.hh"
+#include "models/Point.hh"
 #include "scanner/ScannerLVX.hh"
 #include "scanner/ScannerCSV.hh"
 
 /* Declaraciones */
-DoublePoint computeCentroid(const std::vector<DoublePoint> &points);
-void computeSVD(const std::vector<DoublePoint> &points, arma::mat &U, arma::vec &s, arma::mat &V);
-arma::vec computeNormal(const std::vector<DoublePoint> &points);
+Point computeCentroid(const std::vector<Point> &points);
+void computeSVD(const std::vector<Point> &points, arma::mat &U, arma::vec &s, arma::mat &V);
+arma::vec computeNormal(const std::vector<Point> &points);
 arma::vec computePlane(arma::vec &vnormal, arma::vec &centroid);
-arma::vec computePlane(arma::vec &vnormal, DoublePoint &centroid);
+arma::vec computePlane(arma::vec &vnormal, Point &centroid);
 
 /* Struct de puntos */
-struct DoublePointData {
-    DoublePointData(int xmin, int xmax, int ymin, int ymax) : x{xmin, xmax}, y{ymin, ymax} { v = new std::vector<DoublePoint>(); };
-    ~DoublePointData() { delete v; };
+struct PointData {
+    PointData(int xmin, int xmax, int ymin, int ymax) : x{xmin, xmax}, y{ymin, ymax} { v = new std::vector<Point>(); };
+    ~PointData() { delete v; };
 
     /* Miembros */
     void callback(const Point &p) {
         if (p.getX() >= x[0] && p.getY() >= y[0] && p.getX() <= x[1] && p.getY() <= y[1]) {
-            v->push_back(DoublePoint{p});
+            v->push_back(p);
         }
     };
 
     /* Atributos*/
     int x[2], y[2];
-    std::vector<DoublePoint> *v;
+    std::vector<Point> *v;
 };
 
 /* Main */
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    struct DoublePointData data(atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]));  // Buffer de puntos
+    struct PointData data(atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]));  // Buffer de puntos
 
     /* Creación del escaner */
     // Obtenemos extensión del archivo
@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
     scanner->wait();  // Non-busy wait hasta que finalize el archivo
 
     /* Cálculo del plano */
-    DoublePoint centroide = computeCentroid(*data.v);
+    Point centroide = computeCentroid(*data.v);
     arma::vec vnormal = computeNormal(*data.v);
     arma::vec plano = computePlane(vnormal, centroide);
 
@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
 }
 
 /* Calcula el centroide de los puntos */
-DoublePoint computeCentroid(const std::vector<DoublePoint> &points) {
+Point computeCentroid(const std::vector<Point> &points) {
     double x{}, y{}, z{};
     size_t numPoints = points.size();
 
@@ -102,11 +102,11 @@ DoublePoint computeCentroid(const std::vector<DoublePoint> &points) {
     y /= numPoints;
     z /= numPoints;
 
-    return DoublePoint(x, y, z);
+    return Point(x, y, z);
 }
 
-/* ?? */
-void computeSVD(const std::vector<DoublePoint> &points, arma::mat &U, arma::vec &s, arma::mat &V) {
+/* SVD */
+void computeSVD(const std::vector<Point> &points, arma::mat &U, arma::vec &s, arma::mat &V) {
     arma::mat P(3, points.size());
 
     size_t idx = 0;
@@ -128,7 +128,7 @@ void computeSVD(const std::vector<DoublePoint> &points, arma::mat &U, arma::vec 
 }
 
 /* Computa la normal del plano */
-arma::vec computeNormal(const std::vector<DoublePoint> &points) {
+arma::vec computeNormal(const std::vector<Point> &points) {
     arma::vec vnormal(3);
 
     // SVD
@@ -141,26 +141,14 @@ arma::vec computeNormal(const std::vector<DoublePoint> &points) {
     return vnormal;
 }
 
-/* Computa el plano */
-arma::vec computePlane(arma::vec &vnormal, arma::vec &centroid) {
+/* Computa el plano segun un centroide */
+arma::vec computePlane(arma::vec &vnormal, Point &centroid) {
     arma::vec plane(4);
 
     plane[0] = vnormal[0];
     plane[1] = vnormal[1];
     plane[2] = vnormal[2];
-    plane[3] = (-plane[0] * centroid[0] + plane[1] * centroid[1] + plane[2] * centroid[2]);
-
-    return plane;
-}
-
-/* Computa el plano segun un centroide DoublePoint */
-arma::vec computePlane(arma::vec &vnormal, DoublePoint &centroid) {
-    arma::vec plane(4);
-
-    plane[0] = vnormal[0];
-    plane[1] = vnormal[1];
-    plane[2] = vnormal[2];
-    plane[3] = (-plane[0] * centroid[0] + plane[1] * centroid[1] + plane[2] * centroid[2]);
+    plane[3] = (-plane[0] * centroid.getX() + plane[1] * centroid.getY() + plane[2] * centroid.getZ());
 
     return plane;
 }

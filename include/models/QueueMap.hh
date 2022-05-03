@@ -1,14 +1,14 @@
 /**
- * @file PointMap.hh
+ * @file QueueMap.hh
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 29/03/2022
  *
- * Definición e implementación del objeto PointMap
+ * Definición e implementación del objeto QueueMap
  *
  */
 
-#ifndef POINTMAP_CLASS_H
-#define POINTMAP_CLASS_H
+#ifndef QUEUEMAP_CLASS_H
+#define QUEUEMAP_CLASS_H
 
 #include <queue>
 #include <mutex>
@@ -21,12 +21,12 @@
 /**
  * Clase para realizar el mapping de puntos mediante una cola FIFO concurrente
  */
-class PointMap {
+class QueueMap {
    public:
     /**
-     * Constructor del objero PointMap
+     * Constructor del objero QueueMap
      */
-    PointMap() : lastTimestamp(false, nullptr) {}
+    QueueMap() : lastTimestamp(false, nullptr) {}
 
     /**
      * Introduce un punto al final de la cola
@@ -84,4 +84,4 @@ class PointMap {
     std::pair<bool, Timestamp *> lastTimestamp;  ///< Ultimo timestamp obtenido
 };
 
-#endif  // POINTMAP_CLASS_H
+#endif  // QUEUEMAP_CLASS_H

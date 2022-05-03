@@ -16,8 +16,8 @@
 #include "object_characterization/IObjectCharacterizator.hh"
 #include "models/Point.hh"
 #include "models/CharacteristicsVector.hh"
-#include "models/PointMap.hh"
-#include "models/octree.hh"
+#include "models/QueueMap.hh"
+#include "models/OctreeMap.hh"
 
 #include "logging/debug.hh"
 
@@ -53,8 +53,8 @@ class ObjectCharacterizator : public IObjectCharacterizator {
           exit(true) {
         state = defStopped;
 
-        background = new Octree();
-        object = new PointMap();
+        background = new OctreeMap();
+        object = new QueueMap();
     }
 
     /**
@@ -153,8 +153,8 @@ class ObjectCharacterizator : public IObjectCharacterizator {
     float backgroundDistance;  ///< Distancia mínima a la que tiene que estar un punto para no pertenecer al background
 
     Timestamp *startTimestamp;  ///< Timestamp del primer punto
-    Octree *background;         ///< Mapa de puntos que forman el background
-    PointMap *object;           ///< Mapa de puntos que forman el objeto
+    OctreeMap *background;      ///< Mapa de puntos que forman el background
+    QueueMap *object;           ///< Mapa de puntos que forman el objeto
 
     std::thread *executionThread;  ///< Hilo de ejecución del caracterizador
     bool exit;                     ///< Variable para la finalización del hilo

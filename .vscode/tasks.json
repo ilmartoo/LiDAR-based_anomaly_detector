@@ -2,8 +2,25 @@
     "tasks": [
         {
             "type": "cppbuild",
+            "label": "Build directories",
+            "command": "mkdir",
+            "args": [
+                "-p",
+                "build/anomaly_detection",
+                "build/error_measuring"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "type": "cppbuild",
             "label": "CMake create DEBUG",
-            "command": "cmake ",
+            "command": "cmake",
             "args": [
                 "-S",
                 "anomaly_detection",
@@ -21,7 +38,10 @@
             "problemMatcher": [
                 "$gcc"
             ],
-            "group": "build"
+            "group": "build",
+            "dependsOn": [
+                "Build directories"
+            ]
         },
         {
             "type": "cppbuild",
@@ -45,7 +65,7 @@
         {
             "type": "cppbuild",
             "label": "CMake create RELEASE",
-            "command": "cmake ",
+            "command": "cmake",
             "args": [
                 "-S",
                 "anomaly_detection",
@@ -60,7 +80,10 @@
             "problemMatcher": [
                 "$gcc"
             ],
-            "group": "build"
+            "group": "build",
+            "dependsOn": [
+                "Build directories"
+            ]
         },
         {
             "type": "cppbuild",
