@@ -65,7 +65,7 @@ void ObjectCharacterizator::newPoint(const Point &p) {
 
                 background->buildOctree();
 
-                LOG_INFO("Background formado por " << bp_count << " puntos");
+                LOG_INFO("Background formado por " << bp_count << " puntos.");
 
                 if (timer) {
                     end = std::chrono::high_resolution_clock::now();
@@ -73,10 +73,10 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                         static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
 
                     LOG_INFO("Duración de la caracterización del fondo: " << std::fixed << seconds << "s (" << std::setprecision(2) << bp_count / seconds
-                                        << std::setprecision(6) << " puntos/s)");
+                                        << std::setprecision(6) << " puntos/s).");
                 }
 
-                DEBUG_STDOUT("Timestamp del punto límite: " + p.getTimestamp().string());
+                DEBUG_STDOUT("Timestamp del punto límite: " << p.getTimestamp().string() << ".");
 
             // Punto del objeto
             case defObject:

@@ -187,7 +187,7 @@ class Point {
     uint8_t reflectivity;  ///< Reflectividad del punto
     double x;              ///< Localización en el eje x del punto
     double y;              ///< Localización en el eje y del punto
-    double z;              ///< Localización en el eje <x> del punto
+    double z;              ///< Localización en el eje z del punto
 };
 
 typedef Point Vector;  ///< Definición de Vector como un Point

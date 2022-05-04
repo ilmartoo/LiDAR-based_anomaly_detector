@@ -43,7 +43,10 @@ class OctreeMap {
     /**
      * Crea el octree con los puntos del vector
      */
-    void buildOctree() { map = new Octree(mem); }
+    void buildOctree() {
+        DEBUG_STDOUT("Creamos el Octree de puntos.");
+        map = new Octree(mem);
+    }
 
     /**
      * Devuelve el octree de puntos

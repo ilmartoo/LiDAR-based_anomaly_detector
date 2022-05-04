@@ -133,7 +133,7 @@ void InputParams::parse(int argc, char **argv) {
         this->is_lidar = true;          // Sensor lidar
         this->broadcast_code = option;  // Código de broadcast
 
-        DEBUG_STDOUT("[-b] " + option);
+        DEBUG_STDOUT("[-b] " << option);
     }
 
     /* Input por archivo */
@@ -151,7 +151,7 @@ void InputParams::parse(int argc, char **argv) {
         this->is_lidar = false;   // Escaner de archivo
         this->filename = option;  // Filename
 
-        DEBUG_STDOUT("[-f] " + option);
+        DEBUG_STDOUT("[-f] " << option);
     }
 
     /* No se ha especificado una de las opciones obligatorias */
@@ -179,7 +179,7 @@ void InputParams::parse(int argc, char **argv) {
             try {
                 this->frame_time = static_cast<uint32_t>(std::stoul(option));
 
-                DEBUG_STDOUT("[-t] " + option);
+                DEBUG_STDOUT("[-t] " << option);
             }
             // Valor inválido
             catch (std::exception &e) {
@@ -223,7 +223,7 @@ void InputParams::parse(int argc, char **argv) {
                 return;  // Salimos
             }
 
-            DEBUG_STDOUT("[-c] " + option);
+            DEBUG_STDOUT("[-c] " << option);
         }
     }
 
@@ -243,7 +243,7 @@ void InputParams::parse(int argc, char **argv) {
             try {
                 this->background_time = static_cast<uint32_t>(std::stoul(option));
 
-                DEBUG_STDOUT("[-g] " + option);
+                DEBUG_STDOUT("[-g] " << option);
             }
             // Valor inválido
             catch (std::exception &e) {
@@ -269,7 +269,7 @@ void InputParams::parse(int argc, char **argv) {
             try {
                 this->min_reflectivity = std::stof(option);
 
-                DEBUG_STDOUT("[-r] " + option);
+                DEBUG_STDOUT("[-r] " << option);
             }
             // Valor inválido
             catch (std::exception &e) {
@@ -295,7 +295,7 @@ void InputParams::parse(int argc, char **argv) {
             try {
                 this->background_distance = std::stof(option);
 
-                DEBUG_STDOUT("[-d] " + option);
+                DEBUG_STDOUT("[-d] " << option);
             }
             // Valor inválido
             catch (std::exception &e) {

@@ -33,7 +33,7 @@ void getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void 
         if (data && data->data_type == kExtendCartesian) {
             LivoxExtendRawPoint *p_data = (LivoxExtendRawPoint *)data->data;
 
-            DEBUG_POINT_STDOUT("Obtenido paquete de datos de tipo [" + std::to_string(data->data_type) + "]");
+            DEBUG_POINT_STDOUT("Obtenido paquete de datos de tipo [" << std::to_string(data->data_type) << "]");
 
             for (uint32_t i = 0; !_sl->exit && i < data_num; ++i)
                 if (_sl->callback) {
@@ -43,7 +43,7 @@ void getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void 
         }
         // Dato de tipo incorrecto
         else {
-            DEBUG_POINT_STDOUT("Paquete de datos de tipo [" + std::to_string(data->data_type) + "] no tratado");
+            DEBUG_POINT_STDOUT("Paquete de datos de tipo [" << std::to_string(data->data_type) << "] no tratado");
         }
     }
 }
@@ -56,7 +56,7 @@ void onDeviceBroadcast(const BroadcastDeviceInfo *info) {
         return;
     }
 
-    DEBUG_STDOUT("Recibido código de broadcast " + std::string(_sl->lidar.info.broadcast_code));
+    DEBUG_STDOUT("Recibido código de broadcast " << std::string(_sl->lidar.info.broadcast_code));
 
     if (strncmp(info->broadcast_code, _sl->lidar.info.broadcast_code, kBroadcastCodeSize) != 0) {
         LOG_ERROR("El código de retransmision no coincide con el almacenado.");
@@ -123,19 +123,19 @@ void onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type) {
     if (type == kEventConnect) {
         lidarConnect(info);
 
-        DEBUG_STDOUT("Lidar " + std::string(info->broadcast_code) + " conectado.");
+        DEBUG_STDOUT("Lidar " << std::string(info->broadcast_code) << " conectado.");
     }
 
     else if (type == kEventDisconnect) {
         lidarDisConnect(info);
 
-        DEBUG_STDOUT("Lidar " + std::string(info->broadcast_code) + " desconectado.");
+        DEBUG_STDOUT("Lidar " << std::string(info->broadcast_code) << " desconectado.");
     }
 
     else if (type == kEventStateChange) {
         lidarStateChange(info);
 
-        DEBUG_STDOUT("Modificado estado del LiDAR " + std::string(info->broadcast_code) + ". Conexión: [" +
+        DEBUG_STDOUT("Modificado estado del LiDAR " << std::string(info->broadcast_code) + ". Conexión: [" +
                      std::to_string(_sl->lidar.device_state) + "], Estado: [" + std::to_string(_sl->lidar.info.state) +
                      "], Funcionalidad: [" + std::to_string(_sl->lidar.info.feature) + "]");
     }
@@ -147,7 +147,7 @@ void onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type) {
 
 // Se ejecuta con el comienzo del escaneo de puntos
 void onSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data) {
-    DEBUG_STDOUT("Comienzo del escaneo. Status: [" + std::to_string(status) + "], Response: [" + std::to_string(response) + "]");
+    DEBUG_STDOUT("Comienzo del escaneo. Status: [" << std::to_string(status) << "], Response: [" << std::to_string(response) << "]");
 
     // Inicio correcto
     if (status == kStatusSuccess) {
@@ -164,7 +164,7 @@ void onSampleCallback(livox_status status, uint8_t handle, uint8_t response, voi
 
 // Se ejecuta con la finalización del escaneo de puntos
 void onStopSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data) {
-    DEBUG_STDOUT("Finalización del escaneo. Status: [" + std::to_string(status) + "], Response: [" + std::to_string(response) + "]");
+    DEBUG_STDOUT("Finalización del escaneo. Status: [" << std::to_string(status) << "], Response: [" << std::to_string(response) << "]");
 
     _sl->lidar.device_state = kDeviceStateDisconnect;
 }
