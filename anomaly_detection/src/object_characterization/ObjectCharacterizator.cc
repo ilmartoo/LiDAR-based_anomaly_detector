@@ -63,16 +63,16 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                     state = defObject;  // Empezamos a obtener puntos del objeto
                 }
 
-                background->buildOctree();  // Insertamos los puntos del background al octree
+                background->buildOctree();
 
-                LOG_INFO("Background formado por " << std::to_string(bp_count) << " puntos");
+                LOG_INFO("Background formado por " << bp_count << " puntos");
 
                 if (timer) {
                     end = std::chrono::high_resolution_clock::now();
                     double seconds =
                         static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
 
-                    LOG_INFO("[TIMER] " << std::fixed << seconds << "s (" << std::setprecision(2) << bp_count / seconds
+                    LOG_INFO("Duración de la caracterización del fondo: " << std::fixed << seconds << "s (" << std::setprecision(2) << bp_count / seconds
                                         << std::setprecision(6) << " puntos/s)");
                 }
 
@@ -159,7 +159,7 @@ void ObjectCharacterizator::managePoints() {
 
 // Comprueba si un punto pertenece al background
 bool ObjectCharacterizator::isBackground(const Point &p) const {
-    std::vector<Point *> neighbours = background->getMap().searchNeighbors(p, backgroundDistance, Kernel_t::circle);
+    std::vector<Point *> neighbours = background->getMap()->searchNeighbors(p, backgroundDistance, Kernel_t::circle);
 
     for (Point *&pb : neighbours) {
         if (p.distance3D(*pb) < backgroundDistance) {

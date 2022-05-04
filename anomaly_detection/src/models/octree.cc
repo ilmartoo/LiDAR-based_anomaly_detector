@@ -1,10 +1,17 @@
-//
-// Created by miguel.yermo on 5/03/20.
-//
+/**
+ * @file octree.cc
+ * @author Miguel Yermo (miguel.yermo@usc.es)
+ * @date 05/03/2020
+ *
+ * Implementación del objeto Octree
+ * 
+ */
+
+#include <limits>
 
 #include "models/octree.hh"
 #include "models/Kernel.hh"
-#include <limits>
+
 
 Octree::Octree() {}
 
@@ -722,7 +729,7 @@ Vector mbb(const std::vector<Point> &points, float &maxRadius)
 
     radii = mbbRadii(min, max, maxRadius);
     center = mbbCenter(min, radii);
-    printf("Octree Radius: %.2f\n", maxRadius);
+    DEBUG_STDOUT("Octree Radius: " << maxRadius);
 
     return center;
 }

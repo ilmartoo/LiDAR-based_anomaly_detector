@@ -1,6 +1,11 @@
-//
-// Created by miguel.yermo on 5/03/20.
-//
+/**
+ * @file octree.cc
+ * @author Miguel Yermo (miguel.yermo@usc.es)
+ * @date 05/03/2020
+ *
+ * Definición del objeto Octree
+ *
+ */
 
 #pragma once
 

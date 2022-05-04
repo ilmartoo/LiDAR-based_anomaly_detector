@@ -1,6 +1,11 @@
-//
-// Created by miguelyermo on 28/1/22.
-//
+/**
+ * @file octree.cc
+ * @author Miguel Yermo (miguel.yermo@usc.es)
+ * @date 28/01/2022
+ *
+ * Definición del objeto AbstractKernel y subclases
+ *
+ */
 
 #pragma once
 
