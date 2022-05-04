@@ -15,9 +15,9 @@ To compile the project you will need:
 
 We also need the following libraries for the project to work:
 
-- [livox-sdk 2.3.0](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
-- [read_lvx](https://github.com/michalpelka/read_lvx)
-- [armadillo 10.0.0](https://sourceforge.net/projects/arma/files/)
+- [`livox-sdk 2.3.0`](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
+- [`read_lvx`](https://github.com/michalpelka/read_lvx)
+- [`armadillo 10.0.0`](https://sourceforge.net/projects/arma/files/)
 
 ---
 
@@ -48,9 +48,9 @@ This will decompress the minimalist libraries to the `bin/` folder, compile the 
 
 To manualy install the needed libraries you may download the specified version of the libraries:
 
-- [livox-sdk 2.3.0](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
-- [read_lvx](https://github.com/michalpelka/read_lvx) (First version, no version number specified)
-- [armadillo 10.0.0](https://sourceforge.net/projects/arma/files/)
+- [`livox-sdk 2.3.0`](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
+- [`read_lvx`](https://github.com/michalpelka/read_lvx) (First version, no version number specified)
+- [`armadillo 10.0.0`](https://sourceforge.net/projects/arma/files/)
 
 ***Note:*** *As we said in [Quick Instalation](#quick-installation), `armadillo` depends on OpenBLAS (or LAPACK) library. Be sure to install the library development package beforehand.*
 
@@ -64,19 +64,19 @@ When all the needed libraries are compiled, be sure to change the needed lines i
 # Include directories
 include_directories(
   ${PROJECT_ROOT}/include/      # Project includes
-  ${PROJECT_ROOT}/libs/include  # Library includes			<------	CHANGE THIS to the location of the libraries' includes
+  ${PROJECT_ROOT}/libs/include  # Library includes          <------ CHANGE THIS to the location of the libraries' includes
 )
 
 ## Libraries
 # SDK CORE
-set(SDKCORE_LIB ${PROJECT_ROOT}/libs/lib/liblivox_sdk.a)	<------	CHANGE THIS to the location of the compiled livox_sdk lib
+set(SDKCORE_LIB ${PROJECT_ROOT}/libs/lib/liblivox_sdk.a)    <------ CHANGE THIS to the location of the compiled livox_sdk lib
 # READ LVX
-set(READLVX_LIB ${PROJECT_ROOT}/libs/lib/libread_lvx.a)		<------	CHANGE THIS to the location of the compiled read_lvx lib
+set(READLVX_LIB ${PROJECT_ROOT}/libs/lib/libread_lvx.a)     <------ CHANGE THIS to the location of the compiled read_lvx lib
 # ARMADILLO
-set(ARMADILLO_LIB ${PROJECT_ROOT}/libs/lib/libarmadillo.so)	<------	CHANGE THIS to the location of the compiled armadillo lib
+set(ARMADILLO_LIB ${PROJECT_ROOT}/libs/lib/libarmadillo.so) <------ CHANGE THIS to the location of the compiled armadillo lib
 # OPENBLAS
-set(OPENBLAS_LIB openblas) 									<------	CHANGE THIS to the location of the compiled OpenBLAS lib
-															(leave it like this if you installed it through the package manager)
+set(OPENBLAS_LIB openblas)                                  <------ CHANGE THIS to the location of the compiled OpenBLAS lib
+                                                            (leave it like this if you installed it through the package manager)
 ```
 
 If you did all the steps correctly, you are now ready to compile the project.

@@ -15,8 +15,8 @@ To compile the project you will need:
 
 We also need the following libraries for the project to work:
 
-- [livox-sdk 2.3.0](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
-- [read_lvx](https://github.com/michalpelka/read_lvx)
+- [`livox-sdk 2.3.0`](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
+- [`read_lvx`](https://github.com/michalpelka/read_lvx)
 
 ---
 
@@ -45,8 +45,8 @@ This will decompress the minimalist libraries to the `bin/` folder, compile the 
 
 To manualy install the needed libraries you may download the specified version of the libraries:
 
-- [livox-sdk 2.3.0](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
-- [read_lvx](https://github.com/michalpelka/read_lvx) (First version, no version number specified)
+- [`livox-sdk 2.3.0`](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
+- [`read_lvx`](https://github.com/michalpelka/read_lvx) (First version, no version number specified)
 
 Then, compile the libraries as stipulated by their corresponding documentation.
 
@@ -58,14 +58,14 @@ When all the needed libraries are compiled, be sure to change the needed lines i
 # Include directories
 include_directories(
   ${PROJECT_ROOT}/include/      # Project includes
-  ${PROJECT_ROOT}/libs/include  # Library includes			<------	CHANGE THIS to the location of the libraries' includes
+  ${PROJECT_ROOT}/libs/include  # Library includes        <------ CHANGE THIS to the location of the libraries' includes
 )
 
 ## Libraries
 # SDK CORE
-set(SDKCORE_LIB ${PROJECT_ROOT}/libs/lib/liblivox_sdk.a)	<------	CHANGE THIS to the location of the compiled livox_sdk lib 
+set(SDKCORE_LIB ${PROJECT_ROOT}/libs/lib/liblivox_sdk.a)  <------ CHANGE THIS to the location of the compiled livox_sdk lib 
 # READ LVX
-set(READLVX_LIB ${PROJECT_ROOT}/libs/lib/libread_lvx.a)		<------	CHANGE THIS to the location of the compiled read_lvx lib 
+set(READLVX_LIB ${PROJECT_ROOT}/libs/lib/libread_lvx.a)   <------ CHANGE THIS to the location of the compiled read_lvx lib 
 ```
 
 If you did all the steps correctly, you are now ready to compile the project.
