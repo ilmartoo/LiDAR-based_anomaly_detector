@@ -2,7 +2,7 @@
 
 Using LiDAR data to detect any anomalies an object of a kind may have in comparison to a predefined model.
 
-_...in-depth explanation to come..._
+*...in-depth explanation to come...*
 
 ## Prerequisites
 
@@ -15,8 +15,6 @@ We also need the following libraries for the project to work:
 
 - [livox-sdk 2.3.0](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
 - [read_lvx](https://github.com/michalpelka/read_lvx)
-
-_Note: `read_lvx` repository do not have a CMakeList.txt to generate a library, but an executable, so it needs to be created._
 
 ## Developing enviroment
 
@@ -46,8 +44,7 @@ To manualy install the needed libraries you may download the specified version o
 
 Then, compile the libraries as stipulated by their corresponding documentation.
 
-_**Note:**
-The `read_lvx` project is not a library, but can be compiled as so. It also needs `livox_sdk` library to work, so be aware of it when compiling._
+***Note:*** *The `read_lvx` project is not a library, but can be compiled as so. It also needs `livox_sdk` library to work, so be aware of it when compiling.*
 
 When all the needed libraries are compiled, be sure to change the needed lines in the [`CMakeLists.txt`](CMakeLists.txt) file:
 
@@ -94,8 +91,7 @@ This will create the executable of the project into `build/anomaly_detection/`.
 
 ## Execution and parameters
 
-_...comming soon..._
-
+*...comming soon...*
 
 ## Documentation
 

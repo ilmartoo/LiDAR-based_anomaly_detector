@@ -4,9 +4,8 @@ Using LiDAR data to detect any anomalies an object of a kind may have in compari
 
 *...in-depth explanation to come...*
 
-_**Note:**
-This is an end-of-degree project made for my Computer 
-Science degree at University of Santiago de Compostela._
+***Note:**
+This is an end-of-degree project made for my Computer Science degree at University of Santiago de Compostela.*
 
 ## Projects
 
@@ -17,6 +16,7 @@ The **Error Measuring** project's goal is to measure the cuadratic error a LiDAR
 ## Compilation
 
 To compile all the projects at once:
+
 ```bash
 # Build the projects
 cmake -S . -B build
