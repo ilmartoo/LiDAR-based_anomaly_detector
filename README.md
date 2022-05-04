@@ -8,9 +8,9 @@ This is an end-of-degree project made for my Computer Science degree at Universi
 
 ## Projects
 
-The main project of this repository is the **Anomaly Detector**. This project uses the obtained LiDAR data to characterize objects and detect any anomalies they may have. [[Project README.md](anomaly_detector/src/README.md)]
+The main project of this repository is the **Anomaly Detector**. This project uses the obtained LiDAR data to characterize objects and detect any anomalies they may have. [[Project README.md](anomaly_detection/README.md)]
 
-The **Error Measuring** project's goal is to measure the cuadratic error a LiDAR dataset may have using plane aproximations. [[Project README.md](error_measuring/src/README.md)]
+The **Error Measuring** project's goal is to measure the cuadratic error a LiDAR dataset may have using plane aproximations. [[Project README.md](error_measuring/README.md)]
 
 ---
 
