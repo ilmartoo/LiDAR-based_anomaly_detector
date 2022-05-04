@@ -4,6 +4,8 @@ Project to measure the cuadratic error a predefined LiDAR data may have using pl
 
 *...in-depth explanation to come...*
 
+---
+
 ## Prerequisites
 
 To compile the project you will need:
@@ -17,9 +19,13 @@ We also need the following libraries for the project to work:
 - [read_lvx](https://github.com/michalpelka/read_lvx)
 - [armadillo 10.0.0](https://sourceforge.net/projects/arma/files/)
 
+---
+
 ## Developing enviroment
 
 The project was developed and tested in `Ubuntu 20.04.4` and `Ubuntu 21.04`.
+
+---
 
 ## Library compilation
 
@@ -34,7 +40,7 @@ unzip libraries.zip -d bin/
 ./error_measuring/setup_libraries.sh
 ```
 
-***Note:*** *OpenBLAS (or LAPACK) library needs to be installed for `armadillo` to work properly, so you may be prompt with a request to install the libopenblas-dev package if not present in your system. If you do not wish to install it through the script you may install with your preferred package manager or manually (be sure to link it properly to `armadillo` if you wish to do it this way).*
+> OpenBLAS (or LAPACK) library needs to be installed for `armadillo` to work properly, so you may be prompt with a request to install the libopenblas-dev package if not present in your system. If you do not wish to install it through the script you may install with your preferred package manager or manually (be sure to link it properly to `armadillo` if you wish to do it this way).
 
 This will decompress the minimalist libraries to the `bin/` folder, compile the libraries and install them in the `libs/` folder, without the need to modify the project's `CMakeLists.txt` file.
 
@@ -50,7 +56,7 @@ To manualy install the needed libraries you may download the specified version o
 
 Then, compile the libraries as stipulated by their corresponding documentation.
 
-***Note:*** *The `read_lvx` project is not a library, but can be compiled as so. It also needs `livox_sdk` library to work, so be aware of it when compiling.*
+> The `read_lvx` project is not a library, but can be compiled as so. It also needs `livox_sdk` library to work, so be aware of it when compiling.
 
 When all the needed libraries are compiled, be sure to change the needed lines in the [`CMakeLists.txt`](CMakeLists.txt) file:
 
@@ -74,6 +80,8 @@ set(OPENBLAS_LIB openblas) 									<------	CHANGE THIS to the location of the c
 ```
 
 If you did all the steps correctly, you are now ready to compile the project.
+
+---
 
 ## Project compilation
 
@@ -99,6 +107,8 @@ cmake --build build/error_measuring
 ```
 
 This will create the executable of the project into `build/error_measuring/`.
+
+---
 
 ## Execution and parameters
 

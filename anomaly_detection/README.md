@@ -4,6 +4,8 @@ Using LiDAR data to detect any anomalies an object of a kind may have in compari
 
 *...in-depth explanation to come...*
 
+---
+
 ## Prerequisites
 
 To compile the project you will need:
@@ -16,9 +18,13 @@ We also need the following libraries for the project to work:
 - [livox-sdk 2.3.0](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
 - [read_lvx](https://github.com/michalpelka/read_lvx)
 
+---
+
 ## Developing enviroment
 
 The project was developed and tested in `Ubuntu 20.04.4` and `Ubuntu 21.04`.
+
+---
 
 ## Library compilation
 
@@ -44,7 +50,7 @@ To manualy install the needed libraries you may download the specified version o
 
 Then, compile the libraries as stipulated by their corresponding documentation.
 
-***Note:*** *The `read_lvx` project is not a library, but can be compiled as so. It also needs `livox_sdk` library to work, so be aware of it when compiling.*
+> The `read_lvx` project is not a library, but can be compiled as so. It also needs `livox_sdk` library to work, so be aware of it when compiling.
 
 When all the needed libraries are compiled, be sure to change the needed lines in the [`CMakeLists.txt`](CMakeLists.txt) file:
 
@@ -63,6 +69,8 @@ set(READLVX_LIB ${PROJECT_ROOT}/libs/lib/libread_lvx.a)		<------	CHANGE THIS to 
 ```
 
 If you did all the steps correctly, you are now ready to compile the project.
+
+---
 
 ## Project compilation
 
@@ -89,9 +97,13 @@ cmake --build build/anomaly_detection
 
 This will create the executable of the project into `build/anomaly_detection/`.
 
+---
+
 ## Execution and parameters
 
 *...comming soon...*
+
+---
 
 ## Documentation
 
