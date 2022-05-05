@@ -10,6 +10,8 @@
 #include <iostream>
 #include <functional>
 #include <string>
+#include <sstream>
+#include <vector>
 
 #include "app/App.hh"
 #include "app/InputParser.hh"
@@ -28,6 +30,113 @@ void App::start() {
     // ad->start();       // Iniciamos el detector de anomalías
     oc->start();       // Iniciamos el caracterizador
     scanner->start();  // Iniciamos el escaner
+}
+
+int cli() {
+    std::vector<std::string> command;
+    bool exit = false;
+
+    do {
+        command = getCommand();
+
+        ////
+        std::cout << command.size() << " >> ";
+        for (auto& e : command)
+            std::cout << e << ' ';
+        std::cout << '\n';
+        ////
+
+        if (command.size() >= 1) {
+            // HELP
+            if (!command[0].compare("help")) {
+                //...
+            }
+
+            // EXIT
+            else if (!command[0].compare("exit")) {
+                exit = true;
+            }
+
+            // CHAR
+            else if (!command[0].compare("char")) {
+                if (command.size() >= 2) {
+                    if (!command[1].compare("background")) {
+                        //...
+                    } else if (!command[1].compare("object")) {
+                        //...
+                    } else if (!command[1].compare("set")) {
+                        if (command.size() == 4) {
+                            if (!command[2].compare("bframe")) {
+                                //...
+                            } else if (!command[2].compare("oframe")) {
+                                //...
+                            } else {
+                                badCommand();
+                            }
+                        } else {
+                            badCommand();
+                        }
+                    } else {
+                        badCommand();
+                    }
+                } else {
+                    badCommand();
+                }
+            }
+
+            // MODEL
+            else if (!command[0].compare("model")) {
+                if (command.size() >= 2) {
+                    if (!command[1].compare("save")) {
+                        if (command.size() == 4) {
+                            //...
+                        } else {
+                            badCommand();
+                        }
+                    } else if (!command[1].compare("set")) {
+                        if (command.size() == 3) {
+                            //...
+                        } else {
+                        }
+                    } else {
+                        badCommand();
+                    }
+                }
+            }
+
+            // EXPLAIN
+            else if (!command[0].compare("explain")) {
+                //...
+            }
+
+            // LIST
+            else if (!command[0].compare("list")) {
+                if (command.size() == 2) {
+                    if (!command[1].compare("objects")) {
+                        //...
+                    } else if (!command[1].compare("models")) {
+                        //...
+                    } else {
+                        badCommand();
+                    }
+                }
+            }
+
+            // ANALYZE
+            else if (!command[0].compare("analyze")) {
+                if (command.size() == 3) {
+                    //...
+                } else {
+                    badCommand();
+                }
+            }
+
+            // BAD COMMAND
+            else {
+                badCommand();
+            }
+        }
+    } while (!exit);
 }
 
 void App::cli() {

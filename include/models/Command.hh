@@ -14,67 +14,68 @@
 #include <string>
 
 typedef enum {
-    kStart,                      ///< Comenzar ejecución secuencial
-    kCharacterizatorBackground,  ///< Caracterizar el fondo
-    kCharacterizatorObject,      ///< Caracterizar el objeto
-    kAnomalyDetector,            ///< Detectar anomalías
-    kExit,                       ///< Salir del programa
-    kHelp,                       ///< Mostrar ayuda
-    kUnknown,                    ///< Comando desconocido
+    kExit,     ///< Finalización del programa
+    kHelp,     ///< Impresión de la ayuda
+    kChar,     ///< Caracterización de objetos y fondo
+    kModel,    ///< Opciones de los modelos
+    kExplain,  ///< Impresión de las opciones actuales
+    kList,     ///< Listado de objetos y modelos
+    kAnalyze,  ///< Analizador de anomalías
+    kUnknown   ///< Comando desconocido
 } CommandType;
 
 class Command {
    public:
     /**
      * Parser del comando
-     * @param input Linea con el comando
+     * @params[0] input Linea con el comando
      * @return Command
      */
     static Command parse(std::string& input) {
         size_t start = 0, end;
         CommandType type;
         std::vector<std::string> params;
-        std::string param;
+        std::string item;
 
-        end = input.find_first_of(" ", start);
-        param = input.substr(start, end - start);  // Recuperamos comando
-        start = end;
+        std::getline(std::cin, item);
+
+        std::istringstream stream(item);
+
+        while (std::getline(stream, item, ' ')) {
+            params.push_back(item);
+        }
+
         // Exit
-        if (param.compare("exit") == 0) {
-            type = kExit;
+        if (params[0].compare("exit") == 0) {
+            return {kExit, params};
         }
         // Start
-        else if (param.compare("start") == 0) {
-            type = kStart;
+        else if (params[0].compare("help") == 0) {
+            return {kHelp, params};
         }
         // Characterize Background
-        else if (param.compare("background") == 0) {
-            type = kCharacterizatorBackground;
+        else if (params[0].compare("char") == 0) {
+            return {kChar, params};
         }
         // Characterize Object
-        else if (param.compare("object") == 0) {
-            type = kCharacterizatorObject;
+        else if (params[0].compare("model") == 0) {
+            return {kModel, params};
         }
         // Anomaly Detection
-        else if (param.compare("detect") == 0) {
-            type = kAnomalyDetector;
+        else if (params[0].compare("explain") == 0) {
+            return {kExplain, params};
         }
+        // Listar objectos u modelos
+        else if (params[0].compare("list") == 0) {
+            return {kList, params};
+        }
+        // Detector de anomalias
+        else if (params[0].compare("analyze") == 0) {
+            return {kAnalyze, params};
+        }
+
         // Comando desconocido
-        else {
-            return {};
-        }
-
-        while (end != std::string::npos) {
-            end = input.find_first_of(" ", ++start);
-            param = input.substr(start, end - start);  // Recuperamos parametro
-            start = end;
-
-            if (param.size() != 0) {
-                params.push_back(param);  // Introducimos parametro}
-            }
-        }
-
-        return {type, params};
+        return {};
     }
     /**
      * Devuelve el tipo del comando
@@ -90,18 +91,18 @@ class Command {
 
     /**
      * Obtiene el número de parametros del comando
-     * @return Numero de parámetros 
+     * @return Numero de parámetros
      */
-    const int nparams() const { return params.size(); }
+    const int nparams() const { return params.size() - 1; }
 
     /**
      * Operador [] que permite obtener parametros del comando
-     * @param i Index del comando a acceder
+     * @params[0] i Index del comando a acceder
      * @return Devuelve el parametro en la posición especificada
      */
     const std::string& operator[](unsigned int i) const {
         static const std::string empty_string("");
-        return params.size() > i ? params[i] : empty_string;
+        return params.size() - 1 > i ? params[i + 1] : empty_string;
     }
 
     /**
