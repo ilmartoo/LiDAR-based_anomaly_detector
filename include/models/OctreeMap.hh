@@ -22,7 +22,7 @@ class OctreeMap {
     /**
      * Constructor
      */
-    OctreeMap() {}
+    OctreeMap() : startTime(false, nullptr) {}
 
     /**
      * Destructor
@@ -34,9 +34,14 @@ class OctreeMap {
      * @param p Punto a añadir
      */
     void insert(const Point &p) {
+
         auto isNew = keys.emplace(std::to_string(p.getX()) + std::to_string(p.getY()) + std::to_string(p.getZ()));
         if (isNew.second) {
             mem.push_back(p);
+        }
+        if (!startTime.first) {
+            startTime.first = true;
+            startTime.second = const_cast<Timestamp *>(&mem.back().getTimestamp());
         }
     }
 
@@ -49,15 +54,22 @@ class OctreeMap {
     }
 
     /**
+     * Devuelve un tipo de dato pair con un bool estableciendo si el puntero al primer timestamp es valido o no (false si el puntero es nulo).
+     * @return pair de bool y referencia siendo false, nullptr si no hay puntos o true y la referencia si existe el punto.
+     */
+    const std::pair<bool, Timestamp *> &getStartTime() { return startTime; }
+
+    /**
      * Devuelve el octree de puntos
      * @return Referencia al mapa de puntos si se ha construido anteriormente, sino nulo
      */
     const Octree *getMap() const { return map; }
 
    private:
-    Octree *map;
-    std::set<std::string> keys;
-    std::vector<Point> mem;
+    std::pair<bool, Timestamp *> startTime;  ///< Timestamp del primer punto
+    Octree *map;                             ///< Mapa de puntos
+    std::set<std::string> keys;              ///< Claves de unicidad de las coordenadas
+    std::vector<Point> mem;                  ///< Buffer de almacenaje de puntos
 };
 
 #endif  // OCTREEMAP_CLASS_H

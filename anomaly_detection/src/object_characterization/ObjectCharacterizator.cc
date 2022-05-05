@@ -137,6 +137,14 @@ void ObjectCharacterizator::stop() {
     LOG_INFO("Finalizada caracterización.");
 }
 
+// Define el fondo de la escena
+void ObjectCharacterizator::defineBackground() {
+
+}
+
+// Define un objeto en la escena
+void ObjectCharacterizator::defineObject() {}
+
 #pragma GCC push_options
 #pragma GCC optimize("O1")
 // Guarda en background y elimina los puntos del objeto fuera del frame

@@ -149,38 +149,44 @@ void App::cli() {
         Command command = Command::parse(input);  // Parseamos comando
 
         switch (command.getType()) {
-            // Mostrar ayuda
+            // HELP
             case kHelp:
                 DEBUG_STDOUT("Help command");
                 break;
 
-            // Finalización del programa
+            // EXIT
             case kExit:
                 DEBUG_STDOUT("Exit command");
                 exit = true;
                 break;
 
-            // Inicio secuencial
-            case kStart:
-                DEBUG_STDOUT("Start command");
+            // CHAR
+            case kChar:
+                DEBUG_STDOUT("Char command");
                 start();
                 break;
 
-            // Caracterización del background
-            case kCharacterizatorBackground:
-                DEBUG_STDOUT("Characterize Background command");
+            // MODEL
+            case kModel:
+                DEBUG_STDOUT("Model command");
                 // TODO
                 break;
 
-            // Caracterización del objeto
-            case kCharacterizatorObject:
-                DEBUG_STDOUT("Characterize Object command");
+            // EXPLAIN
+            case kExplain:
+                DEBUG_STDOUT("Explain command");
                 // TODO
                 break;
 
-            // Detector de anomalías
-            case kAnomalyDetector:
-                DEBUG_STDOUT("Anomaly Detector command");
+            // LIST
+            case kList:
+                DEBUG_STDOUT("List command");
+                // TODO
+                break;
+
+            // ANALYZE
+            case kAnalyze:
+                DEBUG_STDOUT("Analyze command");
                 // TODO
                 break;
 

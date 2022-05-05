@@ -25,16 +25,15 @@
  * Estados en los que se puede encontrar el caracterizador de objetos
  */
 enum CharacterizatorState {
-    defStartTime,   ///< Definiendo el timestamp de inicio
-    defBackground,  ///< Definiendo el background
-    defObject,      ///< Definiendo objetos
-    defStopped,     ///< Definición parada
+    defBackground,     ///< Definiendo el background
+    defObject,         ///< Definiendo objetos
+    defStopped,        ///< Definición parada
 };
 
 /**
  * Cararterizador de objetos que implementa la interfaz IObjectCharacterizator
  */
-class ObjectCharacterizator : public IObjectCharacterizator {
+class ObjectCharacterizator {
    public:
     /**
      * Constructor del objeto ObjectCharacterizator
@@ -78,69 +77,73 @@ class ObjectCharacterizator : public IObjectCharacterizator {
     virtual void start();
 
     /**
+     * Define el fondo de la escena
+     */
+    void defineBackground();
+
+    /**
+     * Define un objeto en la escena
+     */
+    void defineObject();
+
+    /**
      * Para la caracterización de objetos
      */
     void stop();
 
-    /**
-     * Devuelve si se está cronometrando la caracterización
-     * @return Booleano conforme está activado el cronometraje
-     */
-    const bool isTimer() const { return this->timer; }
-
+    /* Setters */
     /**
      * Setter del cronometraje
      * @param timer Booleano para establecer el nuevo cronometraje
      */
     void setTimer(const bool timer) { this->timer = timer; }
-
-    /**
-     * Getter de la duración del frame
-     * @return Duración del frame
-     */
-    const uint64_t &getFrameDuration() const { return this->frameDuration; }
-
     /**
      * Setter de la duración del frame
      * @param frameDuration Nueva duración del frame
      */
     void setFrameDuration(const uint64_t &frameDuration) { this->frameDuration = frameDuration; }
-
-    /**
-     * Getter del tiempo de escaneo del background
-     * @return Tiempo de escaneo del background
-     */
-    const uint64_t &getBackgroundTime() const { return this->backgroundTime; }
-
     /**
      * Setter del tiempo de escaneo del background
      * @param backgroundTime Nuevo tiempo de escaneo del background
      */
     void setBackgroundTime(const uint64_t &backgroundTime) { this->backgroundTime = backgroundTime; }
-
-    /**
-     * Getter de la reflectividad minima
-     * @return Reflectividad minima
-     */
-    const float &getMinReflectivity() const { return this->minReflectivity; }
-
     /**
      * Setter de la reflectividad minima
      * @param minReflectivity Nueva reflectividad minima
      */
     void setMinReflectivity(const float &minReflectivity) { this->minReflectivity = minReflectivity; }
-
-    /**
-     * Getter de la distancia al background
-     * @return Distancia al background
-     */
-    const float &getBackgroundDistance() const { return this->backgroundDistance; }
-
     /**
      * Setter de la distancia al background
      * @param backgroundDistance Nueva distancia al background
      */
     void setBackgroundDistance(const float &backgroundDistance) { this->backgroundDistance = backgroundDistance; }
+
+    /* Getters */
+    /**
+     * Devuelve si se está cronometrando la caracterización
+     * @return Booleano conforme está activado el cronometraje
+     */
+    const bool isTimer() const { return this->timer; }
+    /**
+     * Getter de la duración del frame
+     * @return Duración del frame
+     */
+    const uint64_t &getFrameDuration() const { return this->frameDuration; }
+    /**
+     * Getter del tiempo de escaneo del background
+     * @return Tiempo de escaneo del background
+     */
+    const uint64_t &getBackgroundTime() const { return this->backgroundTime; }
+    /**
+     * Getter de la reflectividad minima
+     * @return Reflectividad minima
+     */
+    const float &getMinReflectivity() const { return this->minReflectivity; }
+    /**
+     * Getter de la distancia al background
+     * @return Distancia al background
+     */
+    const float &getBackgroundDistance() const { return this->backgroundDistance; }
 
    private:
     enum CharacterizatorState state;  ///< Estado en el que se encuentra el caracterizador de objetos
