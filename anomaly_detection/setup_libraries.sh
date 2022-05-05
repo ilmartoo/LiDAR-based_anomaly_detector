@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Project root directory
-root="$(dirname $0)/.."
+root="$(cd "$(dirname "$0")" && pwd)/.."
 
 # Crea la librería sdk_core
 if [ ! -r "${root}/libs/lib/liblivox_sdk.a" ]; then
     echo -e "\e[1;33m[sdk_core] Creating library...\e[0m"
 
-    cmake -S "${root}/bin/sdk_core" -B "${root}/bin/sdk_core/build" -D CMAKE_INSTALL_PREFIX:PATH="${root}/libs"
+    cmake -S "${root}/bin/sdk_core" -B "${root}/bin/sdk_core/build" -D CMAKE_INSTALL_PREFIX="${root}/libs"
     make -C "${root}/bin/sdk_core/build"
     make install -C "${root}/bin/sdk_core/build"
     
@@ -20,7 +20,7 @@ fi
 if [ ! -r "${root}/libs/lib/libread_lvx.a" ]; then
     echo -e "\e[1;33m[read_lvx] Creating library...\e[0m"
 
-    cmake -S "${root}/bin/read_lvx" -B "${root}/bin/read_lvx/build" -D CMAKE_INSTALL_PREFIX:PATH="${root}/libs"
+    cmake -S "${root}/bin/read_lvx" -B "${root}/bin/read_lvx/build" -D CMAKE_INSTALL_PREFIX="${root}/libs"
     make -C "${root}/bin/read_lvx/build"
     make install -C "${root}/bin/read_lvx/build"
     

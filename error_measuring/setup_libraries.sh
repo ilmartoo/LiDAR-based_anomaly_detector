@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Project root directory
-root="$(pwd)/$(dirname $0)/.."
+root="$(cd "$(dirname "$0")" && pwd)/.."
 
 # Librerias sdk_core y read_lvx
 ${root}/anomaly_detection/setup_libraries.sh

@@ -24,3 +24,5 @@ cmake --build build
 ```
 
 This will create the projects in their corresponding `build/` subdirectory, both ready to be executed.
+
+If you wish to install the projects individually, please refer to their corresponding READMEs where you can found a more in-depth guide of the process.
