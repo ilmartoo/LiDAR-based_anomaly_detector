@@ -1,5 +1,5 @@
 /**
- * @file octree.cc
+ * @file Kernel.hh
  * @author Miguel Yermo (miguel.yermo@usc.es)
  * @date 28/01/2022
  *

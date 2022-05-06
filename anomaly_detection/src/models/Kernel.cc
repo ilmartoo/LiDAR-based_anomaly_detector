@@ -1,5 +1,5 @@
 /**
- * @file octree.cc
+ * @file Kernel.cc
  * @author Miguel Yermo (miguel.yermo@usc.es)
  * @date 28/01/2022
  *
@@ -8,7 +8,7 @@
  */
 
 #include "models/Kernel.hh"
-#include "models/octree.hh"
+#include "models/Octree.hh"
 #include <memory>
 
 std::unique_ptr<AbstractKernel> kernelFactory(const Point& center, const double radius, const Kernel_t& type)
