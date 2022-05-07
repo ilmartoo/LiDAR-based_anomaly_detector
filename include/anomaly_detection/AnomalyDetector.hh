@@ -13,7 +13,6 @@
 #include <vector>
 #include <thread>
 
-#include "models/CharacteristicsVector.hh"
 #include "models/CharacterizedObject.hh"
 
 class AnomalyDetector {

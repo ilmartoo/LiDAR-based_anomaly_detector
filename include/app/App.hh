@@ -18,6 +18,7 @@
 #include "scanner/ScannerLVX.hh"
 #include "scanner/ScannerLidar.hh"
 #include "object_characterization/ObjectCharacterizator.hh"
+#include "models/ObjectManager.hh"
 #include "anomaly_detection/AnomalyDetector.hh"
 
 #include "logging/logging.hh"
@@ -25,7 +26,7 @@
 
 /** Tipos de mediciones de tiempo a tomar */
 enum ChronoMode {
-    kNoChrono = 0,                  ///< Ejecución sin medida de tiempo
+    kNoChrono = 0,                   ///< Ejecución sin medida de tiempo
     kChronoCharacterization = 0b01,  ///< Ejecución con medida de tiempo en la caracterización de objetos
     kChronoAnomalyDetection = 0b10,  ///< Ejecución con medida de tiempo en la detección de anomalías
     kChronoAll = 0b11,               ///< Ejecución con medida de tiempo en todo el programa
@@ -35,6 +36,7 @@ class App {
    private:
     IScanner *scanner;          ///< Escaner de puntos
     ObjectCharacterizator *oc;  ///< Caracterizador de objetos
+    ObjectManager *om;          ///< Gestor de objetos y modelos
     AnomalyDetector *ad;        ///< Detector de anomalías
 
    public:
@@ -85,11 +87,10 @@ class App {
      */
     App(const char *broadcastCode, ChronoMode chronoMode, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance,
         bool iterativeMode) {
-
         scanner = ScannerLidar::create(broadcastCode);
         oc = new ObjectCharacterizator(scanner, objFrame, backFrame, minReflectivity, backDistance,
                                        chronoMode & kChronoCharacterization);
-                                                                             // ad =
+        // ad =
 
         execution();
     }

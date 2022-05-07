@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <stdint.h>
 #include <functional>
 #include <thread>
 #include <mutex>
@@ -136,8 +137,8 @@ void ScannerLVX::readData(std::condition_variable &cv, std::mutex &mutex) {
                 }
 
                 if (eth_packet->data_type == kExtendCartesian) {
-                    const int points_in_packet = livox_ros::GetPointsPerPacket(eth_packet->data_type);
-                    int i;
+                    const uint32_t points_in_packet = livox_ros::GetPointsPerPacket(eth_packet->data_type);
+                    uint32_t i;
                     for (i = packetOffset / sizeof(LivoxExtendRawPoint); scanning && i < points_in_packet; ++i, packetOffset += sizeof(LivoxExtendRawPoint)) {
                         LivoxExtendRawPoint *point = reinterpret_cast<LivoxExtendRawPoint *>(eth_packet->data + packetOffset);
 

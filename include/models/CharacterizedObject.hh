@@ -19,22 +19,15 @@
  */
 class CharacterizedObject {
    private:
-    std::string name;
+    // DATA
 
    public:
     /**
      * Constructor del objeto CharacterizedObject
-     * @param name Nombre del objeto
      * @param map Mapa de puntos
      */
-    CharacterizedObject(const std::string& name, const Octree& map) : name(name) {
+    CharacterizedObject(const Octree& map) {
     }
-
-    /**
-     * Recupera el nombre del modelo
-     * @return Nombre del modelo
-     */
-    std::string getName() { return this->name; };
 };
 
 typedef CharacterizedObject Model;

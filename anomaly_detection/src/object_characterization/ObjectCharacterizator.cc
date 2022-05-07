@@ -178,7 +178,7 @@ void ObjectCharacterizator::defineBackground() {
     }
 }
 
-CharacterizedObject ObjectCharacterizator::defineObject(const std::string &name) {
+CharacterizedObject ObjectCharacterizator::defineObject() {
     state = defObject;
 
     std::condition_variable cv;
@@ -190,7 +190,7 @@ CharacterizedObject ObjectCharacterizator::defineObject(const std::string &name)
         lock.unlock();
     }
 
-    return CharacterizedObject(name, object->getMap());
+    return CharacterizedObject(object->getMap());
 }
 
 bool ObjectCharacterizator::isBackground(const Point &p) const {

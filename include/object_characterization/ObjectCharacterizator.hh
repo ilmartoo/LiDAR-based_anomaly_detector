@@ -95,10 +95,9 @@ class ObjectCharacterizator {
 
     /**
      * Define un objeto en la escena
-     * @param name Nombre del objeto
      * @return Objecto caracterizado
      */
-    CharacterizedObject defineObject(const std::string &name);
+    CharacterizedObject defineObject();
 
     /**
      * Para la caracterización de objetos
