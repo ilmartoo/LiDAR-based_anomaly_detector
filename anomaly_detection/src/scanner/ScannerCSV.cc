@@ -1,5 +1,5 @@
 /**
- * @file ScannerCSV.cpp
+ * @file ScannerCSV.cc
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 19/03/2022
  *
@@ -9,10 +9,11 @@
 
 #include <iostream>
 #include <string>
-#include <fstream>
 #include <sstream>
 #include <functional>
 #include <thread>
+#include <mutex>
+#include <condition_variable>
 
 #include "scanner/ScannerCSV.hh"
 #include "models/Point.hh"
@@ -21,7 +22,6 @@
 #include "logging/debug.hh"
 #include "logging/logging.hh"
 
-// Inicialización del escaner
 bool ScannerCSV::init() {
     DEBUG_STDOUT("Inicializando el escaner de archivos csv.");
 
@@ -37,25 +37,34 @@ bool ScannerCSV::init() {
     return true;
 }
 
-// Comienza la obtención de puntos
-bool ScannerCSV::start() {
+bool ScannerCSV::scan(std::condition_variable &cv, std::mutex &mutex) {
     LOG_INFO("Inicio del escaneo de puntos.");
 
-    if (infile.is_open()) {
-        exit = false;                                                    // Permitimos la ejecución del hilo
-        executionThread = new std::thread(&ScannerCSV::readData, this);  // Creamos hilo
+    if (!infile.is_open()) {
+        infile.open(filename, std::ios::in);
+    }
+    // Vuelve al principio del archivo
+    else if (infile.eof()) {
+        infile.seekg(std::ios::beg);
+    }
+
+    if (!infile.fail()) {
+        scanning = false;
+        std::thread([this, &cv, &mutex]() { this->readData(cv, mutex); }).detach();
+
+        return true;
     }
     // Fallo de apertura
     else {
         LOG_ERROR("Fallo de apertura del archivo de puntos.");
         return false;
     }
+}
 
-    return true;
-};
+void ScannerCSV::pause() {
+    scanning = false;
+}
 
-// Establece la función especificada como función de callback a la que se llamará cada vez que
-// se escanee un nuevo punto
 bool ScannerCSV::setCallback(const std::function<void(const Point &p)> func) {
     DEBUG_STDOUT("Estableciendo el callback.");
 
@@ -63,38 +72,36 @@ bool ScannerCSV::setCallback(const std::function<void(const Point &p)> func) {
     return ((bool)callback);
 }
 
-// spera pasiva a la finalización del escaneo del archivo de puntos
 void ScannerCSV::wait() {
     DEBUG_STDOUT("Esperando a la finalización del escaneo de puntos.");
 
-    executionThread->join();  // Realizamos unión del hilo de lectura
+    std::mutex mtx;
+    std::condition_variable cv;
+    readData(cv, mtx);
 
-    infile.close();  // Cerramos stream del archivo
+    infile.close();
 
     LOG_INFO("Finalizado el escaneo de puntos.");
 }
 
-// Finaliza el escaner
 void ScannerCSV::stop() {
     DEBUG_STDOUT("Finalizando el escaneo de puntos.");
 
-    exit = true;              // Comunicamos al hilo que finalice la ejecución
-    executionThread->join();  // Realizamos unión del hilo de lectura
-
-    infile.close();  // Cerramos stream del archivo
+    if (infile.is_open()) {
+        infile.close();
+    }
 
     LOG_INFO("Finalizado el escaneo de puntos.");
 }
 
-// Lectura de puntos del archivo
-void ScannerCSV::readData() {
+void ScannerCSV::readData(std::condition_variable &cv, std::mutex &mutex) {
     std::string line;     // String de la linea
     std::string data[5];  // Strings de las celdas
 
     // Proceso de lectura de puntos
     std::getline(this->infile, line);  // Linea de cabecera
 
-    for (int commas, i; !exit && std::getline(infile, line);) {
+    for (int commas, i; scanning && std::getline(infile, line);) {
         // Fallo en la lectura
         if (infile.fail()) {
             LOG_INFO("Fallo en la lectura de puntos");
@@ -145,6 +152,9 @@ void ScannerCSV::readData() {
         }
     }
 
-    DEBUG_STDOUT("Se ha terminado el escaneo del archivo de puntos CSV");
-    exit = true;
+    if (infile.eof()) {
+        DEBUG_STDOUT("Se ha terminado el escaneo del archivo de puntos CSV");
+    }
+
+    scanning = true;
 }

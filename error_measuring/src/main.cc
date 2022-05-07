@@ -14,8 +14,11 @@
 #include "armadillo"
 
 #include "models/Point.hh"
+#include "scanner/IFileScanner.hh"
 #include "scanner/ScannerLVX.hh"
 #include "scanner/ScannerCSV.hh"
+
+#include "logging/logging.hh"
 
 /* Declaraciones */
 Point computeCentroid(const std::vector<Point> &points);
@@ -44,15 +47,13 @@ struct PointData {
 /* Main */
 int main(int argc, char **argv) {
     if (argc != 7) {
-        std::cerr << "Número inválido de argumentos!\n\terror_measuring <filename> <wall_distance> <x_min> <x_max> <y_min> <y_max>"
-                  << std::endl;
+        LOG_ERROR("Número inválido de argumentos!\n\terror_measuring <filename> <wall_distance> <x_min> <x_max> <y_min> <y_max>" << std::endl);
         return EXIT_FAILURE;
     }
 
     struct PointData data(atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]));  // Buffer de puntos
 
     /* Creación del escaner */
-    // Obtenemos extensión del archivo
     std::string filename = {argv[1]};
     size_t loc = filename.find_last_of('.');
     std::string ext = filename.substr(++loc);
@@ -60,18 +61,20 @@ int main(int argc, char **argv) {
 
     // Lectura de un archivo LVX
     if (ext.compare("lvx") == 0) {
-        scanner = new ScannerLVX(filename);  // Creamos escaner
+        scanner = ScannerLVX::create(filename);
     }
-    // Lectura de un archivo CSV por defecto
+    // Lectura de un archivo CSV
+    else if (ext.compare("csv") == 0) {
+        scanner = ScannerCSV::create(filename);
+    }
+    // Archivo no legible
     else {
-        scanner = new ScannerCSV(filename);  // Creamos escaner
+        LOG_ERROR("No se dispone de un escaner para leer el tipo de archivo especificado.");
+        return EXIT_FAILURE;
     }
 
-    /* Obtención de puntos del archivo */
-    scanner->init();                                                      // Inicialización
-    scanner->setCallback([&data](const Point &p) { data.callback(p); });  // Callback
-    scanner->start();                                                     // Inicio
-
+    scanner->init();
+    scanner->setCallback([&data](const Point &p) { data.callback(p); });
     scanner->wait();  // Non-busy wait hasta que finalize el archivo
 
     /* Cálculo del plano */

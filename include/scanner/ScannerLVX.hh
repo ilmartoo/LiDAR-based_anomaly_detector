@@ -14,6 +14,7 @@
 #include <string>
 #include <functional>
 #include <thread>
+#include <mutex>
 
 #include "lvx_file.h"
 
@@ -27,13 +28,14 @@
  * programa propietario Livox Viewer
  */
 class ScannerLVX : public IFileScanner {
-   public:
-    /**
-     * Constructor del objeto ScannerLVX
-     * @param filename Archivo contenedor de datos
-     */
-    ScannerLVX(const std::string &filename) : IFileScanner(filename) {}
+   private:
+    livox_ros::LvxFileHandle lvx_file;            ///< Handler del archivo de puntos
+    livox_ros::OutPacketBuffer packets_of_frame;  ///< Buffer de guardado de datos del archivo lvx
+    uint32_t fileOffset;                          ///< Offset del archivo de datos
+    uint32_t frameOffset;                         ///< Offset del frame de datos
+    size_t packetOffset;                          ///< Offset del paquete de datos
 
+   public:
     /**
      * Destructor del scanner
      */
@@ -41,7 +43,23 @@ class ScannerLVX : public IFileScanner {
         if (lvx_file.GetFileState() == livox_ros::kLvxFileOk) {
             lvx_file.CloseLvxFile();
         }
-        delete executionThread;
+    }
+
+    /**
+     * Devuelve la instancia única creada del escaner
+     * @return Instancia única del escaner
+     */
+    static ScannerLVX *getInstance() { return (ScannerLVX *)instance; }
+
+    /**
+     * Crea una instancia unica del escaner si no existe
+     * @param filename Nombre del archivo de datos
+     * @return Instancia única del escaner
+     */
+    static IFileScanner *create(std::string filename) {
+        static ScannerLVX scanner = {filename};
+        instance = (IScanner *)&scanner;
+        return (IFileScanner *)instance;
     }
 
     /**
@@ -52,10 +70,15 @@ class ScannerLVX : public IFileScanner {
 
     /**
      * Comienza la obtención de puntos
-     * @return Se devolverá true al finalizar de leer correctamente el archivo o false si ocurre un
-     * error en el proceso
+     * @param mutex mutex para bloquear al caracterizador hasta que termine de escanear
+     * @return Se devolverá true si se ha comenzado el escaneo correctamente
      */
-    bool start();
+    bool scan(std::condition_variable &cv, std::mutex &mutex);
+
+    /**
+     * Pausa el escaneo de puntos
+     */
+    void pause();
 
     /**
      * Establece la función especificada como función de callback a la que se llamará cada vez que
@@ -76,13 +99,16 @@ class ScannerLVX : public IFileScanner {
     void stop();
 
    private:
-    livox_ros::LvxFileHandle lvx_file;            ///< Handler del archivo de puntos
-    livox_ros::OutPacketBuffer packets_of_frame;  ///< Buffer de guardado de datos del archivo lvx
+    /**
+     * Constructor del objeto ScannerLVX
+     * @param filename Archivo contenedor de datos
+     */
+    ScannerLVX(const std::string &filename) : IFileScanner(filename) {}
 
     /**
      * Lee los puntos del archivo de input
      */
-    void readData();
+    void readData(std::condition_variable &cv, std::mutex &mutex);
 };
 
 #endif  // SCANNERLVX_CLASS_H

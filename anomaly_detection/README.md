@@ -107,6 +107,12 @@ This will create the executable of the project into `build/anomaly_detection/`.
 
 ## Documentation
 
-Further documentation of this project can be found on the `doxygen/` folder.
+Further documentation can be found inside `documentation.zip`:
 
-[Click here](doxygen/index.html) to take a peek.
+```bash
+unzip documentation.zip -d .
+```
+
+> This will decompress the documentation into the current folder.
+
+When decompressed, open `documentation.html` with your browser to access the docs.

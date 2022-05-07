@@ -15,6 +15,7 @@
 #include <fstream>
 #include <functional>
 #include <thread>
+#include <mutex>
 
 #include "scanner/IFileScanner.hh"
 #include "models/Point.hh"
@@ -26,13 +27,10 @@
  * programa propietario Livox Viewer
  */
 class ScannerCSV : public IFileScanner {
-   public:
-    /**
-     * Constructor del objeto ScannerCSV
-     * @param filename Archivo contenedor de datos
-     */
-    ScannerCSV(const std::string &filename) : IFileScanner(filename) {}
+   private:
+    std::ifstream infile;       ///< Stream del archivo de datos
 
+   public:
     /**
      * Destructor del scanner
      */
@@ -40,7 +38,23 @@ class ScannerCSV : public IFileScanner {
         if (this->infile.is_open()) {
             this->infile.close();
         }
-        delete executionThread;
+    }
+
+    /**
+     * Devuelve la instancia única creada del escaner
+     * @return Instancia única del escaner
+     */
+    static ScannerCSV *getInstance() { return (ScannerCSV *)instance; }
+
+    /**
+     * Crea una instancia unica del escaner si no existe
+     * @param filename Nombre del archivo de datos
+     * @return Instancia única del escaner
+     */
+    static IFileScanner *create(std::string filename) {
+        static ScannerCSV scanner = {filename};
+        instance = (IScanner *)&scanner;
+        return (IFileScanner *)instance;
     }
 
     /**
@@ -51,10 +65,15 @@ class ScannerCSV : public IFileScanner {
 
     /**
      * Comienza la obtención de puntos
-     * @return Se devolverá true al finalizar de leer correctamente el archivo o false si ocurre un
-     * error en el proceso
+     * @param mutex mutex para bloquear al caracterizador hasta que termine de escanear
+     * @return Se devolverá true si se ha comenzado el escaneo correctamente
      */
-    bool start();
+    bool scan(std::condition_variable &cv, std::mutex &mutex);
+
+    /**
+     * Pausa el escaneo de puntos
+     */
+    void pause();
 
     /**
      * Establece la función especificada como función de callback a la que se llamará cada vez que
@@ -75,12 +94,16 @@ class ScannerCSV : public IFileScanner {
     void stop();
 
    private:
-    std::ifstream infile;  ///< Stream del archivo de datos
+    /**
+     * Constructor del objeto ScannerCSV
+     * @param filename Archivo contenedor de datos
+     */
+    ScannerCSV(const std::string &filename) : IFileScanner(filename) {}
 
     /**
      * Lee los puntos del archivo de input
      */
-    void readData();
+    void readData(std::condition_variable &cv, std::mutex &mutex);
 };
 
 #endif  // SCANNERCSV_CLASS_H

@@ -12,18 +12,45 @@
 
 #include <string>
 #include <functional>
+#include <mutex>
+#include <condition_variable>
 
 #include "models/Point.hh"
+
+#include "logging/logging.hh"
 
 /**
  * Interfaz de un escaner de puntos
  */
 class IScanner {
+   protected:
+    std::function<void(const Point &p)> callback;  ///< Función de callback
+    bool scanning;                                     ///< Variable para la finalización del escaneo de puntos
+
+    inline static IScanner *instance = nullptr;  ///< Puntero a la instancia única del escaner
+
    public:
     /**
      * Destructor virtual
      */
     virtual ~IScanner() {}
+
+    /**
+     * Devuelve la instancia única creada del escaner
+     * @return Instancia única del escaner
+     */
+    static IScanner *getInstance() { return instance; }
+
+    /**
+     * Crea una instancia unica del escaner si no existe
+     * @param ... Parametros necesarios para crear el escaner
+     * @return Instancia única del escaner
+     */
+    template <class... Args>
+    static IScanner *create(Args &&...args) {
+        LOG_ERROR("Method not implemented!");
+        return instance;
+    }
 
     /**
      * Inicialización del escaner
@@ -33,10 +60,15 @@ class IScanner {
 
     /**
      * Comienza la obtención de puntos
-     * @return Se devolverá true al finalizar de leer correctamente el archivo o false si ocurre un
-     * error en el proceso
+     * @param mutex mutex para bloquear al caracterizador hasta que termine de escanear
+     * @return Se devolverá true si se ha comenzado el escaneo correctamente
      */
-    virtual bool start() = 0;
+    virtual bool scan(std::condition_variable &cv, std::mutex &mutex) = 0;
+
+    /**
+     * Pausa el escaneo de puntos
+     */
+    virtual void pause() = 0;
 
     /**
      * Establece la función especificada como función de callback a la que se llamará cada vez que
@@ -51,14 +83,17 @@ class IScanner {
      */
     virtual void stop() = 0;
 
+    /**
+     * Devuelve si el escaner está escaneando
+     * @return true si el sensor está escaneando
+     */
+    bool isScanning() { return scanning; }
+
    protected:
     /**
      * Constructor
      */
-    IScanner() : exit(false) {}
-
-    std::function<void(const Point &p)> callback;  ///< Función de callback
-    bool exit;                                     ///< Variable para la finalización del escaneo de puntos
+    IScanner() : scanning(false) {}
 };
 
 #endif  // SCANNER_INTERFACE_H

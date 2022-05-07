@@ -15,6 +15,8 @@
 #include <fstream>
 #include <functional>
 #include <string.h>
+#include <mutex>
+#include <condition_variable>
 
 #include "livox_sdk.h"
 
@@ -47,17 +49,35 @@ struct DeviceItem {
  * Implementación de la interfaz IScanner para la lectura de puntos del modelo de LiDAR Livox Horizon
  */
 class ScannerLidar : public IScanner {
-   public:
-    /**
-     * Constructor del objeto ScannerLidar
-     * @param broadcast_code Codigo de broadcast del sensor
-     */
-    ScannerLidar(const char broadcast_code[kBroadcastCodeSize]) : lidar(broadcast_code) {}
+   private:
+    DeviceItem lidar;  ///< Datos del sensor LiDAR
 
+    std::unique_lock<std::mutex> lock;  ///< Lock de sincronización
+    std::mutex *mtx;                    ///< Mutex de sincronización
+    std::condition_variable *cv;        ///< Gestor de sincronización
+
+   public:
     /**
      * Destructor del scanner
      */
     ~ScannerLidar() {}
+
+    /**
+     * Devuelve la instancia única creada del escaner
+     * @return Instancia única del escaner
+     */
+    static ScannerLidar *getInstance() { return (ScannerLidar *)instance; }
+
+    /**
+     * Crea una instancia unica del escaner si no existe
+     * @param code Broadcast del sensor
+     * @return Instancia única del escaner
+     */
+    static IScanner *create(const char code[kBroadcastCodeSize]) {
+        static ScannerLidar scanner = {code};
+        instance = (IScanner *)&scanner;
+        return instance;
+    }
 
     /**
      * Inicialización del escaner
@@ -67,10 +87,15 @@ class ScannerLidar : public IScanner {
 
     /**
      * Comienza la obtención de puntos
-     * @return Se devolverá true al finalizar de leer correctamente el archivo o false si ocurre un
-     * error en el proceso
+     * @param mutex mutex para bloquear al caracterizador hasta que termine de escanear
+     * @return Se devolverá true si se ha comenzado el escaneo correctamente
      */
-    bool start();
+    bool scan(std::condition_variable &cv, std::mutex &mutex);
+
+    /**
+     * Pausa el escaneo de puntos
+     */
+    void pause();
 
     /**
      * Establece la función especificada como función de callback a la que se llamará cada vez que
@@ -85,6 +110,14 @@ class ScannerLidar : public IScanner {
      */
     void stop();
 
+   private:
+    /**
+     * Constructor del objeto ScannerLidar
+     * @param broadcast_code Codigo de broadcast del sensor
+     */
+    ScannerLidar(const char code[kBroadcastCodeSize]) : lidar(code) {}
+
+   public:
     /**
      * Obtiene los datos del punto enviado por el sensor
      * @param data Paquete contenedor de datos
@@ -149,9 +182,6 @@ class ScannerLidar : public IScanner {
      * @param type Tipo de dispositivo
      */
     friend void onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type);
-
-   private:
-    DeviceItem lidar;  ///< Datos del sensor LiDAR
 };
 
 #endif  // SCANNERLIDAR_CLASS_H

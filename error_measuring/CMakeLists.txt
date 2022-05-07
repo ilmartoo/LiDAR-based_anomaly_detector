@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
+set(CMAKE_CXX_STANDARD 17)
+
 # Project name
 project(error_measuring)
 
@@ -25,9 +27,8 @@ set(PROJECT_ROOT "${PROJECT_SOURCE_DIR}/..")
 # Gather all source files
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS 
   ${PROJECT_ROOT}/error_measuring/src/*.cc
-  ${PROJECT_ROOT}/anomaly_detector/src/scanner/*.cc
-  ${PROJECT_ROOT}/anomaly_detector/src/models/Point.cc
-  ${PROJECT_ROOT}/anomaly_detector/src/models/Timestamp.cc
+  ${PROJECT_ROOT}/anomaly_detector/src/scanner/ScannerLVX.cc
+  ${PROJECT_ROOT}/anomaly_detector/src/scanner/ScannerCSV.cc
 )
 
 # Include directories

@@ -1,22 +1,20 @@
 /**
- * @file ModelManager.hh
+ * @file ObjectManager.hh
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
- * @date 20/03/2022
- *
- * Definición del objeto ModelManager
- *
+ * @date 06/05/2022
+ * 
+ * Definición e implementación del objeto ObjectManager
+ * 
  */
 
-#ifndef MODELMANAGER_CLASS_H
-#define MODELMANAGER_CLASS_H
+#ifndef OBJECTMANAGER_CLASS_H
+#define OBJECTMANAGER_CLASS_H
 
 #include <string>
 #include <list>
 
-#include "models/Model.hh"
+#include "models/CharacterizedObject.hh"
 #include "models/CharacteristicsVector.hh"
-
-#include "logging/debug.hh"
 
 /**
  * Manager de modelos de objetos
@@ -41,4 +39,4 @@ class ModelManager {
     static std::list<Model> modelos;
 };
 
-#endif  //MODELMANAGER_CLASS_H
+#endif  // OBJECTMANAGER_CLASS_H

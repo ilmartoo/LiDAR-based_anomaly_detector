@@ -8,169 +8,196 @@
  */
 
 #include <string>
-#include <chrono>
 #include <thread>
 #include <vector>
 #include <ctime>
 #include <chrono>
 #include <fstream>
 #include <iomanip>
+#include <mutex>
+#include <condition_variable>
 
 #include "object_characterization/ObjectCharacterizator.hh"
+#include "models/CharacterizedObject.hh"
+#include "models/ObjectManager.hh"
 #include "models/Point.hh"
 #include "models/Kernel.hh"
 
 #include "logging/debug.hh"
 #include "logging/logging.hh"
 
-// Callback a donde se recebirán los puntos escaneados
 void ObjectCharacterizator::newPoint(const Point &p) {
-    // Comprobamos reflectividad
+    static uint32_t p_count;
+    static std::chrono::system_clock::time_point start, last_point, end;
+
     if (p.getReflectivity() >= minReflectivity) {
-        // Escogemos la acción adecuada respecto del estado
         switch (state) {
-            // Establecemos primer timestamp
-            case defStartTime:
-                startTimestamp = new Timestamp(p.getTimestamp());
-                state = defBackground;  // Comenzamos la definicion del background
+            case defBackground: {
+                // Primer punto del marco temporal
+                if (!background->getStartTime().first) {
+                    DEBUG_STDOUT("First background point timestamp: " << p.getTimestamp().string());
 
-                DEBUG_STDOUT("Start Timestamp: " << startTimestamp->string());
+                    if (chrono) {
+                        start = std::chrono::high_resolution_clock::now();
+                    }
 
-                static uint32_t bp_count = 0;
-                static std::chrono::system_clock::time_point start, end;
-
-                if (timer) {
-                    start = std::chrono::high_resolution_clock::now();
+                    p_count = 1;
+                    background->insert(p);
                 }
 
-            // Punto de background
-            case defBackground:
+                // Punto dentro del marco temporal
+                else if (background->getStartTime().second + backFrame > p.getTimestamp()) {
+                    DEBUG_POINT_STDOUT("Point added to the background: " << p.string());
 
-                // Punto del background
-                if (*startTimestamp + backgroundTime > p.getTimestamp()) {
-                    DEBUG_POINT_STDOUT("Punto añadido al background: " << p.string());
-                    ++bp_count;
-
-                    background->insert(p);  // Guardamos punto
-
-                    break;  // Finalizamos
+                    ++p_count;
+                    background->insert(p);
                 }
 
-                // Punto fuera del tiempo límite del background. Comenzamos con la caracterización del objeto
+                // Punto fuera del marco temporal
                 else {
-                    executionThread = new std::thread(&ObjectCharacterizator::managePoints, this);  // Creamos hilo
+                    state = defStopped;
 
-                    state = defObject;  // Empezamos a obtener puntos del objeto
+                    if (chrono) {
+                        last_point = std::chrono::high_resolution_clock::now();
+                    }
+
+                    background->buildOctree();
+
+                    if (chrono) {
+                        end = std::chrono::high_resolution_clock::now();
+
+                        double point_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(last_point - start).count()) / 1.e9;
+                        double total_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
+
+                        LOG_INFO("Background characterization lasted " << std::fixed << total_duration << "s (Process speed: " << std::setprecision(2) << p_count / point_duration << std::setprecision(6) << " points/s).");
+                    }
+
+                    LOG_INFO("Defined background contains " << p_count << " unique points.");
+
+                    DEBUG_STDOUT("First out-of-background-frame point timestamp: " << p.getTimestamp().string() << ".");
+
+                    scanner->pause();
                 }
-
-                background->buildOctree();
-
-                LOG_INFO("Background formado por " << bp_count << " puntos.");
-
-                if (timer) {
-                    end = std::chrono::high_resolution_clock::now();
-                    double seconds =
-                        static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
-
-                    LOG_INFO("Duración de la caracterización del fondo: " << std::fixed << seconds << "s (" << std::setprecision(2) << bp_count / seconds
-                                        << std::setprecision(6) << " puntos/s).");
-                }
-
-                DEBUG_STDOUT("Timestamp del punto límite: " << p.getTimestamp().string() << ".");
+            } break;
 
             // Punto del objeto
-            case defObject:
-                if (!isBackground(p)) {
-                    DEBUG_POINT_STDOUT("Punto añadido al objeto: " << p.string());
+            case defObject: {
+                // Primer punto del marco temporal
+                if (!object->getStartTime().first) {
+                    if (chrono) {
+                        start = std::chrono::high_resolution_clock::now();
+                    }
 
-                    object->push(p);  // Guardamos punto
+                    DEBUG_STDOUT("First object point timestamp: " << p.getTimestamp().string());
 
-                } else {
-                    DEBUG_POINT_STDOUT("Punto enviado pertenece al background: " << p.string());
+                    p_count = 1;
+                    object->insert(p);
                 }
 
-                break;
+                // Punto dentro del marco temporal
+                else if (object->getStartTime().second + backFrame > p.getTimestamp()) {
+                    DEBUG_POINT_STDOUT("Point added to the object: " << p.string());
+
+                    ++p_count;
+                    object->insert(p);
+                }
+
+                // Punto fuera del marco temporal
+                else {
+                    state = defStopped;
+
+                    object->buildOctree();
+
+                    LOG_INFO("Defined object contains " << p_count << " unique points.");
+
+                    if (chrono) {
+                        end = std::chrono::high_resolution_clock::now();
+                        double seconds = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
+
+                        LOG_INFO("Object characterization lasted " << std::fixed << seconds << "s (Process speed: " << std::setprecision(2) << p_count / seconds << std::setprecision(6) << " points/s).");
+                    }
+
+                    DEBUG_STDOUT("First out-of-object-frame point timestamp: " << p.getTimestamp().string() << ".");
+
+                    scanner->pause();
+                }
+            } break;
 
             // Punto descartado
             case defStopped:
-                DEBUG_POINT_STDOUT("Punto descartado: " << p.string());
-
-                break;
+            default: {
+                DEBUG_POINT_STDOUT("Point discarded: " << p.string());
+            } break;
         }
     } else {
         DEBUG_POINT_STDOUT("Punto con reflectividad insuficiente: " << p.string());
     }
 }
 
-// Comienza la definición de objetos
-void ObjectCharacterizator::start() {
-    LOG_INFO("Iniciando caracterización.");
+void ObjectCharacterizator::init() {
+    DEBUG_STDOUT("Inicializando el caracterizador.");
 
-    exit = false;  // Permitimos la ejecución del hilo
-
-    state = defStartTime;  // Estado inicial de obtención de puntos
+    scanner->init();
+    scanner->setCallback(([this](const Point &p) { this->newPoint(p); }));
 };
 
-// Para la caracterización de objetos
 void ObjectCharacterizator::stop() {
     DEBUG_STDOUT("Finalizando caracterización.");
 
-    state = defStopped;  // Paramos de obtener puntos
+    scanner->stop();
 
-    exit = true;              // Comunicamos al hilo que finalice la ejecución
-    executionThread->join();  // Realizamos unión del hilo de gestión de puntos
+    // DEBUG_CODE({  // Impresión de los puntos a archivos csv
+    //     std::ofstream os("tmp/object.csv", std::ios::out);
+    //     while (!object->empty()) {
+    //         os << object->front().csv_string() << std::endl;
+    //         object->pop();
+    //     }
+    //     os.close();
+    //     os.open("tmp/background.csv", std::ios::out);
+    //     for (auto &p : *background) {
+    //         os << p.csv_string() << std::endl;
+    //     }
+    //     os.close();
+    // })
 
-    DEBUG_CODE({
-        std::ofstream os("tmp/object.csv", std::ios::out);
-        while (!object->empty()) {
-            os << object->front().csv_string() << std::endl;
-            object->pop();
-        }
-        os.close();
-        // os.open("tmp/background.csv", std::ios::out);
-        // for (auto &p : *background) {
-        //     os << p.csv_string() << std::endl;
-        // }
-        // os.close();
-    })
-
-    LOG_INFO("Finalizada caracterización.");
+    DEBUG_STDOUT("Finalizada caracterización.");
 }
 
-// Define el fondo de la escena
 void ObjectCharacterizator::defineBackground() {
+    state = defBackground;
 
-}
+    std::condition_variable cv;
 
-// Define un objeto en la escena
-void ObjectCharacterizator::defineObject() {}
+    if (scanner->scan(cv, mtx)) {
+        std::unique_lock<std::mutex> lock(mtx);
 
-#pragma GCC push_options
-#pragma GCC optimize("O1")
-// Guarda en background y elimina los puntos del objeto fuera del frame
-void ObjectCharacterizator::managePoints() {
-    while (!exit) {
-        if (!object->empty()) {
-            Point &p = object->front();
+        cv.wait(lock, [this] { return !this->scanner->isScanning(); });  // Esperamos a que termine el escaneo
+        lock.unlock();
 
-            // Eliminamos si su timestamp es viejo
-            const std::pair<bool, Timestamp *> &lp = object->getLastTimestamp();
-            if (lp.first && p.getTimestamp() + frameDuration < *lp.second) {
-                DEBUG_POINT_STDOUT("Punto caducado: " << p.string());
-
-                object->pop();  // Eliminamos punto
-            }
-        }
+        mtx.unlock();
     }
 }
-#pragma GCC pop_options
 
-// Comprueba si un punto pertenece al background
+CharacterizedObject ObjectCharacterizator::defineObject(const std::string &name) {
+    state = defObject;
+
+    std::condition_variable cv;
+
+    if (scanner->scan(cv, mtx)) {
+        std::unique_lock<std::mutex> lock(mtx);
+
+        cv.wait(lock, [this] { return !this->scanner->isScanning(); });  // Esperamos a que termine el escaneo
+        lock.unlock();
+    }
+
+    return CharacterizedObject(name, object->getMap());
+}
+
 bool ObjectCharacterizator::isBackground(const Point &p) const {
-    std::vector<Point *> neighbours = background->getMap()->searchNeighbors(p, backgroundDistance, Kernel_t::circle);
+    std::vector<Point *> neighbours = background->getMap().searchNeighbors(p, backDistance, Kernel_t::circle);
 
     for (Point *&pb : neighbours) {
-        if (p.distance3D(*pb) < backgroundDistance) {
+        if (p.distance3D(*pb) < backDistance) {
             return true;  // Pertenece al background
         }
     }

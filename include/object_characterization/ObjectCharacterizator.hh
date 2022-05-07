@@ -12,11 +12,11 @@
 
 #include <vector>
 #include <thread>
+#include <mutex>
 
-#include "object_characterization/IObjectCharacterizator.hh"
+#include "scanner/IScanner.hh"
 #include "models/Point.hh"
-#include "models/CharacteristicsVector.hh"
-#include "models/QueueMap.hh"
+#include "models/CharacterizedObject.hh"
 #include "models/OctreeMap.hh"
 
 #include "logging/debug.hh"
@@ -25,44 +25,56 @@
  * Estados en los que se puede encontrar el caracterizador de objetos
  */
 enum CharacterizatorState {
-    defBackground,     ///< Definiendo el background
-    defObject,         ///< Definiendo objetos
-    defStopped,        ///< Definición parada
+    defBackground,  ///< Definiendo el background
+    defObject,      ///< Definiendo objetos
+    defStopped,     ///< Definición parada
 };
 
 /**
  * Cararterizador de objetos que implementa la interfaz IObjectCharacterizator
  */
 class ObjectCharacterizator {
+   private:
+    IScanner *scanner;  ///< Escaner de puntos
+    std::mutex mtx;     ///< Mutex de escaneo
+
+    bool chrono;            ///< Activador de la medicion de tiempos
+    uint64_t objFrame;      ///< Duración del frame de puntos en nanosegundos
+    uint64_t backFrame;     ///< Tiempo en el cual los puntos formarán parte del background
+    float minReflectivity;  ///< Reflectividad mínima que necesitan los puntos para no ser descartados
+    float backDistance;     ///< Distancia mínima a la que tiene que estar un punto para no pertenecer al background
+
+    enum CharacterizatorState state;  ///< Estado en el que se encuentra el caracterizador de objetos
+    OctreeMap *background;            ///< Mapa de puntos que forman el fondo
+    OctreeMap *object;                ///< Mapa de puntos que forman el objeto
+
    public:
     /**
      * Constructor del objeto ObjectCharacterizator
-     * @param frameDuration Tiempo en ms que durará un frame
-     * @param backgroundTime Tiempo en ms en los que se escaneará en fondo
+     * @param scanner Escaner de puntos a utilizar por el caracterizador
+     * @param objFrame Tiempo en ms que durará un frame
+     * @param backFrame Tiempo en ms en los que se escaneará en fondo
      * @param minReflectivity Reflectividad mínima de los puntos
-     * @param backgroundDistance Distancia al fondo en metros
-     * @param timer Activador del cronometraje de tiempos
+     * @param backDistance Distancia al fondo en metros
+     * @param chrono Activador del cronometraje de tiempos
      */
-    ObjectCharacterizator(uint32_t frameDuration, uint32_t backgroundTime, float minReflectivity, float backgroundDistance, bool timer)
-        : timer(timer),
-          frameDuration(frameDuration * 1000000),
-          backgroundTime(backgroundTime * 1000000),
+    ObjectCharacterizator(IScanner *scanner, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance, bool chrono)
+        : scanner(scanner),
+          chrono(chrono),
+          objFrame(objFrame * 1000000),
+          backFrame(backFrame * 1000000),
           minReflectivity(minReflectivity),
-          backgroundDistance(backgroundDistance),
-          exit(true) {
-        state = defStopped;
-
+          backDistance(backDistance),
+          state(defStopped) {
         background = new OctreeMap();
-        object = new QueueMap();
+        object = new OctreeMap();
     }
-
     /**
      * Destructor
      */
     ~ObjectCharacterizator() {
         delete background;
         delete object;
-        delete executionThread;
     }
 
     /**
@@ -72,9 +84,9 @@ class ObjectCharacterizator {
     void newPoint(const Point &p);
 
     /**
-     * Comienza la definición de objetos
+     * Inicializa el caracterizador
      */
-    virtual void start();
+    void init();
 
     /**
      * Define el fondo de la escena
@@ -83,30 +95,32 @@ class ObjectCharacterizator {
 
     /**
      * Define un objeto en la escena
+     * @param name Nombre del objeto
+     * @return Objecto caracterizado
      */
-    void defineObject();
+    CharacterizedObject defineObject(const std::string &name);
 
     /**
      * Para la caracterización de objetos
      */
     void stop();
 
-    /* Setters */
+    ////// Setters
     /**
      * Setter del cronometraje
-     * @param timer Booleano para establecer el nuevo cronometraje
+     * @param chrono Booleano para establecer el nuevo cronometraje
      */
-    void setTimer(const bool timer) { this->timer = timer; }
+    void setChrono(const bool chrono) { this->chrono = chrono; }
     /**
      * Setter de la duración del frame
-     * @param frameDuration Nueva duración del frame
+     * @param objFrame Nueva duración del frame en ms
      */
-    void setFrameDuration(const uint64_t &frameDuration) { this->frameDuration = frameDuration; }
+    void setObjFrame(const uint32_t &objFrame) { this->objFrame = objFrame * 1000000; }
     /**
      * Setter del tiempo de escaneo del background
-     * @param backgroundTime Nuevo tiempo de escaneo del background
+     * @param backFrame Nuevo tiempo de escaneo del background en ms
      */
-    void setBackgroundTime(const uint64_t &backgroundTime) { this->backgroundTime = backgroundTime; }
+    void setBackFrame(const uint32_t &backFrame) { this->backFrame = backFrame * 1000000; }
     /**
      * Setter de la reflectividad minima
      * @param minReflectivity Nueva reflectividad minima
@@ -114,26 +128,26 @@ class ObjectCharacterizator {
     void setMinReflectivity(const float &minReflectivity) { this->minReflectivity = minReflectivity; }
     /**
      * Setter de la distancia al background
-     * @param backgroundDistance Nueva distancia al background
+     * @param backDistance Nueva distancia al background
      */
-    void setBackgroundDistance(const float &backgroundDistance) { this->backgroundDistance = backgroundDistance; }
+    void setBackDistance(const float &backDistance) { this->backDistance = backDistance; }
 
-    /* Getters */
+    ////// Getters
     /**
      * Devuelve si se está cronometrando la caracterización
      * @return Booleano conforme está activado el cronometraje
      */
-    const bool isTimer() const { return this->timer; }
+    const bool isChrono() const { return this->chrono; }
     /**
      * Getter de la duración del frame
      * @return Duración del frame
      */
-    const uint64_t &getFrameDuration() const { return this->frameDuration; }
+    const uint64_t &getObjFrame() const { return this->objFrame; }
     /**
      * Getter del tiempo de escaneo del background
      * @return Tiempo de escaneo del background
      */
-    const uint64_t &getBackgroundTime() const { return this->backgroundTime; }
+    const uint64_t &getBackFrame() const { return this->backFrame; }
     /**
      * Getter de la reflectividad minima
      * @return Reflectividad minima
@@ -143,35 +157,17 @@ class ObjectCharacterizator {
      * Getter de la distancia al background
      * @return Distancia al background
      */
-    const float &getBackgroundDistance() const { return this->backgroundDistance; }
+    const float &getBackDistance() const { return this->backDistance; }
 
    private:
-    enum CharacterizatorState state;  ///< Estado en el que se encuentra el caracterizador de objetos
-
-    bool timer;  ///< Activador de la medicion de tiempos
-
-    uint64_t frameDuration;    ///< Duración del frame de puntos en nanosegundos
-    uint64_t backgroundTime;   ///< Tiempo en el cual los puntos formarán parte del background
-    float minReflectivity;     ///< Reflectividad mínima que necesitan los puntos para no ser descartados
-    float backgroundDistance;  ///< Distancia mínima a la que tiene que estar un punto para no pertenecer al background
-
-    Timestamp *startTimestamp;  ///< Timestamp del primer punto
-    OctreeMap *background;      ///< Mapa de puntos que forman el background
-    QueueMap *object;           ///< Mapa de puntos que forman el objeto
-
-    std::thread *executionThread;  ///< Hilo de ejecución del caracterizador
-    bool exit;                     ///< Variable para la finalización del hilo
-
     /**
      * Guarda en background y elimina los puntos del objeto fuera del frame
      */
     void managePoints();
-
     /**
      * Comprueba si un punto pertenece al background
      * @param p Punto a comprobar
-     * @return true El punto pertenece al background
-     * @return false El punto no pertenece al background
+     * @return true si el punto pertenece al background o false en caso contrario
      */
     bool isBackground(const Point &p) const;
 };

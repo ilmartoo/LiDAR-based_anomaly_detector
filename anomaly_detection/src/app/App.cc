@@ -1,5 +1,5 @@
 /**
- * @file App.cpp
+ * @file App.cc
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 20/03/2022
  *
@@ -8,135 +8,37 @@
  */
 
 #include <iostream>
-#include <functional>
 #include <string>
-#include <sstream>
 #include <vector>
 
 #include "app/App.hh"
 #include "app/InputParser.hh"
 #include "models/Point.hh"
-#include "models/Command.hh"
+#include "models/CLICommand.hh"
 
 #include "logging/debug.hh"
 #include "logging/logging.hh"
 
 void App::init() {
-    scanner->init();                                                            // Inicializamos el escaner
-    scanner->setCallback(([this](const Point &p) { this->oc->newPoint(p); }));  // Establecemos callbacks
+    oc->init();
+    // ac->init();
 }
 
-void App::start() {
-    // ad->start();       // Iniciamos el detector de anomalías
-    oc->start();       // Iniciamos el caracterizador
-    scanner->start();  // Iniciamos el escaner
+void App::close() {
+    oc->stop();
+    // ad->stop();
 }
 
-int cli() {
-    std::vector<std::string> command;
-    bool exit = false;
-
-    do {
-        command = getCommand();
-
-        ////
-        std::cout << command.size() << " >> ";
-        for (auto& e : command)
-            std::cout << e << ' ';
-        std::cout << '\n';
-        ////
-
-        if (command.size() >= 1) {
-            // HELP
-            if (!command[0].compare("help")) {
-                //...
-            }
-
-            // EXIT
-            else if (!command[0].compare("exit")) {
-                exit = true;
-            }
-
-            // CHAR
-            else if (!command[0].compare("char")) {
-                if (command.size() >= 2) {
-                    if (!command[1].compare("background")) {
-                        //...
-                    } else if (!command[1].compare("object")) {
-                        //...
-                    } else if (!command[1].compare("set")) {
-                        if (command.size() == 4) {
-                            if (!command[2].compare("bframe")) {
-                                //...
-                            } else if (!command[2].compare("oframe")) {
-                                //...
-                            } else {
-                                badCommand();
-                            }
-                        } else {
-                            badCommand();
-                        }
-                    } else {
-                        badCommand();
-                    }
-                } else {
-                    badCommand();
-                }
-            }
-
-            // MODEL
-            else if (!command[0].compare("model")) {
-                if (command.size() >= 2) {
-                    if (!command[1].compare("save")) {
-                        if (command.size() == 4) {
-                            //...
-                        } else {
-                            badCommand();
-                        }
-                    } else if (!command[1].compare("set")) {
-                        if (command.size() == 3) {
-                            //...
-                        } else {
-                        }
-                    } else {
-                        badCommand();
-                    }
-                }
-            }
-
-            // EXPLAIN
-            else if (!command[0].compare("explain")) {
-                //...
-            }
-
-            // LIST
-            else if (!command[0].compare("list")) {
-                if (command.size() == 2) {
-                    if (!command[1].compare("objects")) {
-                        //...
-                    } else if (!command[1].compare("models")) {
-                        //...
-                    } else {
-                        badCommand();
-                    }
-                }
-            }
-
-            // ANALYZE
-            else if (!command[0].compare("analyze")) {
-                if (command.size() == 3) {
-                    //...
-                } else {
-                    badCommand();
-                }
-            }
-
-            // BAD COMMAND
-            else {
-                badCommand();
-            }
+// Impresión cuando se detecta un comando desconocido
+void inline unknownCommand() { LOG_ERROR("Unknown command! Please execute " bold("help") " to get info about valid commands."); }
+// Comprueba si un string está vacío (sin contar espacios)
+bool isBlank(const std::string &str) {
+    for (const char &c : str) {
+        if (c != ' ') {
+            return false;
         }
-    } while (!exit);
+    }
+    return true;
 }
 
 void App::cli() {
@@ -144,72 +46,119 @@ void App::cli() {
     bool exit = false;
 
     do {
-        std::getline(std::cin, input);  // Leemos comando
+        do {
+            std::cout << "$ ";
+            std::getline(std::cin, input);
+            DEBUG_STDOUT("Readed command: " << input);
+        } while (isBlank(input));
 
-        Command command = Command::parse(input);  // Parseamos comando
+        CLICommand command = CLICommand::parse(input);
 
         switch (command.getType()) {
             // HELP
-            case kHelp:
-                DEBUG_STDOUT("Help command");
-                break;
+            case kHelp: {
+                //...
+
+            } break;
 
             // EXIT
-            case kExit:
-                DEBUG_STDOUT("Exit command");
+            case kExit: {
                 exit = true;
-                break;
+            } break;
+
+            // CHRONO
+            case kChrono: {
+                bool newChrono;
+                if (command.numParams() == 2 && ((newChrono = command[0].compare("set") == 0) || command[0].compare("unset") == 0)) {
+                    if (command[1].compare("char")) {
+                        oc->setChrono(newChrono);
+
+                    } else if (command[1].compare("analyze")) {
+                        // ad->setChrono(newChrono);
+
+                    } else if (command[1].compare("all")) {
+                        oc->setChrono(newChrono);
+                        // ad->setChrono(newChrono);
+
+                    } else {
+                        unknownCommand();
+                    }
+
+                } else {
+                    unknownCommand();
+                }
+            } break;
 
             // CHAR
-            case kChar:
-                DEBUG_STDOUT("Char command");
-                start();
-                break;
+            case kChar: {
+                if (command[0].compare("background") == 0) {
+                    oc->defineBackground();
+
+                } else if (command[0].compare("object") == 0) {
+                    //...
+
+                } else if (command.numParams() == 3 && command[0].compare("set") == 0) {
+                    if (command[1].compare("backframe") == 0) {
+                        //...
+
+                    } else if (command[1].compare("objframe") == 0) {
+                        //...
+
+                    } else {
+                        unknownCommand();
+                    }
+                } else {
+                    unknownCommand();
+                }
+            } break;
 
             // MODEL
-            case kModel:
-                DEBUG_STDOUT("Model command");
-                // TODO
-                break;
+            case kModel: {
+                if (command.numParams() == 3 && command[0].compare("save") == 0) {
+                    //...
+
+                } else if (command.numParams() == 2 && command[0].compare("set") == 0) {
+                    // ...
+
+                } else {
+                    unknownCommand();
+                }
+            } break;
 
             // EXPLAIN
-            case kExplain:
-                DEBUG_STDOUT("Explain command");
-                // TODO
-                break;
+            case kInfo: {
+                //...
+            } break;
 
             // LIST
-            case kList:
-                DEBUG_STDOUT("List command");
-                // TODO
-                break;
+            case kList: {
+                if (command[0].compare("objects") == 0) {
+                    //...
+
+                } else if (command[0].compare("models") == 0) {
+                    //...
+
+                } else {
+                    unknownCommand();
+                }
+            } break;
 
             // ANALYZE
-            case kAnalyze:
-                DEBUG_STDOUT("Analyze command");
-                // TODO
-                break;
+            case kAnalyze: {
+                if (command.numParams() == 2) {
+                    //...
 
-            // Comando desconocido
-            default:
-                DEBUG_STDOUT("Uknown command");
-                // Ayuda o uso de comandos
-                break;
+                } else {
+                    unknownCommand();
+                }
+            } break;
+
+            // UNKNOWN COMMAND
+            case kUnknown:
+            default: {
+                unknownCommand();
+            } break;
         }
 
-    } while (!exit);  // Esperamos a recibir el comando de finalización
-}
-
-void App::wait() {
-    std::string input;
-    do {
-        std::cin >> input;  // Esperamos señal de salida
-
-    } while (input.compare("q") != 0);
-}
-
-void App::close() {
-    scanner->stop();  // Finalizamos el escaner
-    oc->stop();       // Finalizamos el caracterizador
-    // ad->stop();       // Finalizamos el detector de anomalias
+    } while (!exit);
 }
