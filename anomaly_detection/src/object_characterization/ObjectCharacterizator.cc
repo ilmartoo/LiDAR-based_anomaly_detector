@@ -74,7 +74,7 @@ void ObjectCharacterizator::newPoint(const Point &p) {
 
                     LOG_INFO("Defined background contains " << p_count << " unique points.");
 
-                    DEBUG_STDOUT("First out-of-background-frame point timestamp: " << p.getTimestamp().string() << ".");
+                    DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string() << ".");
 
                     scanner->pause();
                 }
@@ -117,7 +117,33 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                         LOG_INFO("Object characterization lasted " << std::fixed << seconds << "s (Process speed: " << std::setprecision(2) << p_count / seconds << std::setprecision(6) << " points/s).");
                     }
 
-                    DEBUG_STDOUT("First out-of-object-frame point timestamp: " << p.getTimestamp().string() << ".");
+                    DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string() << ".");
+
+                    scanner->pause();
+                }
+            } break;
+
+            // Descarte de puntos intencionado
+            case defDiscard: {
+                // Primer punto del marco temporal
+                if (!discardStartTime.first) {
+                    DEBUG_STDOUT("First discarded point timestamp: " << p.getTimestamp().string());
+
+                    discardStartTime = {true, p.getTimestamp()};
+                }
+
+                // Punto dentro del marco temporal
+                else if (discardStartTime.second + discardTime > p.getTimestamp()) {
+                    DEBUG_POINT_STDOUT("Point discarded: " << p.string());
+                }
+
+                // Punto fuera del marco temporal
+                else {
+                    state = defStopped;
+
+                    discardStartTime.first = false;
+
+                    DEBUG_STDOUT("Last discarded point timestamp: " << p.getTimestamp().string() << ".");
 
                     scanner->pause();
                 }
@@ -164,33 +190,29 @@ void ObjectCharacterizator::stop() {
 }
 
 void ObjectCharacterizator::defineBackground() {
+    background->clear();
+
     state = defBackground;
 
-    std::condition_variable cv;
-
-    if (scanner->scan(cv, mtx)) {
-        std::unique_lock<std::mutex> lock(mtx);
-
-        cv.wait(lock, [this] { return !this->scanner->isScanning(); });  // Esperamos a que termine el escaneo
-        lock.unlock();
-
-        mtx.unlock();
-    }
+    scanner->scan();
 }
 
 CharacterizedObject ObjectCharacterizator::defineObject() {
+    object->clear();
+
     state = defObject;
 
-    std::condition_variable cv;
+    scanner->scan();
 
-    if (scanner->scan(cv, mtx)) {
-        std::unique_lock<std::mutex> lock(mtx);
+    return CharacterizedObject(*object);
+}
 
-        cv.wait(lock, [this] { return !this->scanner->isScanning(); });  // Esperamos a que termine el escaneo
-        lock.unlock();
-    }
+void ObjectCharacterizator::wait(uint32_t miliseconds) {
+    discardTime = miliseconds * 1000000;
 
-    return CharacterizedObject(object->getMap());
+    state = defDiscard;
+
+    scanner->scan();
 }
 
 bool ObjectCharacterizator::isBackground(const Point &p) const {

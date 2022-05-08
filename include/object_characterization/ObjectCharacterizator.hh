@@ -12,7 +12,6 @@
 
 #include <vector>
 #include <thread>
-#include <mutex>
 
 #include "scanner/IScanner.hh"
 #include "models/Point.hh"
@@ -25,9 +24,10 @@
  * Estados en los que se puede encontrar el caracterizador de objetos
  */
 enum CharacterizatorState {
-    defBackground,  ///< Definiendo el background
+    defBackground,  ///< Definiendo el fondo
     defObject,      ///< Definiendo objetos
-    defStopped,     ///< Definición parada
+    defDiscard,     ///< Descarte de puntos intencionado
+    defStopped      ///< Definición parada
 };
 
 /**
@@ -36,17 +36,19 @@ enum CharacterizatorState {
 class ObjectCharacterizator {
    private:
     IScanner *scanner;  ///< Escaner de puntos
-    std::mutex mtx;     ///< Mutex de escaneo
 
     bool chrono;            ///< Activador de la medicion de tiempos
     uint64_t objFrame;      ///< Duración del frame de puntos en nanosegundos
-    uint64_t backFrame;     ///< Tiempo en el cual los puntos formarán parte del background
+    uint64_t backFrame;     ///< Tiempo en el cual los puntos formarán parte del fondo
     float minReflectivity;  ///< Reflectividad mínima que necesitan los puntos para no ser descartados
-    float backDistance;     ///< Distancia mínima a la que tiene que estar un punto para no pertenecer al background
+    float backDistance;     ///< Distancia mínima a la que tiene que estar un punto para no pertenecer al fondo
 
     enum CharacterizatorState state;  ///< Estado en el que se encuentra el caracterizador de objetos
     OctreeMap *background;            ///< Mapa de puntos que forman el fondo
     OctreeMap *object;                ///< Mapa de puntos que forman el objeto
+
+    uint64_t discardTime;                         ///< Tiempo durante el cual se descartarán puntos
+    std::pair<bool, Timestamp> discardStartTime;  ///< Timestamp de inicio del descarte de puntos
 
    public:
     /**
@@ -65,7 +67,9 @@ class ObjectCharacterizator {
           backFrame(backFrame * 1000000),
           minReflectivity(minReflectivity),
           backDistance(backDistance),
-          state(defStopped) {
+          state(defStopped),
+          discardTime(0),
+          discardStartTime(false, Timestamp(0, 0)) {
         background = new OctreeMap();
         object = new OctreeMap();
     }
@@ -100,6 +104,12 @@ class ObjectCharacterizator {
     CharacterizedObject defineObject();
 
     /**
+     * Descarta puntos durante la duracion especificada
+     * @param miliseconds Milisegundos a esperar
+     */
+    void wait(uint32_t miliseconds);
+
+    /**
      * Para la caracterización de objetos
      */
     void stop();
@@ -116,8 +126,8 @@ class ObjectCharacterizator {
      */
     void setObjFrame(const uint32_t &objFrame) { this->objFrame = objFrame * 1000000; }
     /**
-     * Setter del tiempo de escaneo del background
-     * @param backFrame Nuevo tiempo de escaneo del background en ms
+     * Setter del tiempo de escaneo del fondo
+     * @param backFrame Nuevo tiempo de escaneo del fondo en ms
      */
     void setBackFrame(const uint32_t &backFrame) { this->backFrame = backFrame * 1000000; }
     /**
@@ -126,8 +136,8 @@ class ObjectCharacterizator {
      */
     void setMinReflectivity(const float &minReflectivity) { this->minReflectivity = minReflectivity; }
     /**
-     * Setter de la distancia al background
-     * @param backDistance Nueva distancia al background
+     * Setter de la distancia al fondo
+     * @param backDistance Nueva distancia al fondo
      */
     void setBackDistance(const float &backDistance) { this->backDistance = backDistance; }
 
@@ -143,8 +153,8 @@ class ObjectCharacterizator {
      */
     const uint64_t &getObjFrame() const { return this->objFrame; }
     /**
-     * Getter del tiempo de escaneo del background
-     * @return Tiempo de escaneo del background
+     * Getter del tiempo de escaneo del fondo
+     * @return Tiempo de escaneo del fondo
      */
     const uint64_t &getBackFrame() const { return this->backFrame; }
     /**
@@ -153,20 +163,20 @@ class ObjectCharacterizator {
      */
     const float &getMinReflectivity() const { return this->minReflectivity; }
     /**
-     * Getter de la distancia al background
-     * @return Distancia al background
+     * Getter de la distancia al fondo
+     * @return Distancia al fondo
      */
     const float &getBackDistance() const { return this->backDistance; }
 
    private:
     /**
-     * Guarda en background y elimina los puntos del objeto fuera del frame
+     * Guarda en fondo y elimina los puntos del objeto fuera del frame
      */
     void managePoints();
     /**
-     * Comprueba si un punto pertenece al background
+     * Comprueba si un punto pertenece al fondo
      * @param p Punto a comprobar
-     * @return true si el punto pertenece al background o false en caso contrario
+     * @return true si el punto pertenece al fondo o false en caso contrario
      */
     bool isBackground(const Point &p) const;
 };
