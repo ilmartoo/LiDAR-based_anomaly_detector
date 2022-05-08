@@ -15,7 +15,6 @@
 #include <fstream>
 #include <functional>
 #include <thread>
-#include <mutex>
 
 #include "scanner/IFileScanner.hh"
 #include "models/Point.hh"
@@ -28,18 +27,9 @@
  */
 class ScannerCSV : public IFileScanner {
    private:
-    std::ifstream infile;       ///< Stream del archivo de datos
+    std::ifstream infile;  ///< Stream del archivo de datos
 
    public:
-    /**
-     * Destructor del scanner
-     */
-    ~ScannerCSV() {
-        if (this->infile.is_open()) {
-            this->infile.close();
-        }
-    }
-
     /**
      * Devuelve la instancia única creada del escaner
      * @return Instancia única del escaner
@@ -64,11 +54,12 @@ class ScannerCSV : public IFileScanner {
     bool init();
 
     /**
-     * Comienza la obtención de puntos
-     * @param mutex mutex para bloquear al caracterizador hasta que termine de escanear
-     * @return Se devolverá true si se ha comenzado el escaneo correctamente
+     * Comienza a escanear puntos.
+     * Si no se quiere escanear hasta el final del archivo será responsabilidad del programador
+     * hacer una llamada a la función pause() cuando se requiera parar el escaneo.
+     * @return Se devolverá un ScanCode respecto a como ha finalizado el escaneo
      */
-    bool scan(std::condition_variable &cv, std::mutex &mutex);
+    ScanCode scan();
 
     /**
      * Pausa el escaneo de puntos
@@ -99,11 +90,20 @@ class ScannerCSV : public IFileScanner {
      * @param filename Archivo contenedor de datos
      */
     ScannerCSV(const std::string &filename) : IFileScanner(filename) {}
+    /**
+     * Destructor del scanner
+     */
+    ~ScannerCSV() {
+        if (this->infile.is_open()) {
+            this->infile.close();
+        }
+    }
 
     /**
      * Lee los puntos del archivo de input
+     * @return Devuelve un ScanCode según la finalización de la lectura del archivo
      */
-    void readData(std::condition_variable &cv, std::mutex &mutex);
+    ScanCode readData();
 };
 
 #endif  // SCANNERCSV_CLASS_H

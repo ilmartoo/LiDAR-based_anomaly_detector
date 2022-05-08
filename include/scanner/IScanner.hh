@@ -12,12 +12,19 @@
 
 #include <string>
 #include <functional>
-#include <mutex>
-#include <condition_variable>
 
 #include "models/Point.hh"
 
 #include "logging/logging.hh"
+
+/**
+ * Enumeración de los codigos de finalización que puede devolver un escaneo
+ */
+enum ScanCode {
+    kScanOk,    ///< Escaneo correcto
+    kScanEof,   ///< Escaneo hasta el final del archivo
+    kScanError  ///< Error de escaneo
+};
 
 /**
  * Interfaz de un escaner de puntos
@@ -25,16 +32,11 @@
 class IScanner {
    protected:
     std::function<void(const Point &p)> callback;  ///< Función de callback
-    bool scanning;                                     ///< Variable para la finalización del escaneo de puntos
+    bool scanning;                                 ///< Variable para la finalización del escaneo de puntos
 
     inline static IScanner *instance = nullptr;  ///< Puntero a la instancia única del escaner
 
    public:
-    /**
-     * Destructor virtual
-     */
-    virtual ~IScanner() {}
-
     /**
      * Devuelve la instancia única creada del escaner
      * @return Instancia única del escaner
@@ -59,11 +61,12 @@ class IScanner {
     virtual bool init() = 0;
 
     /**
-     * Comienza la obtención de puntos
-     * @param mutex mutex para bloquear al caracterizador hasta que termine de escanear
-     * @return Se devolverá true si se ha comenzado el escaneo correctamente
+     * Comienza a escanear puntos.
+     * Si no se quiere escanear hasta el final del archivo será responsabilidad del programador
+     * hacer una llamada a la función pause() cuando se requiera parar el escaneo.
+     * @return Se devolverá un ScanCode respecto a como ha finalizado el escaneo
      */
-    virtual bool scan(std::condition_variable &cv, std::mutex &mutex) = 0;
+    virtual ScanCode scan() = 0;
 
     /**
      * Pausa el escaneo de puntos
@@ -94,6 +97,10 @@ class IScanner {
      * Constructor
      */
     IScanner() : scanning(false) {}
+    /**
+     * Destructor virtual
+     */
+    virtual ~IScanner() {}
 };
 
 #endif  // SCANNER_INTERFACE_H

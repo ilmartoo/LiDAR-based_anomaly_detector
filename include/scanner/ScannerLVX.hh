@@ -14,7 +14,6 @@
 #include <string>
 #include <functional>
 #include <thread>
-#include <mutex>
 
 #include "lvx_file.h"
 
@@ -36,15 +35,6 @@ class ScannerLVX : public IFileScanner {
     size_t packetOffset;                          ///< Offset del paquete de datos
 
    public:
-    /**
-     * Destructor del scanner
-     */
-    ~ScannerLVX() {
-        if (lvx_file.GetFileState() == livox_ros::kLvxFileOk) {
-            lvx_file.CloseLvxFile();
-        }
-    }
-
     /**
      * Devuelve la instancia única creada del escaner
      * @return Instancia única del escaner
@@ -69,11 +59,12 @@ class ScannerLVX : public IFileScanner {
     bool init();
 
     /**
-     * Comienza la obtención de puntos
-     * @param mutex mutex para bloquear al caracterizador hasta que termine de escanear
-     * @return Se devolverá true si se ha comenzado el escaneo correctamente
+     * Comienza a escanear puntos.
+     * Si no se quiere escanear hasta el final del archivo será responsabilidad del programador
+     * hacer una llamada a la función pause() cuando se requiera parar el escaneo.
+     * @return Se devolverá un ScanCode respecto a como ha finalizado el escaneo
      */
-    bool scan(std::condition_variable &cv, std::mutex &mutex);
+    ScanCode scan();
 
     /**
      * Pausa el escaneo de puntos
@@ -104,11 +95,20 @@ class ScannerLVX : public IFileScanner {
      * @param filename Archivo contenedor de datos
      */
     ScannerLVX(const std::string &filename) : IFileScanner(filename) {}
+    /**
+     * Destructor del scanner
+     */
+    ~ScannerLVX() {
+        if (lvx_file.GetFileState() == livox_ros::kLvxFileOk) {
+            lvx_file.CloseLvxFile();
+        }
+    }
 
     /**
      * Lee los puntos del archivo de input
+     * @return Devuelve un ScanCode según la finalización de la lectura del archivo
      */
-    void readData(std::condition_variable &cv, std::mutex &mutex);
+    ScanCode readData();
 };
 
 #endif  // SCANNERLVX_CLASS_H

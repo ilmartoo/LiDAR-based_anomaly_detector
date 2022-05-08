@@ -15,8 +15,6 @@
 #include <fstream>
 #include <functional>
 #include <string.h>
-#include <mutex>
-#include <condition_variable>
 
 #include "livox_sdk.h"
 
@@ -52,16 +50,7 @@ class ScannerLidar : public IScanner {
    private:
     DeviceItem lidar;  ///< Datos del sensor LiDAR
 
-    std::unique_lock<std::mutex> lock;  ///< Lock de sincronización
-    std::mutex *mtx;                    ///< Mutex de sincronización
-    std::condition_variable *cv;        ///< Gestor de sincronización
-
    public:
-    /**
-     * Destructor del scanner
-     */
-    ~ScannerLidar() {}
-
     /**
      * Devuelve la instancia única creada del escaner
      * @return Instancia única del escaner
@@ -86,11 +75,12 @@ class ScannerLidar : public IScanner {
     bool init();
 
     /**
-     * Comienza la obtención de puntos
-     * @param mutex mutex para bloquear al caracterizador hasta que termine de escanear
-     * @return Se devolverá true si se ha comenzado el escaneo correctamente
+     * Comienza a escanear puntos.
+     * Si no se quiere escanear hasta el final del archivo será responsabilidad del programador
+     * hacer una llamada a la función pause() cuando se requiera parar el escaneo.
+     * @return Se devolverá un ScanCode respecto a como ha finalizado el escaneo
      */
-    bool scan(std::condition_variable &cv, std::mutex &mutex);
+    ScanCode scan();
 
     /**
      * Pausa el escaneo de puntos
@@ -116,6 +106,10 @@ class ScannerLidar : public IScanner {
      * @param broadcast_code Codigo de broadcast del sensor
      */
     ScannerLidar(const char code[kBroadcastCodeSize]) : lidar(code) {}
+    /**
+     * Destructor del scanner
+     */
+    ~ScannerLidar() {}
 
    public:
     /**

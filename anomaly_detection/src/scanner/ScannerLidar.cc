@@ -25,6 +25,10 @@
 #include "logging/debug.hh"
 #include "logging/logging.hh"
 
+std::mutex mtx;                          // Mutex de bloqueo
+std::unique_lock<std::mutex> lock(mtx);  // Candado de sincronización
+std::condition_variable cv;              // Gestor de sincronización
+
 // Obtiene los datos del punto enviado por el sensor
 void getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void *client_data) {
     if (ScannerLidar::getInstance()->lidar.device_state == kDeviceStateSampling) {
@@ -149,10 +153,7 @@ void onSampleCallback(livox_status status, uint8_t handle, uint8_t response, voi
     DEBUG_STDOUT("Comienzo del escaneo. Status: [" << std::to_string(status) << "], Response: [" << std::to_string(response) << "]");
 
     // Bloqueamos el mutex
-    if (ScannerLidar::getInstance()->mtx != nullptr) {
-        ScannerLidar::getInstance()->lock = std::unique_lock<std::mutex>(*ScannerLidar::getInstance()->mtx);
-        ScannerLidar::getInstance()->lock.lock();
-    }
+    lock.lock();
 
     // Inicio correcto
     if (status == kStatusSuccess) {
@@ -163,6 +164,10 @@ void onSampleCallback(livox_status status, uint8_t handle, uint8_t response, voi
     else {
         LOG_ERROR("Fallo al intentar iniciar el escaneo de puntos.");
         ScannerLidar::getInstance()->lidar.device_state = kDeviceStateDisconnect;
+
+        // Debloqueamos mutex por fallo
+        lock.unlock();
+        cv.notify_all();
     }
 }
 
@@ -184,10 +189,8 @@ void onStopSampleCallback(livox_status status, uint8_t handle, uint8_t response,
     ScannerLidar::getInstance()->scanning = false;
 
     // Desbloqueamos el mutex
-    if (ScannerLidar::getInstance()->mtx != nullptr && ScannerLidar::getInstance()->cv != nullptr) {
-        ScannerLidar::getInstance()->lock.unlock();
-        ScannerLidar::getInstance()->cv->notify_one();
-    }
+    lock.unlock();
+    cv.notify_all();
 }
 
 // Se ejecuta al realizar la peticion de desestimiento de los datos IMU
@@ -227,14 +230,11 @@ bool ScannerLidar::init() {
     return true;
 }
 
-bool ScannerLidar::scan(std::condition_variable &cv, std::mutex &mutex) {
+ScanCode ScannerLidar::scan() {
     if (!scanning) {
         LOG_INFO("Iniciando el escaneo de puntos.");
 
         scanning = true;
-
-        ScannerLidar::getInstance()->mtx = &mutex;
-        ScannerLidar::getInstance()->cv = &cv;
 
         /* Esperamos a que el sensor esté listo */
         while (ScannerLidar::getInstance()->lidar.info.state != kLidarStateNormal) {}
@@ -246,21 +246,24 @@ bool ScannerLidar::scan(std::condition_variable &cv, std::mutex &mutex) {
 
         /* Comenzamos el muestreo */
         if (kStatusSuccess == LidarStartSampling(ScannerLidar::getInstance()->lidar.handle, onSampleCallback, NULL)) {
-            return true;
+            cv.wait(lock, [this] { return !this->isScanning(); });  // Esperamos a que finalize de escanear
+
+            return ScanCode::kScanOk;
 
         } else {
             LOG_ERROR("El sensor no está listo para iniciar el escaneo de puntos.");
-            return false;
+            return ScanCode::kScanError;
         }
 
     } else {
         LOG_ERROR("El sensor ya está escaneando.");
-        return false;
+        return ScanCode::kScanError;
     }
 }
 
 void ScannerLidar::pause() {
     LidarStopSampling(lidar.handle, onStopSampleCallback, NULL);
+
     ScannerLidar::getInstance()->lidar.device_state = kDeviceStateConnect;
 }
 

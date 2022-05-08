@@ -14,6 +14,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <exception>
 
 #include "scanner/ScannerCSV.hh"
 #include "models/Point.hh"
@@ -37,7 +38,7 @@ bool ScannerCSV::init() {
     return true;
 }
 
-bool ScannerCSV::scan(std::condition_variable &cv, std::mutex &mutex) {
+ScanCode ScannerCSV::scan() {
     LOG_INFO("Inicio del escaneo de puntos.");
 
     if (!infile.is_open()) {
@@ -49,15 +50,19 @@ bool ScannerCSV::scan(std::condition_variable &cv, std::mutex &mutex) {
     }
 
     if (!infile.fail()) {
-        scanning = false;
-        std::thread([this, &cv, &mutex]() { this->readData(cv, mutex); }).detach();
+        if (!scanning) {
+            scanning = true;
+            return readData();
 
-        return true;
+        } else {
+            LOG_ERROR("El sensor ya está escaneando.");
+            return ScanCode::kScanError;
+        }
     }
     // Fallo de apertura
     else {
-        LOG_ERROR("Fallo de apertura del archivo de puntos.");
-        return false;
+        LOG_ERROR("Fallo de apertura del archivo CSV de puntos.");
+        return ScanCode::kScanError;
     }
 }
 
@@ -75,11 +80,7 @@ bool ScannerCSV::setCallback(const std::function<void(const Point &p)> func) {
 void ScannerCSV::wait() {
     DEBUG_STDOUT("Esperando a la finalización del escaneo de puntos.");
 
-    std::mutex mtx;
-    std::condition_variable cv;
-    readData(cv, mtx);
-
-    infile.close();
+    readData();
 
     LOG_INFO("Finalizado el escaneo de puntos.");
 }
@@ -94,7 +95,7 @@ void ScannerCSV::stop() {
     LOG_INFO("Finalizado el escaneo de puntos.");
 }
 
-void ScannerCSV::readData(std::condition_variable &cv, std::mutex &mutex) {
+ScanCode ScannerCSV::readData() {
     std::string line;     // String de la linea
     std::string data[5];  // Strings de las celdas
 
@@ -105,7 +106,7 @@ void ScannerCSV::readData(std::condition_variable &cv, std::mutex &mutex) {
         // Fallo en la lectura
         if (infile.fail()) {
             LOG_INFO("Fallo en la lectura de puntos");
-            return;
+            return ScanCode::kScanError;
         }
 
         commas = 0;  // Contador de comas
@@ -147,14 +148,21 @@ void ScannerCSV::readData(std::condition_variable &cv, std::mutex &mutex) {
 
         // Llamada al callback
         if (this->callback) {
-            this->callback(Point(Timestamp(data[0]), static_cast<uint8_t>(std::stoi(data[1])), static_cast<double>(std::stod(data[2])),
-                                 static_cast<double>(std::stod(data[3])), static_cast<double>(std::stod(data[4]))));
+            try {
+                this->callback(Point(Timestamp(data[0]), static_cast<uint8_t>(std::stoi(data[1])), static_cast<double>(std::stod(data[2])),
+                                     static_cast<double>(std::stod(data[3])), static_cast<double>(std::stod(data[4]))));
+            } catch (std::exception &e) {
+                LOG_ERROR("Error de conversión de datos.");
+            }
         }
     }
 
     if (infile.eof()) {
-        DEBUG_STDOUT("Se ha terminado el escaneo del archivo de puntos CSV");
+        DEBUG_STDOUT("Se ha llegado al final del archivo CSV de puntos.");
+
+        scanning = false;
+        return ScanCode::kScanEof;
     }
 
-    scanning = true;
+    return ScanCode::kScanOk;
 }

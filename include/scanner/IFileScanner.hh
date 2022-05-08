@@ -12,8 +12,6 @@
 
 #include <string>
 #include <functional>
-#include <mutex>
-#include <condition_variable>
 
 #include "scanner/IScanner.hh"
 #include "models/Point.hh"
@@ -28,11 +26,6 @@ class IFileScanner : public IScanner {
     std::string filename;  ///< Nombre del archivo de datos
 
    public:
-    /**
-     * Destructor virtual
-     */
-    virtual ~IFileScanner() {}
-
     /**
      * Devuelve la instancia única creada del escaner
      * @return Instancia única del escaner
@@ -59,11 +52,16 @@ class IFileScanner : public IScanner {
      * Constructor
      */
     IFileScanner(const std::string &filename) : filename(filename) {}
+    /**
+     * Destructor virtual
+     */
+    virtual ~IFileScanner() {}
 
     /**
      * Lee los puntos del archivo de input
+     * @return Devuelve un ScanCode según la finalización de la lectura del archivo
      */
-    virtual void readData(std::condition_variable &cv, std::mutex &mutex) = 0;
+    virtual ScanCode readData() = 0;
 };
 
 #endif  // FILE_SCANNER_INTERFACE_H

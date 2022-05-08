@@ -48,17 +48,13 @@ bool ScannerLVX::init() {
     return true;
 }
 
-bool ScannerLVX::scan(std::condition_variable &cv, std::mutex &mutex) {
+ScanCode ScannerLVX::scan() {
     DEBUG_STDOUT("Inicio del escaneo de puntos.");
 
     // Reabre el archivo si no está abierto
     if (lvx_file.GetLvxFileReadProgress() == 100) {
         lvx_file.CloseLvxFile();
-        if (lvx_file.Open(filename.c_str(), std::ios::in) != livox_ros::kLvxFileOk) {
-            LOG_ERROR("Fallo al abrir el escaner de archivos lvx.");
-
-            return false;
-        }
+        lvx_file.Open(filename.c_str(), std::ios::in);
 
         fileOffset = 0;
         frameOffset = 0;
@@ -66,15 +62,19 @@ bool ScannerLVX::scan(std::condition_variable &cv, std::mutex &mutex) {
     }
 
     if (lvx_file.GetFileState() == livox_ros::kLvxFileOk) {
-        scanning = true;
-        std::thread([this, &cv, &mutex]() { this->readData(cv, mutex); }).detach();
+        if (!scanning) {
+            scanning = true;
+            return readData();
 
-        return true;
+        } else {
+            LOG_ERROR("El sensor ya está escaneando.");
+            return ScanCode::kScanError;
+        }
     }
     // Fallo de apertura
     else {
-        LOG_ERROR("Fallo de apertura del archivo de puntos.");
-        return false;
+        LOG_ERROR("Fallo de apertura del archivo LVX de puntos.");
+        return ScanCode::kScanError;
     }
 }
 
@@ -92,11 +92,7 @@ bool ScannerLVX::setCallback(const std::function<void(const Point &p)> func) {
 void ScannerLVX::wait() {
     DEBUG_STDOUT("Esperando a la finalización del escaneo de puntos.");
 
-    std::mutex mtx;
-    std::condition_variable cv;
-    readData(cv, mtx);
-
-    lvx_file.CloseLvxFile();
+    readData();
 
     delete packets_of_frame.packet;
 
@@ -113,52 +109,50 @@ void ScannerLVX::stop() {
     DEBUG_STDOUT("Finalizado el escaneo de puntos.");
 }
 
-void ScannerLVX::readData(std::condition_variable &cv, std::mutex &mutex) {
-    {
-        std::lock_guard<std::mutex> lock(mutex);  // Bloqueamos el mutex durante la funcion
+ScanCode ScannerLVX::readData() {
+    int fileState = livox_ros::kLvxFileOk;  // Estado del archivo
 
-        int fileState = livox_ros::kLvxFileOk;  // Estado del archivo
+    uint8_t *packet_base;        // Array de paquetes ethernet
+    LivoxEthPacket *eth_packet;  // Puntero al paquete de datos
 
-        uint8_t *packet_base;        // Array de paquetes ethernet
-        LivoxEthPacket *eth_packet;  // Puntero al paquete de datos
-
-        if (packetOffset == 0 && frameOffset == 0) {
-            fileState = lvx_file.GetPacketsOfFrame(&packets_of_frame);
-        }
-        for (; scanning && fileState == livox_ros::kLvxFileOk; ++fileOffset, fileState = lvx_file.GetPacketsOfFrame(&packets_of_frame)) {
-            for (packet_base = packets_of_frame.packet; scanning && frameOffset < packets_of_frame.data_size; frameOffset += (livox_ros::GetEthPacketLen(eth_packet->data_type) + 1)) {
-                // V1 Point packet
-                if (lvx_file.GetFileVersion() != 0) {
-                    eth_packet = (LivoxEthPacket *)(&((livox_ros::LvxFilePacket *)&packet_base[frameOffset])->version);
-                }
-                // V0 Point packet
-                else {
-                    eth_packet = (LivoxEthPacket *)(&((livox_ros::LvxFilePacketV0 *)&packet_base[frameOffset])->version);
-                }
-
-                if (eth_packet->data_type == kExtendCartesian) {
-                    const uint32_t points_in_packet = livox_ros::GetPointsPerPacket(eth_packet->data_type);
-                    uint32_t i;
-                    for (i = packetOffset / sizeof(LivoxExtendRawPoint); scanning && i < points_in_packet; ++i, packetOffset += sizeof(LivoxExtendRawPoint)) {
-                        LivoxExtendRawPoint *point = reinterpret_cast<LivoxExtendRawPoint *>(eth_packet->data + packetOffset);
-
-                        // Llamada al callback
-                        if (this->callback) {
-                            Point p = {Timestamp(eth_packet->timestamp), point->reflectivity, point->x, point->y, point->z};
-                            this->callback(p);
-                        }
-                    }
-                    packetOffset = i == points_in_packet ? 0 : packetOffset;
-                }
+    if (packetOffset == 0 && frameOffset == 0) {
+        fileState = lvx_file.GetPacketsOfFrame(&packets_of_frame);
+    }
+    for (; scanning && fileState == livox_ros::kLvxFileOk; ++fileOffset, fileState = lvx_file.GetPacketsOfFrame(&packets_of_frame)) {
+        for (packet_base = packets_of_frame.packet; scanning && frameOffset < packets_of_frame.data_size; frameOffset += (livox_ros::GetEthPacketLen(eth_packet->data_type) + 1)) {
+            // V1 Point packet
+            if (lvx_file.GetFileVersion() != 0) {
+                eth_packet = (LivoxEthPacket *)(&((livox_ros::LvxFilePacket *)&packet_base[frameOffset])->version);
             }
-            frameOffset = frameOffset == packets_of_frame.data_size ? 0 : frameOffset;
-        }
+            // V0 Point packet
+            else {
+                eth_packet = (LivoxEthPacket *)(&((livox_ros::LvxFilePacketV0 *)&packet_base[frameOffset])->version);
+            }
 
-        if (lvx_file.GetLvxFileReadProgress() == 100) {
-            DEBUG_STDOUT("Se ha llegado al final del paquete de puntos LVX");
+            if (eth_packet->data_type == kExtendCartesian) {
+                const uint32_t points_in_packet = livox_ros::GetPointsPerPacket(eth_packet->data_type);
+                uint32_t i;
+                for (i = packetOffset / sizeof(LivoxExtendRawPoint); scanning && i < points_in_packet; ++i, packetOffset += sizeof(LivoxExtendRawPoint)) {
+                    LivoxExtendRawPoint *point = reinterpret_cast<LivoxExtendRawPoint *>(eth_packet->data + packetOffset);
+
+                    // Llamada al callback
+                    if (this->callback) {
+                        Point p = {Timestamp(eth_packet->timestamp), point->reflectivity, point->x, point->y, point->z};
+                        this->callback(p);
+                    }
+                }
+                packetOffset = i == points_in_packet ? 0 : packetOffset;
+            }
         }
+        frameOffset = frameOffset == packets_of_frame.data_size ? 0 : frameOffset;
+    }
+
+    if (lvx_file.GetLvxFileReadProgress() == 100) {
+        DEBUG_STDOUT("Se ha llegado al final del archivo LVX de puntos.");
 
         scanning = false;
+        return ScanCode::kScanEof;
     }
-    cv.notify_one();
+
+    return ScanCode::kScanOk;
 }
