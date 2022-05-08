@@ -71,6 +71,7 @@ class App {
 
         oc = new ObjectCharacterizator(scanner, objFrame, backFrame, minReflectivity, backDistance,
                                        chronoMode & kChronoCharacterization);
+        om = new ObjectManager();
         // ad =
 
         execution();
@@ -90,6 +91,7 @@ class App {
         scanner = ScannerLidar::create(broadcastCode);
         oc = new ObjectCharacterizator(scanner, objFrame, backFrame, minReflectivity, backDistance,
                                        chronoMode & kChronoCharacterization);
+        om = new ObjectManager();
         // ad =
 
         execution();
@@ -98,8 +100,9 @@ class App {
      * Destructor de la app
      */
     ~App() {
-        delete oc;
         // delete ad;
+        delete om;
+        delete oc;
     }
 
    private:
@@ -123,8 +126,8 @@ class App {
      */
     void execution() {
         init();   // Inicializamos componentes
-        cli();    // Comenzamos modo iterativo
-        close();  // Finalizamos app
+        cli();    // Iniciamos CLI
+        close();  // Cerramos componentes
     }
 };
 

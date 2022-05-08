@@ -12,24 +12,41 @@
 
 #include <string>
 
-#include "models/Octree.hh"
+#include "models/OctreeMap.hh"
+#include "models/Point.hh"
 
 /**
  * Caracteristicas de un objecto caracterizado
  */
 class CharacterizedObject {
    private:
-    // DATA
+    Box bbox;  ///< Bounding box
 
    public:
     /**
-     * Constructor del objeto CharacterizedObject
-     * @param map Mapa de puntos
+     * Constructor
+     * @param om Mapa de puntos del objeto
      */
-    CharacterizedObject(const Octree& map) {
-    }
-};
+    CharacterizedObject(const OctreeMap& om) : bbox(om.getMap().getCenter(),
+                                                    {om.getMap().getMax().getX() - om.getMap().getMin().getX(),
+                                                     om.getMap().getMax().getY() - om.getMap().getMin().getY(),
+                                                     om.getMap().getMax().getZ() - om.getMap().getMin().getZ()}) {}
+    /**
+     * Constructor
+     * @param bbox Bounding box
+     */
+    CharacterizedObject(const Box& bbox) : bbox(bbox) {}
 
-typedef CharacterizedObject Model;
+    /**
+     * Destructor
+     */
+    ~CharacterizedObject() {}
+
+    /**
+     * Obtiene la bounding box
+     * @return Bounding box del objeto
+     */
+    const Box& getBBox() const { return bbox; }
+};
 
 #endif  // CHARACTERIZEDOBJECT_CLASS_H

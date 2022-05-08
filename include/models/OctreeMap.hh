@@ -22,7 +22,7 @@ class OctreeMap {
     std::pair<bool, Timestamp> startTime;  ///< Timestamp del primer punto
     Octree map;                            ///< Mapa de puntos
     std::set<std::string> keys;            ///< Claves de unicidad de las coordenadas
-    std::vector<Point> mem;                ///< Buffer de almacenaje de puntos
+    std::vector<Point> points;             ///< Buffer de almacenaje de puntos
 
    public:
     /**
@@ -39,9 +39,9 @@ class OctreeMap {
      * @param p Punto a añadir
      */
     void insert(const Point &p) {
-        auto isNew = keys.emplace(std::to_string(p.getX()) + std::to_string(p.getY()) + std::to_string(p.getZ()));
+        auto isNew = keys.insert(std::to_string(p.getX()) + std::to_string(p.getY()) + std::to_string(p.getZ()));
         if (isNew.second) {
-            mem.push_back(p);
+            points.push_back(p);
         }
         if (!startTime.first) {
             startTime.first = true;
@@ -53,7 +53,7 @@ class OctreeMap {
      * Crea el octree con los puntos del vector
      */
     void buildOctree() {
-        map = Octree(mem);
+        map = Octree(points);
     }
 
     /**
@@ -63,7 +63,7 @@ class OctreeMap {
         startTime.first = false;
 
         map = Octree();
-        mem.clear();
+        points.clear();
         keys.clear();
     }
 
@@ -78,6 +78,11 @@ class OctreeMap {
      * @return Mapa de puntos si se ha construido anteriormente
      */
     const Octree &getMap() const { return map; }
+    /**
+     * Devuelve el vector de puntos
+     * @return Vector de puntos del objeto
+     */
+    const std::vector<Point> &getPoints() const { return points; }
 };
 
 #endif  // OCTREEMAP_CLASS_H

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <exception>
 
 #include "app/App.hh"
 #include "app/InputParser.hh"
@@ -21,7 +22,7 @@
 
 void App::init() {
     oc->init();
-    // ac->init();
+    // ad->init();
 }
 
 void App::close() {
@@ -30,7 +31,7 @@ void App::close() {
 }
 
 // Impresión cuando se detecta un comando desconocido
-void inline unknownCommand() { LOG_ERROR("Unknown command! Please execute " bold("help") " to get info about valid commands."); }
+void inline unknownCommand() { CLI_STDERR("Unknown command: Execute " bold("help") " to get info about valid commands"); }
 // Comprueba si un string está vacío (sin contar espacios)
 bool isBlank(const std::string &str) {
     for (const char &c : str) {
@@ -89,13 +90,26 @@ void App::cli() {
                 }
             } break;
 
-            // CHAR
-            case kChar: {
+            // DEFINE
+            case kDefine: {
                 if (command[0].compare("background") == 0) {
                     oc->defineBackground();
 
                 } else if (command[0].compare("object") == 0) {
-                    //...
+                    CharacterizedObject obj = oc->defineObject();
+
+                    std::pair<bool, std::string> p;
+                    if (command.numParams() == 2) {
+                        p = om->newObject(command[1], obj);
+                    } else {
+                        p = om->newObject(obj);
+                    }
+
+                    if (p.first) {
+                        CLI_STDOUT("Object " << command[1] << " created");
+                    } else {
+                        CLI_STDERR("Could not create object " << command[1]);
+                    }
 
                 } else if (command.numParams() == 3 && command[0].compare("set") == 0) {
                     if (command[1].compare("backframe") == 0) {
@@ -112,14 +126,42 @@ void App::cli() {
                 }
             } break;
 
+            // DISCARD
+            case kDiscard: {
+                if (command.numParams() == 1) {
+                    try {
+                        uint32_t ms = static_cast<uint32_t>(std::stoi(command[0]));
+                        oc->wait(ms);
+
+                    } catch (std::exception &e) {
+                        CLI_STDERR("Time not valid");
+                    }
+
+                } else {
+                    unknownCommand();
+                }
+            } break;
+
             // MODEL
             case kModel: {
-                if (command.numParams() == 3 && command[0].compare("save") == 0) {
+                if (command.numParams() == 4 && command[0].compare("save") == 0) {
                     //...
 
-                } else if (command.numParams() == 2 && command[0].compare("set") == 0) {
-                    // ...
+                } else if (command.numParams() == 2) {
+                    if (command[0].compare("set") == 0) {
+                        //...
 
+                    } else if (command[0].compare("load") == 0) {
+                        std::pair<bool, std::string> p = om->loadModel(command[1]);
+                        if (p.first) {
+                            CLI_STDOUT("Model " << p.second << " loaded");
+                        } else {
+                            CLI_STDERR("Could not load model " << command[1]);
+                        }
+
+                    } else {
+                        unknownCommand();
+                    }
                 } else {
                     unknownCommand();
                 }
@@ -133,10 +175,24 @@ void App::cli() {
             // LIST
             case kList: {
                 if (command[0].compare("objects") == 0) {
-                    //...
+                    if (om->getModels().size() > 0) {
+                        CLI_STDOUT("Defined objects list:");
+                        for (auto &o : om->getObjects()) {
+                            CLI_STDOUT("  " << o.first);
+                        }
+                    } else {
+                        CLI_STDOUT("No objects were created yet");
+                    }
 
                 } else if (command[0].compare("models") == 0) {
-                    //...
+                    if (om->getModels().size() > 0) {
+                        CLI_STDOUT("Models list:");
+                        for (auto &m : om->getModels()) {
+                            CLI_STDOUT("  " << m.first);
+                        }
+                    } else {
+                        CLI_STDOUT("No models were loaded yet");
+                    }
 
                 } else {
                     unknownCommand();
@@ -159,6 +215,5 @@ void App::cli() {
                 unknownCommand();
             } break;
         }
-
     } while (!exit);
 }

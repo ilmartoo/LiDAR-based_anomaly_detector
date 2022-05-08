@@ -11,18 +11,19 @@
 #define OBJECTMANAGER_CLASS_H
 
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <stdint.h>
 
 #include "models/CharacterizedObject.hh"
+#include "models/Model.hh"
 
 /**
  * Manager de modelos de objetos
  */
 class ObjectManager {
    private:
-    std::map<std::string, Model> *models;
-    std::map<std::string, CharacterizedObject> *objects;
+    std::unordered_map<std::string, Model> *models;
+    std::unordered_map<std::string, CharacterizedObject> *objects;
     static inline uint32_t objID = 0;
 
    public:
@@ -30,18 +31,20 @@ class ObjectManager {
      * Constructor
      */
     ObjectManager() {
-        models = new std::map<std::string, Model>();
-        objects = new std::map<std::string, CharacterizedObject>();
+        models = new std::unordered_map<std::string, Model>();
+        objects = new std::unordered_map<std::string, CharacterizedObject>();
     }
     /**
      * Constructor
-     * @param modelfile Path del archivo de modelos
+     * @param filenames Vector de nombre de archivos de modelos
      */
-    ObjectManager(const std::string &modelfile) {
-        models = new std::map<std::string, Model>();
-        objects = new std::map<std::string, CharacterizedObject>();
+    ObjectManager(const std::vector<std::string> &filenames) {
+        models = new std::unordered_map<std::string, Model>();
+        objects = new std::unordered_map<std::string, CharacterizedObject>();
 
-        // RETRIEVE MODELS LOGIC
+        for (const auto &f : filenames) {
+            loadModel(f);
+        }
     }
     /**
      * Destructor
@@ -55,21 +58,51 @@ class ObjectManager {
      * Guarda un nuevo objecto
      * @param objname Nombre del objeto
      * @param obj Objeto a guardar
-     * @return true si no existe un objeto bajo el mismo nombre y se ha insertado correctamente
+     * @return pair con boolean a false si no se ha guardado o true y el nombre del objeto si se ha guardado correctamente
      */
-    bool createObject(const std::string &objname, const CharacterizedObject &obj) { return objects->emplace(objname, obj).second; };
+    const std::pair<bool, std::string> newObject(const std::string &objname, const CharacterizedObject &obj) { return {objects->insert({objname, obj}).second, objname}; };
 
     /**
-     *
-     * @param objname
-     * @return true si existe el objecto con el nombre especificado y no exite un modelo con el nombre deseado
+     * Guarda un nuevo objecto bajo un nombre generico
+     * @param obj Objeto a guardar
+     * @return pair con boolean a false si no se ha guardado o true y el nombre del objeto si se ha guardado correctamente
      */
-    bool newModel(const std::string &objname, const std::string &modelname) {
+    const std::pair<bool, std::string> newObject(const CharacterizedObject &obj) {
+        std::string name;
+        do {
+            name = "object-" + std::to_string(objID++);
+        } while (!objects->insert({name, obj}).second);
+
+        return {true, name};
+    }
+
+    /**
+     * Crea un nuevo modelo a partir de un objeto base
+     * @param objname Nombre del objeto existente
+     * @param modelname Nombre del nuevo modelo
+     * @return pair con boolean a false si no se ha guardado o true y el nombre del modelo si se ha guardado correctamente
+     */
+    const std::pair<bool, std::string> newModel(const std::string &objname, const std::string &modelname, const ModelFace &face) {
         auto itr = objects->find(objname);
         if (itr != objects->end()) {
-            return models->emplace(modelname, itr->second).second;
+            auto p = models->insert({modelname, Model(modelname, face, itr->second)});
+            return {p.second, modelname};
         }
-        return false;
+        return {false, ""};
+    }
+
+    /**
+     * Carga un modelo de un archivo
+     * @param filename Archivo del modelo
+     * @return pair con boolean a false si no se ha cargado o true y el modelo si se ha cargado el modelo correctamente
+     */
+    const std::pair<bool, std::string> loadModel(const std::string &filename) {
+        auto p = Model::load(filename);
+        if (p.first) {
+            auto ep = models->insert({p.second.getName(), p.second});
+            return {true, ep.first->first};
+        }
+        return {false, ""};
     }
 
     ////// Getters
@@ -77,12 +110,12 @@ class ObjectManager {
      * Obtiene la lista de modelos actualmente disponibles
      * @return Lista de modelos
      */
-    const std::map<std::string, Model> &getModels() { return *models; }
+    const std::unordered_map<std::string, Model> &getModels() { return *models; }
     /**
      * Obtiene la lista de objetos actualmente disponibles
      * @return Lista de objetos
      */
-    const std::map<std::string, CharacterizedObject> &getObjects() { return *objects; }
+    const std::unordered_map<std::string, CharacterizedObject> &getObjects() { return *objects; }
 
    private:
 };

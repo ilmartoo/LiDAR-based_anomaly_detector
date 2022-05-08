@@ -22,14 +22,8 @@ class AnomalyDetector {
      */
     ~AnomalyDetector() {}
 
-    /**
-     * Carga los modelos disponibles del archivo especificado
-     * @param
-     */
-    void loadModels(std::string path);
-    std::vector<Model> getModels();
-    void setModel(Model m);
-    void compare(CharacteristicsVector cv);
+    // void setModel(Model m);
+    // void compare(CharacterizedObject cv);
 
    protected:
     std::thread executionThread;  ///< Hilo de ejecución del detector de anomalías

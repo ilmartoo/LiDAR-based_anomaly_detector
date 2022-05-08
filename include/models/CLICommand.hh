@@ -10,15 +10,22 @@
 #ifndef CLICOMMAND_CLASS_H
 #define CLICOMMAND_CLASS_H
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include <sstream>
+
+#include "logging/string_format.h"
+
+#define CLI_STDOUT(msg) do { std::cout << "> " << msg << std::endl; } while(0)
+#define CLI_STDERR(msg) do { std::cerr << "> " << msg << std::endl; } while(0)
 
 enum CLICommandType {
     kExit,     ///< Finalización del programa
     kHelp,     ///< Impresión de la ayuda
     kChrono,   ///< Gestión de cronometros
-    kChar,     ///< Caracterización de objetos y fondo
+    kDefine,   ///< Caracterización de objetos y fondo
+    kDiscard,  ///< Descarte de puntos
     kModel,    ///< Opciones de los modelos
     kInfo,     ///< Impresión de las opciones actuales
     kList,     ///< Listado de objetos y modelos
@@ -61,10 +68,14 @@ class CLICommand {
             // CHRONO
             else if (params[0].compare("chrono") == 0) {
                 return {kChrono, params};
-            } 
-            // CHAR
-            else if (params[0].compare("char") == 0) {
-                return {kChar, params};
+            }
+            // DEFINE
+            else if (params[0].compare("define") == 0) {
+                return {kDefine, params};
+            }
+            // DISCARD
+            else if (params[0].compare("discard") == 0) {
+                return {kDiscard, params};
             }
             // MODEL
             else if (params[0].compare("model") == 0) {
