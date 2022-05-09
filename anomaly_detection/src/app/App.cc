@@ -41,6 +41,89 @@ bool isBlank(const std::string &str) {
     }
     return true;
 }
+// Impresión de la ayuda
+void printHelp(CLICommandType ct) {
+    bool doBreak = !(ct == kUnknown);
+    switch (ct) {
+        // UNKNOWN COMMAND
+        case kUnknown:
+        default:
+
+        // HELP
+        case kHelp: {
+            CLI_STDOUT(bold("help") "                           Prints this help text");
+            if (doBreak) {
+                break;
+            }
+        }
+
+        // EXIT
+        case kExit: {
+            CLI_STDOUT(bold("exit") "                           Exits the program");
+            if (doBreak) {
+                break;
+            }
+        }
+
+        // CHRONO
+        case kChrono: {
+            CLI_STDOUT(bold("chrono <set|unset> <...>") "       Activates/Deactivates a specific chronometer:");
+            CLI_STDOUT("  - define                        Object and background definition routine");
+            CLI_STDOUT("  - analyze                       Anomaly detection routine");
+            CLI_STDOUT("  - all                           All of the above");
+            if (doBreak) {
+                break;
+            }
+        }
+
+        // DEFINE
+        case kDefine: {
+            if (doBreak) {
+                break;
+            }
+        }
+
+        // DISCARD
+        case kDiscard: {
+            CLI_STDOUT(bold("discard <mseconds>") "             Discards points for the amount of miliseconds specified");
+            if (doBreak) {
+                break;
+            }
+        }
+
+        // MODEL
+        case kModel: {
+            if (doBreak) {
+                break;
+            }
+        }
+
+        // INFO
+        case kInfo: {
+            if (doBreak) {
+                break;
+            }
+        }
+
+        // LIST
+        case kList: {
+            CLI_STDOUT(bold("list <...>") "                     List the items of:");
+            CLI_STDOUT("  - objects                       Created objects");
+            CLI_STDOUT("  - models                        Loaded models");
+            if (doBreak) {
+                break;
+            }
+        }
+
+        // ANALYZE
+        case kAnalyze: {
+            CLI_STDOUT(bold("analyze <object> <model>") "       Analizes the diferences between the specified object and model");
+            if (doBreak) {
+                break;
+            }
+        }
+    }
+}
 
 void App::cli() {
     std::string input;
@@ -58,8 +141,7 @@ void App::cli() {
         switch (command.getType()) {
             // HELP
             case kHelp: {
-                //...
-
+                printHelp(CLICommand::parse(command[0]).getType());
             } break;
 
             // EXIT
@@ -71,7 +153,7 @@ void App::cli() {
             case kChrono: {
                 bool newChrono;
                 if (command.numParams() == 2 && ((newChrono = command[0].compare("set") == 0) || command[0].compare("unset") == 0)) {
-                    if (command[1].compare("char")) {
+                    if (command[1].compare("define")) {
                         oc->setChrono(newChrono);
 
                     } else if (command[1].compare("analyze")) {
@@ -106,9 +188,9 @@ void App::cli() {
                     }
 
                     if (p.first) {
-                        CLI_STDOUT("Object " << command[1] << " created");
+                        CLI_STDOUT("Object " << p.second << " created");
                     } else {
-                        CLI_STDERR("Could not create object " << command[1]);
+                        CLI_STDERR("Could not create object");
                     }
 
                 } else if (command.numParams() == 3 && command[0].compare("set") == 0) {
@@ -145,7 +227,44 @@ void App::cli() {
             // MODEL
             case kModel: {
                 if (command.numParams() == 4 && command[0].compare("save") == 0) {
-                    //...
+                    if (command[3].size() == 1) {
+                        switch (command[3][0]) {
+                            case 'f': {
+                                if (om->newModel(command[1], command[2], mFrontal).first) {
+                                    CLI_STDOUT("Saved " << command[1] << " as front face of model " << command[2]);
+                                } else {
+                                    CLI_STDERR("Could not save " << command[1] << " as front face of model " << command[2]);
+                                }
+
+                            } break;
+
+                            case 'b': {
+                                om->newModel(command[1], command[2], mBack);
+                            } break;
+
+                            case 'r': {
+                                om->newModel(command[1], command[2], mRSide);
+                            } break;
+
+                            case 'l': {
+                                om->newModel(command[1], command[2], mLSide);
+                            } break;
+
+                            case 'c': {
+                                om->newModel(command[1], command[2], mCeil);
+                            } break;
+
+                            case 't': {
+                                om->newModel(command[1], command[2], mBottom);
+                            } break;
+                            default: {
+                                CLI_STDERR("Face not valid");
+                            }
+                        }
+
+                    } else {
+                        unknownCommand();
+                    }
 
                 } else if (command.numParams() == 2) {
                     if (command[0].compare("set") == 0) {
@@ -167,7 +286,7 @@ void App::cli() {
                 }
             } break;
 
-            // EXPLAIN
+            // INFO
             case kInfo: {
                 //...
             } break;
@@ -175,7 +294,7 @@ void App::cli() {
             // LIST
             case kList: {
                 if (command[0].compare("objects") == 0) {
-                    if (om->getModels().size() > 0) {
+                    if (om->getObjects().size() > 0) {
                         CLI_STDOUT("Defined objects list:");
                         for (auto &o : om->getObjects()) {
                             CLI_STDOUT("  " << o.first);
