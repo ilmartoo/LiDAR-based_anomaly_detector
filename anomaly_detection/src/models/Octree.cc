@@ -12,6 +12,7 @@
 #include "models/Octree.hh"
 #include "models/Kernel.hh"
 
+#include "logging/debug.hh"
 
 Octree::Octree() {}
 

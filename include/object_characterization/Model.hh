@@ -7,10 +7,13 @@
  *
  */
 
+#ifndef MODEL_CLASS_H
+#define MODEL_CLASS_H
+
 #include <vector>
 #include <fstream>
 
-#include "models/CharacterizedObject.hh"
+#include "object_characterization/CharacterizedObject.hh"
 
 enum ModelFace {
     mFrontal = 0,  ///< Cara frontal
@@ -94,10 +97,19 @@ class Model {
         if (infile.is_open()) {
             Model model;
 
+            size_t slen;
+            infile.read((char *)&slen, sizeof(size_t));  // Longitud del nombre del modelo
+
+            char nameBuff[slen + 1];
+            nameBuff[slen] = '\0';
+            infile.read(nameBuff, slen);  // Nombre del modelo
+
+            model.setName(std::string(nameBuff));
+
             int nfaces;
             ModelFace face;
             char obj[sizeof(CharacterizedObject)];
-            infile.read((char *)&nfaces, sizeof(int));  // Total de caras
+
             infile.read((char *)&nfaces, sizeof(int));  // Total de caras
             for (int i = 0; i < nfaces; ++i) {
                 infile.read((char *)&face, sizeof(ModelFace));  // Tipo de la cara
@@ -146,7 +158,12 @@ class Model {
                     ++nfaces;
                 }
             }
-            outfile.write((char *)&nfaces, sizeof(nfaces));  // Numero de caras del modelo
+
+            size_t slen = name.size();
+            outfile.write((char *)&slen, sizeof(size_t));  // Logitud del nombre del modelo
+            outfile.write(name.c_str(), slen);             // Nombre del modelo
+
+            outfile.write((char *)&nfaces, sizeof(int));  // Numero de caras del modelo
 
             // Guardado de caras
             for (int i = 0; nfaces > 0 && i < 6; ++i) {
@@ -324,3 +341,5 @@ class Model {
      */
     void setBottom(const CharacterizedObject &obj) { setFace(mBottom, obj); }
 };
+
+#endif  // MODEL_CLASS_H

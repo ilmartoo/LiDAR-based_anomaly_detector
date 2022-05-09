@@ -18,13 +18,14 @@
 #include <condition_variable>
 
 #include "object_characterization/ObjectCharacterizator.hh"
-#include "models/CharacterizedObject.hh"
-#include "models/ObjectManager.hh"
+#include "object_characterization/CharacterizedObject.hh"
+#include "object_characterization/ObjectManager.hh"
 #include "models/Point.hh"
 #include "models/Kernel.hh"
+#include "models/CLICommand.hh"
 
 #include "logging/debug.hh"
-#include "logging/logging.hh"
+
 
 void ObjectCharacterizator::newPoint(const Point &p) {
     static uint32_t p_count;
@@ -69,10 +70,10 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                         double point_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(last_point - start).count()) / 1.e9;
                         double total_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
 
-                        LOG_INFO("Background characterization lasted " << std::fixed << total_duration << "s (Process speed: " << std::setprecision(2) << p_count / point_duration << std::setprecision(6) << " points/s).");
+                        CLI_STDOUT("Background characterization lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << "s (Process speed: " << p_count / point_duration << " points/s).");
                     }
 
-                    LOG_INFO("Defined background contains " << p_count << " unique points.");
+                    CLI_STDOUT("Defined background contains " << p_count << " unique points.");
 
                     DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string() << ".");
 
@@ -106,15 +107,21 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                 else {
                     state = defStopped;
 
+                    if (chrono) {
+                        last_point = std::chrono::high_resolution_clock::now();
+                    }
+
                     object->buildOctree();
 
-                    LOG_INFO("Defined object contains " << p_count << " unique points.");
+                    CLI_STDOUT("Defined object contains " << p_count << " unique points.");
 
                     if (chrono) {
                         end = std::chrono::high_resolution_clock::now();
-                        double seconds = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
 
-                        LOG_INFO("Object characterization lasted " << std::fixed << seconds << "s (Process speed: " << std::setprecision(2) << p_count / seconds << std::setprecision(6) << " points/s).");
+                        double point_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(last_point - start).count()) / 1.e9;
+                        double total_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
+
+                        CLI_STDOUT("Object characterization lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << "s (Process speed: " << p_count / point_duration << " points/s).");
                     }
 
                     DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string() << ".");

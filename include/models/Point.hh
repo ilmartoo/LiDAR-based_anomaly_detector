@@ -16,8 +16,6 @@
 
 #include "models/Timestamp.hh"
 
-#include "logging/debug.hh"
-
 /**
  * Representación de un punto de una nube de datos 3D
  */

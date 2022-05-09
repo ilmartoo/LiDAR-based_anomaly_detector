@@ -19,9 +19,10 @@
 #include "scanner/ScannerCSV.hh"
 #include "models/Point.hh"
 #include "models/Timestamp.hh"
+#include "models/CLICommand.hh"
 
 #include "logging/debug.hh"
-#include "logging/logging.hh"
+
 
 bool ScannerCSV::init() {
     DEBUG_STDOUT("Inicializando el escaner de archivos csv.");
@@ -29,17 +30,17 @@ bool ScannerCSV::init() {
     // Abrimos stream del archivo
     infile.open(filename, std::ifstream::in);
     if (infile.fail()) {
-        LOG_ERROR("Fallo al inicializar el escaner de archivos csv.");
+        CLI_STDERR("Fallo al inicializar el escaner de archivos csv.");
         return false;
     }
 
-    LOG_INFO("Escaner de archivos csv inicializado correctamente.");
+    DEBUG_STDOUT("Escaner de archivos csv inicializado correctamente.");
 
     return true;
 }
 
 ScanCode ScannerCSV::scan() {
-    LOG_INFO("Inicio del escaneo de puntos.");
+    DEBUG_STDOUT("Inicio del escaneo de puntos.");
 
     if (!infile.is_open()) {
         infile.open(filename, std::ios::in);
@@ -55,13 +56,13 @@ ScanCode ScannerCSV::scan() {
             return readData();
 
         } else {
-            LOG_ERROR("El sensor ya está escaneando.");
+            CLI_STDERR("El sensor ya está escaneando.");
             return ScanCode::kScanError;
         }
     }
     // Fallo de apertura
     else {
-        LOG_ERROR("Fallo de apertura del archivo CSV de puntos.");
+        CLI_STDERR("Fallo de apertura del archivo CSV de puntos.");
         return ScanCode::kScanError;
     }
 }
@@ -82,7 +83,7 @@ void ScannerCSV::wait() {
 
     readData();
 
-    LOG_INFO("Finalizado el escaneo de puntos.");
+    DEBUG_STDOUT("Finalizado el escaneo de puntos.");
 }
 
 void ScannerCSV::stop() {
@@ -92,7 +93,7 @@ void ScannerCSV::stop() {
         infile.close();
     }
 
-    LOG_INFO("Finalizado el escaneo de puntos.");
+    DEBUG_STDOUT("Finalizado el escaneo de puntos.");
 }
 
 ScanCode ScannerCSV::readData() {
@@ -105,7 +106,7 @@ ScanCode ScannerCSV::readData() {
     for (int commas, i; scanning && std::getline(infile, line);) {
         // Fallo en la lectura
         if (infile.fail()) {
-            LOG_INFO("Fallo en la lectura de puntos");
+            DEBUG_STDOUT("Fallo en la lectura de puntos");
             return ScanCode::kScanError;
         }
 
@@ -152,7 +153,7 @@ ScanCode ScannerCSV::readData() {
                 this->callback(Point(Timestamp(data[0]), static_cast<uint8_t>(std::stoi(data[1])), static_cast<double>(std::stod(data[2])),
                                      static_cast<double>(std::stod(data[3])), static_cast<double>(std::stod(data[4]))));
             } catch (std::exception &e) {
-                LOG_ERROR("Error de conversión de datos.");
+                CLI_STDERR("Error de conversión de datos.");
             }
         }
     }

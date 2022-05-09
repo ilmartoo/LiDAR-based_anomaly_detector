@@ -25,6 +25,7 @@ enum CLICommandType {
     kHelp,     ///< Impresión de la ayuda
     kChrono,   ///< Gestión de cronometros
     kDefine,   ///< Caracterización de objetos y fondo
+    kSet,      ///< Definición de parametros
     kDiscard,  ///< Descarte de puntos
     kModel,    ///< Opciones de los modelos
     kInfo,     ///< Impresión de las opciones actuales
@@ -44,7 +45,7 @@ class CLICommand {
      * @param input Texto con el comando
      * @return Objecto CLICommandType
      */
-    static CLICommand parse(std::string& input) {
+    static CLICommand parse(const std::string& input) {
         std::vector<std::string> params;
         std::string item;
 
@@ -73,6 +74,10 @@ class CLICommand {
             else if (params[0].compare("define") == 0) {
                 return {kDefine, params};
             }
+            // SET
+            else if (params[0].compare("set") == 0) {
+                return {kSet, params};
+            }
             // DISCARD
             else if (params[0].compare("discard") == 0) {
                 return {kDiscard, params};
@@ -81,7 +86,7 @@ class CLICommand {
             else if (params[0].compare("model") == 0) {
                 return {kModel, params};
             }
-            // EXPLAIN
+            // INFO
             else if (params[0].compare("info") == 0) {
                 return {kInfo, params};
             }

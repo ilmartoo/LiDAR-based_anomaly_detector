@@ -14,8 +14,8 @@
 #include <unordered_map>
 #include <stdint.h>
 
-#include "models/CharacterizedObject.hh"
-#include "models/Model.hh"
+#include "object_characterization/CharacterizedObject.hh"
+#include "object_characterization/Model.hh"
 
 /**
  * Manager de modelos de objetos
@@ -24,13 +24,13 @@ class ObjectManager {
    private:
     std::unordered_map<std::string, Model> *models;
     std::unordered_map<std::string, CharacterizedObject> *objects;
-    static inline uint32_t objID = 0;
+    uint32_t objID;
 
    public:
     /**
      * Constructor
      */
-    ObjectManager() {
+    ObjectManager() : objID(0) {
         models = new std::unordered_map<std::string, Model>();
         objects = new std::unordered_map<std::string, CharacterizedObject>();
     }
@@ -38,7 +38,7 @@ class ObjectManager {
      * Constructor
      * @param filenames Vector de nombre de archivos de modelos
      */
-    ObjectManager(const std::vector<std::string> &filenames) {
+    ObjectManager(const std::vector<std::string> &filenames) : objID(0) {
         models = new std::unordered_map<std::string, Model>();
         objects = new std::unordered_map<std::string, CharacterizedObject>();
 
@@ -83,10 +83,19 @@ class ObjectManager {
      * @return pair con boolean a false si no se ha guardado o true y el nombre del modelo si se ha guardado correctamente
      */
     const std::pair<bool, std::string> newModel(const std::string &objname, const std::string &modelname, const ModelFace &face) {
-        auto itr = objects->find(objname);
-        if (itr != objects->end()) {
-            auto p = models->insert({modelname, Model(modelname, face, itr->second)});
-            return {p.second, modelname};
+        auto oitr = objects->find(objname);
+        if (oitr != objects->end()) {
+            auto mitr = models->find(modelname);
+            // Existe el modelo
+            if (mitr != models->end()) {
+                mitr->second.setFace(face, oitr->second);
+                return {true, modelname};
+            }
+            // Nuevo modelo
+            else {
+                auto p = models->insert({modelname, Model(modelname, face, oitr->second)});
+                return {p.second, modelname};
+            }
         }
         return {false, ""};
     }
@@ -105,6 +114,21 @@ class ObjectManager {
         return {false, ""};
     }
 
+    /**
+     * Escribe el modelo al archivo especificado
+     * @param filename Nombre del archivo a escribir
+     * @param model Nombre del modelo a guardar
+     * @return true si se ha escrito correctamente
+     */
+    bool writeModel(const std::string &filename, const std::string &model) {
+        auto itr = models->find(model);
+        if (itr != models->end()) {
+            return itr->second.write(filename);
+        } else {
+            return false;
+        }
+    }
+
     ////// Getters
     /**
      * Obtiene la lista de modelos actualmente disponibles
@@ -116,6 +140,18 @@ class ObjectManager {
      * @return Lista de objetos
      */
     const std::unordered_map<std::string, CharacterizedObject> &getObjects() { return *objects; }
+    /**
+     * Comprueba la existencia de un modelo
+     * @param model Nombre del modelo
+     * @return true si existe el modelo
+     */
+    bool existsModel(const std::string &model) { return models->find(model) != models->end(); }
+    /**
+     * Comprueba la existencia de un objeto
+     * @param model Nombre del objeto
+     * @return true si existe el objeto
+     */
+    bool existsObject(const std::string &obj) { return objects->find(obj) != objects->end(); }
 
    private:
 };

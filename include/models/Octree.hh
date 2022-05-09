@@ -9,13 +9,14 @@
 
 #pragma once
 
-#include "models/Point.hh"
-#include "models/Kernel.hh"
 #include <array>
 #include <fstream>
 #include <iostream>
 #include <vector>
 #include <memory>
+
+#include "models/Point.hh"
+#include "models/Kernel.hh"
 
 class Box {
    private:

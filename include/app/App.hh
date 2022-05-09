@@ -18,10 +18,12 @@
 #include "scanner/ScannerLVX.hh"
 #include "scanner/ScannerLidar.hh"
 #include "object_characterization/ObjectCharacterizator.hh"
-#include "models/ObjectManager.hh"
+#include "object_characterization/ObjectManager.hh"
+#include "object_characterization/CharacterizedObject.hh"
+#include "object_characterization/Model.hh"
 #include "anomaly_detection/AnomalyDetector.hh"
+#include "models/CLICommand.hh"
 
-#include "logging/logging.hh"
 #include "logging/debug.hh"
 
 /** Tipos de mediciones de tiempo a tomar */
@@ -65,14 +67,14 @@ class App {
         }
         // Archivo no legible
         else {
-            LOG_ERROR("No se dispone de un escaner para leer el tipo de archivo especificado.");
+            CLI_STDERR("No se dispone de un escaner para leer el tipo de archivo especificado.");
             return;
         }
 
         oc = new ObjectCharacterizator(scanner, objFrame, backFrame, minReflectivity, backDistance,
                                        chronoMode & kChronoCharacterization);
         om = new ObjectManager();
-        // ad =
+        ad = new AnomalyDetector(chronoMode & kChronoAnomalyDetection);
 
         execution();
     }
@@ -92,7 +94,7 @@ class App {
         oc = new ObjectCharacterizator(scanner, objFrame, backFrame, minReflectivity, backDistance,
                                        chronoMode & kChronoCharacterization);
         om = new ObjectManager();
-        // ad =
+        ad = new AnomalyDetector(chronoMode & kChronoAnomalyDetection);
 
         execution();
     }
@@ -100,7 +102,7 @@ class App {
      * Destructor de la app
      */
     ~App() {
-        // delete ad;
+        delete ad;
         delete om;
         delete oc;
     }

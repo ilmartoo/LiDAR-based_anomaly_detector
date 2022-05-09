@@ -25,7 +25,6 @@
 #define DEFAULT_BACKGROUND_FRAME_T  1000               // Default background time (ms)
 #define DEFAULT_MIN_RELECTIVITY     0.0f               // Default point reflectivity
 #define DEFAULT_BACKGROUND_DISTANCE 0.2f               // Default backgound distance (m)
-#define DEFAULT_ITERATIVE_MODE      false              // Default iterative mode indicator
 
 /* InputParams struct */
 struct InputParams {

@@ -15,10 +15,8 @@
 
 #include "scanner/IScanner.hh"
 #include "models/Point.hh"
-#include "models/CharacterizedObject.hh"
 #include "models/OctreeMap.hh"
-
-#include "logging/debug.hh"
+#include "object_characterization/CharacterizedObject.hh"
 
 /**
  * Estados en los que se puede encontrar el caracterizador de objetos
@@ -119,54 +117,54 @@ class ObjectCharacterizator {
      * Setter del cronometraje
      * @param chrono Booleano para establecer el nuevo cronometraje
      */
-    void setChrono(const bool chrono) { this->chrono = chrono; }
+    void setChrono(bool chrono) { this->chrono = chrono; }
     /**
      * Setter de la duración del frame
      * @param objFrame Nueva duración del frame en ms
      */
-    void setObjFrame(const uint32_t &objFrame) { this->objFrame = objFrame * 1000000; }
+    void setObjFrame(uint32_t objFrame) { this->objFrame = objFrame * 1000000; }
     /**
      * Setter del tiempo de escaneo del fondo
      * @param backFrame Nuevo tiempo de escaneo del fondo en ms
      */
-    void setBackFrame(const uint32_t &backFrame) { this->backFrame = backFrame * 1000000; }
+    void setBackFrame(uint32_t backFrame) { this->backFrame = backFrame * 1000000; }
     /**
      * Setter de la reflectividad minima
      * @param minReflectivity Nueva reflectividad minima
      */
-    void setMinReflectivity(const float &minReflectivity) { this->minReflectivity = minReflectivity; }
+    void setMinReflectivity(float minReflectivity) { this->minReflectivity = minReflectivity; }
     /**
      * Setter de la distancia al fondo
      * @param backDistance Nueva distancia al fondo
      */
-    void setBackDistance(const float &backDistance) { this->backDistance = backDistance; }
+    void setBackDistance(float backDistance) { this->backDistance = backDistance; }
 
     ////// Getters
     /**
      * Devuelve si se está cronometrando la caracterización
      * @return Booleano conforme está activado el cronometraje
      */
-    const bool isChrono() const { return this->chrono; }
+    bool isChrono() const { return this->chrono; }
     /**
      * Getter de la duración del frame
      * @return Duración del frame
      */
-    const uint64_t &getObjFrame() const { return this->objFrame; }
+    uint64_t getObjFrame() const { return this->objFrame; }
     /**
      * Getter del tiempo de escaneo del fondo
      * @return Tiempo de escaneo del fondo
      */
-    const uint64_t &getBackFrame() const { return this->backFrame; }
+    uint64_t getBackFrame() const { return this->backFrame; }
     /**
      * Getter de la reflectividad minima
      * @return Reflectividad minima
      */
-    const float &getMinReflectivity() const { return this->minReflectivity; }
+    float getMinReflectivity() const { return this->minReflectivity; }
     /**
      * Getter de la distancia al fondo
      * @return Distancia al fondo
      */
-    const float &getBackDistance() const { return this->backDistance; }
+    float getBackDistance() const { return this->backDistance; }
 
    private:
     /**

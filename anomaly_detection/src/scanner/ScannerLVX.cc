@@ -22,15 +22,16 @@
 #include "scanner/ScannerLVX.hh"
 #include "models/Point.hh"
 #include "models/Timestamp.hh"
+#include "models/CLICommand.hh"
 
 #include "logging/debug.hh"
-#include "logging/logging.hh"
+
 
 bool ScannerLVX::init() {
     DEBUG_STDOUT("Inicializando el escaner de archivos lvx.");
 
     if (lvx_file.Open(filename.c_str(), std::ios::in) != livox_ros::kLvxFileOk) {
-        LOG_ERROR("Fallo al inicializar el escaner de archivos lvx.");
+        CLI_STDERR("Fallo al inicializar el escaner de archivos lvx.");
 
         return false;
     }
@@ -67,13 +68,13 @@ ScanCode ScannerLVX::scan() {
             return readData();
 
         } else {
-            LOG_ERROR("El sensor ya está escaneando.");
+            CLI_STDERR("El sensor ya está escaneando.");
             return ScanCode::kScanError;
         }
     }
     // Fallo de apertura
     else {
-        LOG_ERROR("Fallo de apertura del archivo LVX de puntos.");
+        CLI_STDERR("Fallo de apertura del archivo LVX de puntos.");
         return ScanCode::kScanError;
     }
 }

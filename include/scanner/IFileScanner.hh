@@ -16,7 +16,7 @@
 #include "scanner/IScanner.hh"
 #include "models/Point.hh"
 
-#include "logging/logging.hh"
+#include "logging/debug.hh"
 
 /**
  * Interfaz de un escaner de puntos
@@ -38,7 +38,7 @@ class IFileScanner : public IScanner {
      * @return Instancia única del escaner
      */
     static IFileScanner *create(std::string filename) {
-        LOG_ERROR("Method not implemented!");
+        DEBUG_STDERR("Method not implemented!");
         return (IFileScanner *)instance;
     }
 

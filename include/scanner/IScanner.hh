@@ -15,7 +15,7 @@
 
 #include "models/Point.hh"
 
-#include "logging/logging.hh"
+#include "logging/debug.hh"
 
 /**
  * Enumeración de los codigos de finalización que puede devolver un escaneo
@@ -50,7 +50,7 @@ class IScanner {
      */
     template <class... Args>
     static IScanner *create(Args &&...args) {
-        LOG_ERROR("Method not implemented!");
+        DEBUG_STDERR("Method not implemented!");
         return instance;
     }
 
