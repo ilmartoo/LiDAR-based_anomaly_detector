@@ -60,7 +60,7 @@ Then, compile the libraries as stipulated by their corresponding documentation.
 
 When all the needed libraries are compiled, be sure to change the needed lines in the [`CMakeLists.txt`](CMakeLists.txt) file:
 
-```txt
+```cmake
 # Include directories
 include_directories(
   ${PROJECT_ROOT}/include/      # Project includes

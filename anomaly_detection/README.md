@@ -54,7 +54,7 @@ Then, compile the libraries as stipulated by their corresponding documentation.
 
 When all the needed libraries are compiled, be sure to change the needed lines in the [`CMakeLists.txt`](CMakeLists.txt) file:
 
-```txt
+```cmake
 # Include directories
 include_directories(
   ${PROJECT_ROOT}/include/      # Project includes
@@ -115,4 +115,4 @@ unzip documentation.zip -d .
 
 > This will decompress the documentation into the current folder.
 
-When decompressed, open `documentation.html` with your browser to access the docs.
+When decompressed, open `index.html` located in the doxygen folder with your preferred browser to access the docs.

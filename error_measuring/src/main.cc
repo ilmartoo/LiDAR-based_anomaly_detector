@@ -18,7 +18,7 @@
 #include "scanner/ScannerLVX.hh"
 #include "scanner/ScannerCSV.hh"
 
-#include "logging/logging.hh"
+
 
 /* Declaraciones */
 Point computeCentroid(const std::vector<Point> &points);

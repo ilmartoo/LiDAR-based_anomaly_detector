@@ -1,8 +1,9 @@
-# Excluded folders
+# Excluded folders & files
 build/
 tmp/
 libs/
 bin/
+doxygen/
 
 # vscode files
 *.code-workspace
