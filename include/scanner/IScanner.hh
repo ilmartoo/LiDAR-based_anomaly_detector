@@ -13,7 +13,7 @@
 #include <string>
 #include <functional>
 
-#include "models/Point.hh"
+#include "models/LidarPoint.hh"
 
 #include "logging/debug.hh"
 
@@ -31,7 +31,7 @@ enum ScanCode {
  */
 class IScanner {
    protected:
-    std::function<void(const Point &p)> callback;  ///< Función de callback
+    std::function<void(const LidarPoint &p)> callback;  ///< Función de callback
     bool scanning;                                 ///< Variable para la finalización del escaneo de puntos
 
     inline static IScanner *instance = nullptr;  ///< Puntero a la instancia única del escaner
@@ -79,7 +79,7 @@ class IScanner {
      * @param func Función de callback a ser llamada por el sensor
      * @return Se devolverá true si se ha establecido el callback correctamente
      */
-    virtual bool setCallback(std::function<void(const Point &p)> func) = 0;
+    virtual bool setCallback(std::function<void(const LidarPoint &p)> func) = 0;
 
     /**
      * Finaliza el escaner

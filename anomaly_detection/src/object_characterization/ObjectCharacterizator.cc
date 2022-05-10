@@ -20,13 +20,14 @@
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "object_characterization/CharacterizedObject.hh"
 #include "object_characterization/ObjectManager.hh"
+#include "models/LidarPoint.hh"
 #include "models/Point.hh"
 #include "models/Kernel.hh"
 #include "app/CLICommand.hh"
 
 #include "logging/debug.hh"
 
-void ObjectCharacterizator::newPoint(const Point &p) {
+void ObjectCharacterizator::newPoint(const LidarPoint &p) {
     static uint32_t p_count;
     static std::chrono::system_clock::time_point start, last_point, end;
 

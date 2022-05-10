@@ -18,7 +18,7 @@
 #include "lvx_file.h"
 
 #include "scanner/IFileScanner.hh"
-#include "models/Point.hh"
+#include "models/LidarPoint.hh"
 
 #include "logging/debug.hh"
 
@@ -77,7 +77,7 @@ class ScannerLVX : public IFileScanner {
      * @param func Función de callback a ser llamada por el sensor
      * @return Se devolverá true si se ha establecido el callback correctamente
      */
-    bool setCallback(const std::function<void(const Point &p)> func);
+    bool setCallback(const std::function<void(const LidarPoint &p)> func);
 
     /**
      * Espera pasiva a la finalización del escaneo del archivo de puntos

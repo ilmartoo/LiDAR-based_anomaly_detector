@@ -15,6 +15,7 @@
 #include <utility>
 
 #include "scanner/IScanner.hh"
+#include "models/LidarPoint.hh"
 #include "models/Point.hh"
 #include "models/OctreeMap.hh"
 #include "object_characterization/CharacterizedObject.hh"
@@ -84,7 +85,7 @@ class ObjectCharacterizator {
      * Callback a donde se recebirán los puntos escaneados
      * @param p Punto escaneado
      */
-    void newPoint(const Point &p);
+    void newPoint(const LidarPoint &p);
 
     /**
      * Inicializa el caracterizador

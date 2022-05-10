@@ -19,7 +19,7 @@
 #include "livox_sdk.h"
 
 #include "scanner/ScannerLidar.hh"
-#include "models/Point.hh"
+#include "models/LidarPoint.hh"
 #include "models/Timestamp.hh"
 #include "app/CLICommand.hh"
 
@@ -40,8 +40,7 @@ void getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void 
 
             for (uint32_t i = 0; !ScannerLidar::getInstance()->scanning && i < data_num; ++i)
                 if (ScannerLidar::getInstance()->callback) {
-                    Point p = {Timestamp(data->timestamp), p_data[i].reflectivity, p_data[i].x, p_data[i].y, p_data[i].z};
-                    ScannerLidar::getInstance()->callback(p);
+                    ScannerLidar::getInstance()->callback({Timestamp(data->timestamp), p_data[i].reflectivity, p_data[i].x, p_data[i].y, p_data[i].z});
                 }
         }
         // Dato de tipo incorrecto
@@ -283,7 +282,7 @@ void ScannerLidar::pause() {
     ScannerLidar::getInstance()->lidar.device_state = kDeviceStateConnect;
 }
 
-bool ScannerLidar::setCallback(const std::function<void(const Point &p)> func) {
+bool ScannerLidar::setCallback(const std::function<void(const LidarPoint &p)> func) {
     DEBUG_STDOUT("Estableciendo el callback.");
 
     callback = func;

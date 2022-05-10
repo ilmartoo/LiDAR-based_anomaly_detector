@@ -17,12 +17,11 @@
 #include <exception>
 
 #include "scanner/ScannerCSV.hh"
-#include "models/Point.hh"
+#include "models/LidarPoint.hh"
 #include "models/Timestamp.hh"
 #include "app/CLICommand.hh"
 
 #include "logging/debug.hh"
-
 
 bool ScannerCSV::init() {
     DEBUG_STDOUT("Inicializando el escaner de archivos csv.");
@@ -71,7 +70,7 @@ void ScannerCSV::pause() {
     scanning = false;
 }
 
-bool ScannerCSV::setCallback(const std::function<void(const Point &p)> func) {
+bool ScannerCSV::setCallback(const std::function<void(const LidarPoint &p)> func) {
     DEBUG_STDOUT("Estableciendo el callback.");
 
     callback = func;
@@ -150,8 +149,8 @@ ScanCode ScannerCSV::readData() {
         // Llamada al callback
         if (this->callback) {
             try {
-                this->callback(Point(Timestamp(data[0]), static_cast<uint8_t>(std::stoi(data[1])), static_cast<double>(std::stod(data[2])),
-                                     static_cast<double>(std::stod(data[3])), static_cast<double>(std::stod(data[4]))));
+                this->callback({Timestamp(data[0]), static_cast<uint8_t>(std::stoi(data[1])), static_cast<double>(std::stod(data[2])),
+                                static_cast<double>(std::stod(data[3])), static_cast<double>(std::stod(data[4]))});
             } catch (std::exception &e) {
                 CLI_STDERR("Error de conversión de datos.");
             }

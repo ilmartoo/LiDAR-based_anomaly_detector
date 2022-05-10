@@ -20,7 +20,7 @@
 #include "lds.h"
 
 #include "scanner/ScannerLVX.hh"
-#include "models/Point.hh"
+#include "models/LidarPoint.hh"
 #include "models/Timestamp.hh"
 #include "app/CLICommand.hh"
 
@@ -83,7 +83,7 @@ void ScannerLVX::pause() {
     scanning = false;
 }
 
-bool ScannerLVX::setCallback(const std::function<void(const Point &p)> func) {
+bool ScannerLVX::setCallback(const std::function<void(const LidarPoint &p)> func) {
     DEBUG_STDOUT("Estableciendo el callback.");
 
     callback = func;
@@ -138,8 +138,7 @@ ScanCode ScannerLVX::readData() {
 
                     // Llamada al callback
                     if (this->callback) {
-                        Point p = {Timestamp(eth_packet->timestamp), point->reflectivity, point->x, point->y, point->z};
-                        this->callback(p);
+                        this->callback({Timestamp(eth_packet->timestamp), point->reflectivity, point->x, point->y, point->z});
                     }
                 }
                 packetOffset = i == points_in_packet ? 0 : packetOffset;
