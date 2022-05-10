@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <thread>
+#include <utility>
 
 #include "scanner/IScanner.hh"
 #include "models/Point.hh"

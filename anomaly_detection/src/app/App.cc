@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <exception>
+#include <utility>
 
 #include "app/App.hh"
 #include "app/InputParser.hh"
@@ -32,8 +33,8 @@ void App::close() {
 // Macro de comparación de string con c_string
 #define STR_STRC_CMP(string, c_string) (string.compare(c_string) == 0)
 // Impresión cuando se detecta un comando desconocido
-void inline unknownCommand(const char *command) { CLI_STDERR("Unknown command: Execute " bold("help [") << command << bold("]") " to get info about valid commands"); }
-void inline unknownCommand() { unknownCommand("command"); }
+void inline unknownCommand(const char *command) { CLI_STDERR("Unknown command: Execute <help " << command << "> to get info about valid commands"); }
+void inline unknownCommand() { unknownCommand("[command]"); }
 // Comprueba si un string está vacío (sin contar espacios)
 bool isBlank(const std::string &str) {
     for (const char &c : str) {

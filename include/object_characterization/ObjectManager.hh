@@ -13,6 +13,7 @@
 #include <string>
 #include <unordered_map>
 #include <stdint.h>
+#include <utility>
 
 #include "object_characterization/CharacterizedObject.hh"
 #include "object_characterization/Model.hh"
@@ -82,7 +83,7 @@ class ObjectManager {
      * @param modelname Nombre del nuevo modelo
      * @return pair con boolean a false si no se ha guardado o true y el nombre del modelo si se ha guardado correctamente
      */
-    const std::pair<bool, std::string> newModel(const std::string &objname, const std::string &modelname, const ModelFace &face) {
+    const std::pair<bool, std::string> newModel(const std::string &objname, const std::string &modelname, ModelFace face) {
         auto oitr = objects->find(objname);
         if (oitr != objects->end()) {
             auto mitr = models->find(modelname);

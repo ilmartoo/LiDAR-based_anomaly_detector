@@ -25,7 +25,6 @@
 
 #include "logging/debug.hh"
 
-
 std::mutex mtx;                          // Mutex de bloqueo
 std::unique_lock<std::mutex> lock(mtx);  // Candado de sincronización
 std::condition_variable cv;              // Gestor de sincronización
@@ -206,6 +205,18 @@ void onStopIMURecepcionCallback(livox_status status, uint8_t handle, uint8_t res
     }
 }
 
+// Callback para el establecimiento de las coordenadas cartesianas
+void onSetCartesianCoordinateCallback(livox_status status, uint8_t handle, uint8_t response, void *data) {
+    // Establecido correctamente
+    if (status == kStatusSuccess) {
+        DEBUG_STDOUT("Establecidas coordenadas cartesianas.");
+    }
+    // Fallo
+    else {
+        CLI_STDERR("Fallo al establecer las coordenadas cartesianas.");
+    }
+}
+
 bool ScannerLidar::init() {
     DEBUG_STDOUT("Inicializando Livox SDK.");
 
@@ -214,6 +225,8 @@ bool ScannerLidar::init() {
         CLI_STDERR("Fallo al inicializar Livox SDK.");
         return false;
     }
+    // Desactivamos logs
+    DisableConsoleLogger();
 
     // Callback para recibir mensajes de broadcast del Livox LiDAR
     SetBroadcastCallback(onDeviceBroadcast);
@@ -245,12 +258,14 @@ ScanCode ScannerLidar::scan() {
         /* Renegamos de la obtención de datos IMU */
         LidarSetImuPushFrequency(ScannerLidar::getInstance()->lidar.handle, kImuFreq0Hz, onStopIMURecepcionCallback, NULL);
 
+        /* Establecemos las cordenadas cartesianas por defecto */
+        SetCartesianCoordinate(ScannerLidar::getInstance()->lidar.handle, onSetCartesianCoordinateCallback, NULL);
+
         /* Comenzamos el muestreo */
         if (kStatusSuccess == LidarStartSampling(ScannerLidar::getInstance()->lidar.handle, onSampleCallback, NULL)) {
             cv.wait(lock, [this] { return !this->isScanning(); });  // Esperamos a que finalize de escanear
 
             return ScanCode::kScanOk;
-
         } else {
             CLI_STDERR("El sensor no está listo para iniciar el escaneo de puntos.");
             return ScanCode::kScanError;

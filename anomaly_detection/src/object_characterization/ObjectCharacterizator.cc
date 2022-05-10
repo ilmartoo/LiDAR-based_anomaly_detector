@@ -26,7 +26,6 @@
 
 #include "logging/debug.hh"
 
-
 void ObjectCharacterizator::newPoint(const Point &p) {
     static uint32_t p_count;
     static std::chrono::system_clock::time_point start, last_point, end;
@@ -70,12 +69,12 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                         double point_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(last_point - start).count()) / 1.e9;
                         double total_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
 
-                        CLI_STDOUT("Background characterization lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << "s (Process speed: " << p_count / point_duration << " points/s).");
+                        CLI_STDOUT("Background characterization lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << " s (Process speed: " << p_count / point_duration << " points/s)");
                     }
 
-                    CLI_STDOUT("Defined background contains " << p_count << " unique points.");
+                    CLI_STDOUT("Defined background contains " << p_count << " unique points");
 
-                    DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string() << ".");
+                    DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string());
 
                     scanner->pause();
                 }
@@ -89,18 +88,22 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                         start = std::chrono::high_resolution_clock::now();
                     }
 
-                    DEBUG_STDOUT("First object point timestamp: " << p.getTimestamp().string());
+                    if (!isBackground(p)) {
+                        DEBUG_STDOUT("First object point timestamp: " << p.getTimestamp().string());
 
-                    p_count = 1;
-                    object->insert(p);
+                        p_count = 1;
+                        object->insert(p);
+                    }
                 }
 
                 // Punto dentro del marco temporal
-                else if (object->getStartTime().second + backFrame > p.getTimestamp()) {
-                    DEBUG_POINT_STDOUT("Point added to the object: " << p.string());
+                else if (object->getStartTime().second + objFrame > p.getTimestamp()) {
+                    if (!isBackground(p)) {
+                        DEBUG_POINT_STDOUT("Point added to the object: " << p.string());
 
-                    ++p_count;
-                    object->insert(p);
+                        ++p_count;
+                        object->insert(p);
+                    }
                 }
 
                 // Punto fuera del marco temporal
@@ -113,7 +116,7 @@ void ObjectCharacterizator::newPoint(const Point &p) {
 
                     object->buildOctree();
 
-                    CLI_STDOUT("Defined object contains " << p_count << " unique points.");
+                    CLI_STDOUT("Defined object contains " << p_count << " unique points");
 
                     if (chrono) {
                         end = std::chrono::high_resolution_clock::now();
@@ -121,10 +124,10 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                         double point_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(last_point - start).count()) / 1.e9;
                         double total_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
 
-                        CLI_STDOUT("Object characterization lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << "s (Process speed: " << p_count / point_duration << " points/s).");
+                        CLI_STDOUT("Object characterization lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << " s (Process speed: " << p_count / point_duration << " points/s)");
                     }
 
-                    DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string() << ".");
+                    DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string());
 
                     scanner->pause();
                 }
@@ -136,12 +139,15 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                 if (!discardStartTime.first) {
                     DEBUG_STDOUT("First discarded point timestamp: " << p.getTimestamp().string());
 
+                    p_count = 1;
                     discardStartTime = {true, p.getTimestamp()};
                 }
 
                 // Punto dentro del marco temporal
                 else if (discardStartTime.second + discardTime > p.getTimestamp()) {
                     DEBUG_POINT_STDOUT("Point discarded: " << p.string());
+
+                    ++p_count;
                 }
 
                 // Punto fuera del marco temporal
@@ -149,6 +155,8 @@ void ObjectCharacterizator::newPoint(const Point &p) {
                     state = defStopped;
 
                     discardStartTime.first = false;
+
+                    CLI_STDOUT("A total of " << p_count << " points where discarded during " << discardTime / 1000000 << " ms");
 
                     DEBUG_STDOUT("Last discarded point timestamp: " << p.getTimestamp().string() << ".");
 
@@ -168,32 +176,18 @@ void ObjectCharacterizator::newPoint(const Point &p) {
 }
 
 void ObjectCharacterizator::init() {
-    DEBUG_STDOUT("Inicializando el caracterizador.");
+    DEBUG_STDOUT("Initializing characterizator");
 
     scanner->init();
     scanner->setCallback(([this](const Point &p) { this->newPoint(p); }));
 };
 
 void ObjectCharacterizator::stop() {
-    DEBUG_STDOUT("Finalizando caracterización.");
+    DEBUG_STDOUT("Ending characterization");
 
     scanner->stop();
-
-    // DEBUG_CODE({  // Impresión de los puntos a archivos csv
-    //     std::ofstream os("tmp/object.csv", std::ios::out);
-    //     while (!object->empty()) {
-    //         os << object->front().csv_string() << std::endl;
-    //         object->pop();
-    //     }
-    //     os.close();
-    //     os.open("tmp/background.csv", std::ios::out);
-    //     for (auto &p : *background) {
-    //         os << p.csv_string() << std::endl;
-    //     }
-    //     os.close();
-    // })
-
-    DEBUG_STDOUT("Finalizada caracterización.");
+    
+    DEBUG_STDOUT("Ended characterization");
 }
 
 void ObjectCharacterizator::defineBackground() {
