@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <fstream>
+#include <utility>
 
 #include "object_characterization/CharacterizedObject.hh"
 
@@ -25,43 +26,36 @@ enum ModelFace {
 };
 
 class Model {
+   public:
+    static const int numFaces = 6;  ///< Constante del numero de caras de los modelos
+
    private:
-    std::string name;
-    std::vector<bool> hasFace;
-    std::vector<CharacterizedObject> faces;
+    std::string name;                        ///< Nombre del modelo
+    std::vector<bool> hasFace;               ///< Vector de valided de caras
+    std::vector<CharacterizedObject> faces;  ///< Vector de caras
 
    public:
     /**
      * Constructor
      */
     Model() {
-        for (int i = 0; i < 6; ++i) {
+        for (int i = 0; i < numFaces; ++i) {
             hasFace.push_back(false);
         }
-        faces.reserve(6);
+        faces.reserve(numFaces);
     }
     /**
      * Constructor
      * @param name Nombre del modelo
      */
-    Model(const std::string &name) : name(name) {
-        for (int i = 0; i < 6; ++i) {
-            hasFace.push_back(false);
-        }
-        faces.reserve(6);
-    }
+    Model(const std::string &name) : name(name), hasFace(numFaces, false), faces(numFaces) {}
     /**
      * Constructor
      * @param name Nombre del modelo
      * @param face Cara del modelo
      * @param obj Caracterización de la cara
      */
-    Model(const std::string &name, const ModelFace &face, const CharacterizedObject &obj) : name(name) {
-        for (int i = 0; i < 6; ++i) {
-            hasFace.push_back(false);
-        }
-        faces.reserve(6);
-
+    Model(const std::string &name, ModelFace face, const CharacterizedObject &obj) : name(name), hasFace(numFaces, false), faces(numFaces) {
         faces[face] = obj;
         hasFace[face] = true;
     }
@@ -70,13 +64,8 @@ class Model {
      * @param name Nombre del modelo
      * @param faces Vector con las caras del modelo
      */
-    Model(const std::string &name, const std::vector<CharacterizedObject> &modelFaces) : name(name) {
-        for (int i = 0; i < 6; ++i) {
-            hasFace.push_back(false);
-        }
-        faces.reserve(6);
-
-        int items = faces.size() <= 6 ? faces.size() : 6;
+    Model(const std::string &name, const std::vector<CharacterizedObject> &modelFaces) : name(name), hasFace(numFaces, false), faces(numFaces) {
+        int items = faces.size() <= numFaces ? faces.size() : numFaces;
         for (int i = 0; i < items; ++i) {
             faces[i] = modelFaces[i];
             hasFace[i] = true;
@@ -166,7 +155,7 @@ class Model {
             outfile.write((char *)&nfaces, sizeof(int));  // Numero de caras del modelo
 
             // Guardado de caras
-            for (int i = 0; nfaces > 0 && i < 6; ++i) {
+            for (int i = 0; nfaces > 0 && i < numFaces; ++i) {
                 if (hasFace[i]) {
                     outfile.write((char *)&i, sizeof(ModelFace));                   // Tipo de la cara
                     outfile.write((char *)&faces[i], sizeof(CharacterizedObject));  // BBox de la cara
@@ -189,7 +178,7 @@ class Model {
      * @param face Cara a recuperar
      * @return Cara caracterizada
      */
-    const CharacterizedObject &operator[](const ModelFace &face) const { return faces[face]; }
+    const CharacterizedObject &operator[](ModelFace face) const { return faces[face]; }
 
     ////// Getters
 
@@ -209,7 +198,7 @@ class Model {
      * @param face Cara a obtener
      * @return const CharacterizedObject&
      */
-    const CharacterizedObject &getFace(const ModelFace &face) const { return faces[face]; }
+    const CharacterizedObject &getFace(ModelFace face) const { return faces[face]; }
     /**
      * Obtiene la cara frontal
      * @return Caracterización de la cara
@@ -251,7 +240,7 @@ class Model {
      * @param face Cara de modelo a comprobar
      * @return true si contiene la cara
      */
-    const bool isFace(const ModelFace &face) const { return hasFace[face]; }
+    const bool isFace(ModelFace face) const { return hasFace[face]; }
     /**
      * Obtiene si contiene cara frontal
      * @return true si contiene la cara
@@ -295,7 +284,7 @@ class Model {
      * @param modelFaces Vector de nuevas caras del modelo
      */
     void setFaces(const std::vector<CharacterizedObject> &modelFaces) {
-        int items = faces.size() <= 6 ? faces.size() : 6;
+        int items = faces.size() <= numFaces ? faces.size() : numFaces;
         for (int i = 0; i < items; ++i) {
             faces[i] = modelFaces[i];
             hasFace[i] = true;
@@ -306,7 +295,7 @@ class Model {
      * @param face Cara a añadir
      * @param obj Caracterización de la cara
      */
-    void setFace(const ModelFace &face, const CharacterizedObject &obj) {
+    void setFace(ModelFace face, const CharacterizedObject &obj) {
         hasFace[face] = true;
         faces[face] = obj;
     }

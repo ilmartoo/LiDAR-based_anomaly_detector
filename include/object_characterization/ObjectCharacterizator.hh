@@ -62,8 +62,8 @@ class ObjectCharacterizator {
     ObjectCharacterizator(IScanner *scanner, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance, bool chrono)
         : scanner(scanner),
           chrono(chrono),
-          objFrame(objFrame * 1000000),
-          backFrame(backFrame * 1000000),
+          objFrame(static_cast<uint64_t>(objFrame) * 1000000),
+          backFrame(static_cast<uint64_t>(backFrame) * 1000000),
           minReflectivity(minReflectivity),
           backDistance(backDistance),
           state(defStopped),
@@ -123,12 +123,12 @@ class ObjectCharacterizator {
      * Setter de la duración del frame
      * @param objFrame Nueva duración del frame en ms
      */
-    void setObjFrame(uint32_t objFrame) { this->objFrame = objFrame * 1000000; }
+    void setObjFrame(uint32_t objFrame) { this->objFrame = static_cast<uint64_t>(objFrame) * 1000000; }
     /**
      * Setter del tiempo de escaneo del fondo
      * @param backFrame Nuevo tiempo de escaneo del fondo en ms
      */
-    void setBackFrame(uint32_t backFrame) { this->backFrame = backFrame * 1000000; }
+    void setBackFrame(uint32_t backFrame) { this->backFrame = static_cast<uint64_t>(backFrame) * 1000000; }
     /**
      * Setter de la reflectividad minima
      * @param minReflectivity Nueva reflectividad minima

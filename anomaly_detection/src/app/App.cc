@@ -16,7 +16,7 @@
 #include "app/App.hh"
 #include "app/InputParser.hh"
 #include "models/Point.hh"
-#include "models/CLICommand.hh"
+#include "app/CLICommand.hh"
 
 #include "logging/debug.hh"
 
@@ -92,10 +92,10 @@ void printHelp(CLICommandType ct) {
         // SET
         case kSet: {
             CLI_STDOUT(bold("set <...>") "                      Modification of current execution parameters:");
-            CLI_STDOUT("  - backframe                     Miliseconds (integer) to scan for background points");
-            CLI_STDOUT("  - objframe                      Miliseconds (integer) to scan for object points");
-            CLI_STDOUT("  - backthreshold                 Meters (decimal) away an object point must be from the background to not be discarded");
-            CLI_STDOUT("  - reflthreshold                 Minimun reflectivity (decimal) a point must have to not be discarded");
+            CLI_STDOUT("  - backframe <ms>                Miliseconds (integer) to scan for background points");
+            CLI_STDOUT("  - objframe <ms>                 Miliseconds (integer) to scan for object points");
+            CLI_STDOUT("  - backthreshold <m>             Meters (decimal) away an object point must be from the background to not be discarded");
+            CLI_STDOUT("  - reflthreshold <rf>            Minimun reflectivity (decimal) a point must have to not be discarded");
             if (doBreak) {
                 break;
             }
@@ -103,7 +103,7 @@ void printHelp(CLICommandType ct) {
 
         // DISCARD
         case kDiscard: {
-            CLI_STDOUT(bold("discard <mseconds>") "             Discards points for the amount of miliseconds specified");
+            CLI_STDOUT(bold("discard <ms>") "                   Discards points for the amount of miliseconds specified");
             if (doBreak) {
                 break;
             }
@@ -236,21 +236,21 @@ void App::cli() {
             case kSet: {
                 if (command.numParams() == 2) {
                     try {
-                        if (STR_STRC_CMP(command[2], "backframe")) {
+                        if (STR_STRC_CMP(command[0], "backframe")) {
                             oc->setBackFrame(static_cast<uint32_t>(std::stoi(command[1])));
-                            CLI_STDOUT("New background frame set at " << command[1] << "ms");
+                            CLI_STDOUT("New background frame set at " << command[1] << " ms");
 
-                        } else if (STR_STRC_CMP(command[2], "objframe")) {
+                        } else if (STR_STRC_CMP(command[0], "objframe")) {
                             oc->setObjFrame(static_cast<uint32_t>(std::stoi(command[1])));
-                            CLI_STDOUT("New object frame set at " << command[1] << "ms");
+                            CLI_STDOUT("New object frame set at " << command[1] << " ms");
 
-                        } else if (STR_STRC_CMP(command[2], "backthreshold")) {
+                        } else if (STR_STRC_CMP(command[0], "backthreshold")) {
                             oc->setBackDistance(std::stof(command[1]));
-                            CLI_STDOUT("New background distance threshold set at " << command[1] << "m");
+                            CLI_STDOUT("New background distance threshold set at " << command[1] << " m");
 
-                        } else if (STR_STRC_CMP(command[2], "reflthreshold")) {
+                        } else if (STR_STRC_CMP(command[0], "reflthreshold")) {
                             oc->setMinReflectivity(std::stof(command[1]));
-                            CLI_STDOUT("New minimun reflectivity set at " << command[1]);
+                            CLI_STDOUT("New minimun reflectivity set at " << command[1] << " points");
 
                         } else {
                             unknownCommand("set");
@@ -258,6 +258,8 @@ void App::cli() {
                     } catch (std::exception &e) {
                         CLI_STDERR("Invalid number");
                     }
+                } else {
+                    unknownCommand("set");
                 }
             } break;
 

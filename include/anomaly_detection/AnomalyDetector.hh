@@ -15,16 +15,19 @@
 
 #include "object_characterization/CharacterizedObject.hh"
 #include "object_characterization/Model.hh"
+#include "anomaly_detection/Anomalies.hh"
 
 class AnomalyDetector {
    private:
     bool chrono;  ///< Activador de la medicion de tiempos
 
+    const double radiiMaxDiff = 0.2;  ///< Limite máximo de anomalía en el radio
+
    public:
     /**
      * Constructor
      */
-    AnomalyDetector(const bool chrono) : chrono(chrono) {}
+    AnomalyDetector(bool chrono) : chrono(chrono) {}
 
     /**
      * Destructor virtual
@@ -35,9 +38,9 @@ class AnomalyDetector {
      * Compara un objecto con un modelo especificado
      * @param obj Objeto a comparar
      * @param model Modelo sobre el que se comparará el objeto
-     * @return ...
+     * @return Anomalías detectadas
      */
-    void /* Differences */ compare(const CharacterizedObject& obj, const Model& model);
+    Anomalies compare(const CharacterizedObject& obj, const Model& model);
 
     ////// Setters
     /**

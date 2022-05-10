@@ -13,6 +13,7 @@
 #include <set>
 #include <vector>
 #include <string>
+#include <utility>
 
 #include "models/Octree.hh"
 #include "models/Point.hh"

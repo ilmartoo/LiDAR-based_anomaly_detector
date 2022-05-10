@@ -22,7 +22,7 @@
 #include "scanner/ScannerLVX.hh"
 #include "models/Point.hh"
 #include "models/Timestamp.hh"
-#include "models/CLICommand.hh"
+#include "app/CLICommand.hh"
 
 #include "logging/debug.hh"
 

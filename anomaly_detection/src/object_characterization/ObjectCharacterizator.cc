@@ -22,7 +22,7 @@
 #include "object_characterization/ObjectManager.hh"
 #include "models/Point.hh"
 #include "models/Kernel.hh"
-#include "models/CLICommand.hh"
+#include "app/CLICommand.hh"
 
 #include "logging/debug.hh"
 
@@ -209,7 +209,7 @@ CharacterizedObject ObjectCharacterizator::defineObject() {
 }
 
 void ObjectCharacterizator::wait(uint32_t miliseconds) {
-    discardTime = miliseconds * 1000000;
+    discardTime = static_cast<uint64_t>(miliseconds) * 1000000;
 
     state = defDiscard;
 
