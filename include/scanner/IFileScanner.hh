@@ -38,7 +38,7 @@ class IFileScanner : public IScanner {
      * @return Instancia única del escaner
      */
     static IFileScanner *create(std::string filename) {
-        DEBUG_STDERR("Method not implemented!");
+        DEBUG_STDERR("Method not implemented");
         return (IFileScanner *)instance;
     }
 

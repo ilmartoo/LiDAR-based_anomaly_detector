@@ -28,10 +28,10 @@
 
 
 bool ScannerLVX::init() {
-    DEBUG_STDOUT("Inicializando el escaner de archivos lvx.");
+    DEBUG_STDOUT("Initializing lvx file scanner");
 
     if (lvx_file.Open(filename.c_str(), std::ios::in) != livox_ros::kLvxFileOk) {
-        CLI_STDERR("Fallo al inicializar el escaner de archivos lvx.");
+        CLI_STDERR("Error while initializing lvx file scanner");
 
         return false;
     }
@@ -44,13 +44,13 @@ bool ScannerLVX::init() {
     frameOffset = 0;
     packetOffset = 0;
 
-    DEBUG_STDOUT("Escaner de archivos lvx inicializado correctamente.");
+    DEBUG_STDOUT("Initialized lvx file scanner");
 
     return true;
 }
 
 ScanCode ScannerLVX::scan() {
-    DEBUG_STDOUT("Inicio del escaneo de puntos.");
+    DEBUG_STDOUT("Starting point scanning");
 
     // Reabre el archivo si no está abierto
     if (lvx_file.GetLvxFileReadProgress() == 100) {
@@ -68,13 +68,13 @@ ScanCode ScannerLVX::scan() {
             return readData();
 
         } else {
-            CLI_STDERR("El sensor ya está escaneando.");
+            CLI_STDERR("Scanner already in use");
             return ScanCode::kScanError;
         }
     }
     // Fallo de apertura
     else {
-        CLI_STDERR("Fallo de apertura del archivo LVX de puntos.");
+        CLI_STDERR("Error while opening lvx file");
         return ScanCode::kScanError;
     }
 }
@@ -84,30 +84,30 @@ void ScannerLVX::pause() {
 }
 
 bool ScannerLVX::setCallback(const std::function<void(const LidarPoint &p)> func) {
-    DEBUG_STDOUT("Estableciendo el callback.");
+    DEBUG_STDOUT("Setting up callback");
 
     callback = func;
     return ((bool)callback);
 }
 
 void ScannerLVX::wait() {
-    DEBUG_STDOUT("Esperando a la finalización del escaneo de puntos.");
+    DEBUG_STDOUT("Waiting for the scanner to end");
 
     readData();
 
     delete packets_of_frame.packet;
 
-    DEBUG_STDOUT("Finalizado el escaneo de puntos.");
+    DEBUG_STDOUT("Ended point scanning");
 }
 
 void ScannerLVX::stop() {
-    DEBUG_STDOUT("Finalizando el escaneo de puntos.");
+    DEBUG_STDOUT("Closing scanner");
 
     lvx_file.CloseLvxFile();
 
     delete packets_of_frame.packet;
 
-    DEBUG_STDOUT("Finalizado el escaneo de puntos.");
+    DEBUG_STDOUT("Scanner closed");
 }
 
 ScanCode ScannerLVX::readData() {
@@ -138,7 +138,7 @@ ScanCode ScannerLVX::readData() {
 
                     // Llamada al callback
                     if (this->callback) {
-                        this->callback({Timestamp(eth_packet->timestamp), point->reflectivity, point->x, point->y, point->z});
+                        this->callback({Timestamp(eth_packet->timestamp), (float)point->reflectivity, point->x, point->y, point->z});
                     }
                 }
                 packetOffset = i == points_in_packet ? 0 : packetOffset;
@@ -148,7 +148,7 @@ ScanCode ScannerLVX::readData() {
     }
 
     if (lvx_file.GetLvxFileReadProgress() == 100) {
-        DEBUG_STDOUT("Se ha llegado al final del archivo LVX de puntos.");
+        CLI_STDERR("EOF reached");
 
         scanning = false;
         return ScanCode::kScanEof;

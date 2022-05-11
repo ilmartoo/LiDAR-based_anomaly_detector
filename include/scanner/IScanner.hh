@@ -50,7 +50,7 @@ class IScanner {
      */
     template <class... Args>
     static IScanner *create(Args &&...args) {
-        DEBUG_STDERR("Method not implemented!");
+        DEBUG_STDERR("Method not implemented");
         return instance;
     }
 

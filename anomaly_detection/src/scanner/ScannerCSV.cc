@@ -24,22 +24,22 @@
 #include "logging/debug.hh"
 
 bool ScannerCSV::init() {
-    DEBUG_STDOUT("Inicializando el escaner de archivos csv.");
+    DEBUG_STDOUT("Initializing csv file scanner");
 
     // Abrimos stream del archivo
     infile.open(filename, std::ifstream::in);
     if (infile.fail()) {
-        CLI_STDERR("Fallo al inicializar el escaner de archivos csv.");
+        CLI_STDERR("Error while initializing csv file scanner");
         return false;
     }
 
-    DEBUG_STDOUT("Escaner de archivos csv inicializado correctamente.");
+    DEBUG_STDOUT("Initialized csv file scanner");
 
     return true;
 }
 
 ScanCode ScannerCSV::scan() {
-    DEBUG_STDOUT("Inicio del escaneo de puntos.");
+    DEBUG_STDOUT("Starting point scanning");
 
     if (!infile.is_open()) {
         infile.open(filename, std::ios::in);
@@ -55,13 +55,13 @@ ScanCode ScannerCSV::scan() {
             return readData();
 
         } else {
-            CLI_STDERR("El sensor ya está escaneando.");
+            CLI_STDERR("Scanner already in use");
             return ScanCode::kScanError;
         }
     }
     // Fallo de apertura
     else {
-        CLI_STDERR("Fallo de apertura del archivo CSV de puntos.");
+        CLI_STDERR("Error while opening csv file");
         return ScanCode::kScanError;
     }
 }
@@ -71,28 +71,28 @@ void ScannerCSV::pause() {
 }
 
 bool ScannerCSV::setCallback(const std::function<void(const LidarPoint &p)> func) {
-    DEBUG_STDOUT("Estableciendo el callback.");
+    DEBUG_STDOUT("Setting up callback");
 
     callback = func;
     return ((bool)callback);
 }
 
 void ScannerCSV::wait() {
-    DEBUG_STDOUT("Esperando a la finalización del escaneo de puntos.");
+    DEBUG_STDOUT("Waiting for the scanner to end");
 
     readData();
 
-    DEBUG_STDOUT("Finalizado el escaneo de puntos.");
+    DEBUG_STDOUT("Ended point scanning");
 }
 
 void ScannerCSV::stop() {
-    DEBUG_STDOUT("Finalizando el escaneo de puntos.");
+    DEBUG_STDOUT("Closing scanner");
 
     if (infile.is_open()) {
         infile.close();
     }
 
-    DEBUG_STDOUT("Finalizado el escaneo de puntos.");
+    DEBUG_STDOUT("Scanner closed");
 }
 
 ScanCode ScannerCSV::readData() {
@@ -105,7 +105,7 @@ ScanCode ScannerCSV::readData() {
     for (int commas, i; scanning && std::getline(infile, line);) {
         // Fallo en la lectura
         if (infile.fail()) {
-            DEBUG_STDOUT("Fallo en la lectura de puntos");
+            DEBUG_STDOUT("Error while reading file");
             return ScanCode::kScanError;
         }
 
@@ -149,16 +149,16 @@ ScanCode ScannerCSV::readData() {
         // Llamada al callback
         if (this->callback) {
             try {
-                this->callback({Timestamp(data[0]), static_cast<uint8_t>(std::stoi(data[1])), static_cast<double>(std::stod(data[2])),
-                                static_cast<double>(std::stod(data[3])), static_cast<double>(std::stod(data[4]))});
+                this->callback({Timestamp(data[0]), (float)std::stoi(data[1]), std::stod(data[2]), std::stod(data[3]), std::stod(data[4])});
+
             } catch (std::exception &e) {
-                CLI_STDERR("Error de conversión de datos.");
+                CLI_STDERR("Data conversion error");
             }
         }
     }
 
     if (infile.eof()) {
-        DEBUG_STDOUT("Se ha llegado al final del archivo CSV de puntos.");
+        CLI_STDERR("EOF reached");
 
         scanning = false;
         return ScanCode::kScanEof;

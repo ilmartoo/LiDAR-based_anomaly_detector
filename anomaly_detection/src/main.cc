@@ -38,10 +38,10 @@ struct InputParams {
           min_reflectivity(DEFAULT_MIN_RELECTIVITY),
           back_distance(DEFAULT_BACKGROUND_DISTANCE){};
 
-    void help() const;         // Command line help
-    void usage() const;        // Command line usage
-    void missusage();          // Treats InputParams when command line options are used wrong
-    void parse(int, char **);  // Command line input parser
+    void help() const;               // Command line help
+    void usage() const;              // Command line usage
+    void missusage();                // Treats InputParams when command line options are used wrong
+    void parse(int, const char **);  // Command line input parser
 
     std::string exec_name;  // Nombre del ejecutable
 
@@ -85,14 +85,14 @@ int main(int argc, char *argv[]) {
     return pi.exit_code;  // Exit
 }
 
-// Command line parser & App creator
-void InputParams::parse(int argc, char **argv) {
+// Command line parser
+void InputParams::parse(int argc, const char **argv) {
     // Parser de argumentos
     InputParser parser(argc, argv);
 
     /* Impresión de la ayuda */
-    if (parser.optionExists("-h") || parser.optionExists("--help")) {
-        DEBUG_STDOUT("Opción [-h | --help ]: Impresión del mensaje de ayuda.");
+    if (parser.hasParam("-h") || parser.hasParam("--help")) {
+        DEBUG_STDOUT("Param <-h | --help> detected");
 
         help();  // Imprimimos help
         exit_code = EXIT_SUCCESS;
@@ -100,10 +100,10 @@ void InputParams::parse(int argc, char **argv) {
     }
 
     /* Input por lidar */
-    else if (parser.optionExists("-b")) {
-        DEBUG_STDOUT("Opción [-b]: Sensor LiDAR.");
+    else if (parser.hasParam("-b")) {
+        DEBUG_STDOUT("Param <-b> detected");
 
-        std::string &option = const_cast<std::string &>(parser.getOption("-b"));
+        std::string option = parser.getParam("-b");
         // No se ha proporcionado valor
         if (option.empty()) {
             missusage();
@@ -111,8 +111,7 @@ void InputParams::parse(int argc, char **argv) {
         }
         // Valor por defecto
         else if (option.compare("default") == 0) {
-            option.clear();
-            option.append(DEFAULT_BROADCAST_CODE);
+            option = DEFAULT_BROADCAST_CODE;
         }
         // Valor inválido
         else if (option.length() > kBroadcastCodeSize || !is_alphanumeric(option)) {
@@ -124,14 +123,14 @@ void InputParams::parse(int argc, char **argv) {
         is_lidar = true;      // Sensor lidar
         lidar_code = option;  // Código de broadcast
 
-        DEBUG_STDOUT("[-b] " << option);
+        DEBUG_STDOUT("Value of <-b> is " << option);
     }
 
     /* Input por archivo */
-    else if (parser.optionExists("-f")) {
-        DEBUG_STDOUT("Opción [-f]: Archivo de datos.");
+    else if (parser.hasParam("-f")) {
+        DEBUG_STDOUT("Param <-f> detected");
 
-        const std::string &option = parser.getOption("-f");
+        const std::string &option = parser.getParam("-f");
         // No se ha proporcionado valor
         if (option.empty()) {
             missusage();
@@ -142,12 +141,12 @@ void InputParams::parse(int argc, char **argv) {
         is_lidar = false;   // Escaner de archivo
         filename = option;  // Filename
 
-        DEBUG_STDOUT("[-f] " << option);
+        DEBUG_STDOUT("Value of <-f> is " << option);
     }
 
     /* No se ha especificado una de las opciones obligatorias */
     else {
-        DEBUG_STDOUT("No se ha especificado una opción obligatoria.");
+        DEBUG_STDOUT("No value for <-f> or <-b> provided");
 
         usage();  // Imprimimos help
         exit_code = EXIT_SUCCESS;
@@ -155,10 +154,10 @@ void InputParams::parse(int argc, char **argv) {
     }
 
     /* Duración del frame */
-    if (parser.optionExists("-t")) {
-        DEBUG_STDOUT("Opción [-t]: Duración del frame.");
+    if (parser.hasParam("-t")) {
+        DEBUG_STDOUT("Param <-t> detected");
 
-        const std::string &option = parser.getOption("-t");
+        const std::string &option = parser.getParam("-t");
         // No se ha proporcionado valor
         if (option.empty()) {
             missusage();
@@ -170,7 +169,7 @@ void InputParams::parse(int argc, char **argv) {
             try {
                 obj_frame_t = static_cast<uint32_t>(std::stoul(option));
 
-                DEBUG_STDOUT("[-t] " << option);
+                DEBUG_STDOUT("Value of <-t> is " << option);
             }
             // Valor inválido
             catch (std::exception &e) {
@@ -181,10 +180,10 @@ void InputParams::parse(int argc, char **argv) {
     }
 
     /* Tipo de cronómetraje */
-    if (parser.optionExists("-c")) {
-        DEBUG_STDOUT("Opción [-c]: Tipo de cronometraje.");
+    if (parser.hasParam("-c")) {
+        DEBUG_STDOUT("Param <-c> detected");
 
-        const std::string &option = parser.getOption("-c");
+        const std::string &option = parser.getParam("-c");
         // No se ha proporcionado valor
         if (option.empty()) {
             missusage();
@@ -214,15 +213,15 @@ void InputParams::parse(int argc, char **argv) {
                 return;  // Salimos
             }
 
-            DEBUG_STDOUT("[-c] " << option);
+            DEBUG_STDOUT("Value of <-c> is " << option);
         }
     }
 
     /* Duración del background */
-    if (parser.optionExists("-g")) {
-        DEBUG_STDOUT("Opción [-g]: Duración del escaneo del fondo.");
+    if (parser.hasParam("-g")) {
+        DEBUG_STDOUT("Param <-g> detected");
 
-        const std::string &option = parser.getOption("-g");
+        const std::string &option = parser.getParam("-g");
         // No se ha proporcionado valor
         if (option.empty()) {
             missusage();
@@ -234,7 +233,7 @@ void InputParams::parse(int argc, char **argv) {
             try {
                 back_frame_t = static_cast<uint32_t>(std::stoul(option));
 
-                DEBUG_STDOUT("[-g] " << option);
+                DEBUG_STDOUT("Value of <-g> is " << option);
             }
             // Valor inválido
             catch (std::exception &e) {
@@ -245,10 +244,10 @@ void InputParams::parse(int argc, char **argv) {
     }
 
     /* Reflectividad mínima */
-    if (parser.optionExists("-r")) {
-        DEBUG_STDOUT("Opción [-r]: Reflectividad mínima.");
+    if (parser.hasParam("-r")) {
+        DEBUG_STDOUT("Param <-r> detected");
 
-        const std::string &option = parser.getOption("-r");
+        const std::string &option = parser.getParam("-r");
         // No se ha proporcionado valor
         if (option.empty()) {
             missusage();
@@ -260,7 +259,7 @@ void InputParams::parse(int argc, char **argv) {
             try {
                 min_reflectivity = std::stof(option);
 
-                DEBUG_STDOUT("[-r] " << option);
+                DEBUG_STDOUT("Value of <-r> is " << option);
             }
             // Valor inválido
             catch (std::exception &e) {
@@ -271,10 +270,10 @@ void InputParams::parse(int argc, char **argv) {
     }
 
     /* Distancia al background mínima */
-    if (parser.optionExists("-d")) {
-        DEBUG_STDOUT("Opción [-d]: Distancia mínima del fondo.");
+    if (parser.hasParam("-d")) {
+        DEBUG_STDOUT("Param <-d> detected");
 
-        const std::string &option = parser.getOption("-d");
+        const std::string &option = parser.getParam("-d");
         // No se ha proporcionado valor
         if (option.empty()) {
             missusage();
@@ -286,7 +285,7 @@ void InputParams::parse(int argc, char **argv) {
             try {
                 back_distance = std::stof(option);
 
-                DEBUG_STDOUT("[-d] " << option);
+                DEBUG_STDOUT("Value of <-d> is " << option);
             }
             // Valor inválido
             catch (std::exception &e) {
@@ -329,7 +328,7 @@ void InputParams::help() const {
 
 // Exit when command line options are used wrong
 void InputParams::missusage() {
-    DEBUG_STDOUT("Uso incorrecto de la linea de comandos");
+    DEBUG_STDOUT("Invalid input detected. To get more info about the commands execute " << bold_s(exec_name) << " --help");
 
     usage();
 
