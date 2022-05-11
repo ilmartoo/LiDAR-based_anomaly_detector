@@ -54,7 +54,15 @@ To manualy install the needed libraries you may download the specified version o
 
 ***Note:*** *As we said in [Quick Instalation](#quick-installation), `armadillo` depends on OpenBLAS (or LAPACK) library. Be sure to install the library development package beforehand.*
 
-Then, compile the libraries as stipulated by their corresponding documentation.
+Then, compile the libraries with `cmake`:
+
+```bash
+cd <lib_folder>/build
+cmake ..
+cmake --build .
+```
+
+Being `<lib_folder>` the name of the library to compile.
 
 > The `read_lvx` project is not a library, but can be compiled as so. It also needs `livox_sdk` library to work, so be aware of it when compiling.
 

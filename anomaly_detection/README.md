@@ -48,7 +48,15 @@ To manualy install the needed libraries you may download the specified version o
 - [`livox-sdk 2.3.0`](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
 - [`read_lvx`](https://github.com/michalpelka/read_lvx) (First version, no version number specified)
 
-Then, compile the libraries as stipulated by their corresponding documentation.
+Then, compile the libraries with `cmake`:
+
+```bash
+cd <lib_folder>/build
+cmake ..
+cmake --build .
+```
+
+Being `<lib_folder>` the name of the library to compile.
 
 > The `read_lvx` project is not a library, but can be compiled as so. It also needs `livox_sdk` library to work, so be aware of it when compiling.
 
