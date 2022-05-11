@@ -1,9 +1,7 @@
 /**
  * @file InputParser.hh
- * @author iain (https://stackoverflow.com/users/85381/iain)
+ * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 20/03/2022
- *
- * Modified by: Martín Suárez (martin.suarez.garcia@rai.usc.es)
  *
  * Parser de argumentos de linea de comandos
  *
@@ -14,66 +12,65 @@
 
 #include <string>
 #include <vector>
-#include <algorithm>
 
 #include "logging/debug.hh"
 
 class InputParser {
+   private:
+    std::vector<std::string> params;
+
    public:
     /**
      * Constructor
-     * @author iain (https://stackoverflow.com/users/85381/iain)
-     * @param argc Numero de argumentos
-     * @param argv Vector de argumentos
+     * @param nargs Numero de argumentos
+     * @param args Vector de argumentos
      */
-    InputParser(int &argc, char **argv) {
-        for (int i = 1; i < argc; ++i)
-            this->tokens.push_back(std::string(argv[i]));
+    InputParser(int nargs, const char **args) {
+        for (int i = 1; i < nargs; ++i) {
+            params.push_back(std::string(args[i]));
+        }
     }
     /**
      * Devuelve un string con el parámetro de la opción especificada
-     * @author iain (https://stackoverflow.com/users/85381/iain)
      * @param option Opción a recuperar
      * @return String con los datos de la opción o string vacío si no se ha encontrado
      */
-    const std::string &getOption(const std::string &option) const {
-        std::vector<std::string>::const_iterator itr;
-        itr = std::find(this->tokens.begin(), this->tokens.end(), option);
-
-        if (itr != this->tokens.end() && ++itr != this->tokens.end()) {
-            return *itr;
+    const std::string &getParam(const std::string &option) const {
+        for (auto itr = params.begin(); itr != params.end(); ++itr) {
+            if (*itr == option && ++itr != params.end()) {
+                return *itr;
+            }
         }
+
         static const std::string empty_string("");
         return empty_string;
+    }
+    /**
+     * Obtiene el valor en la posición especificada
+     * @param index Posición del valor a recuperar
+     * @return String con los datos de la opción o string vacío si no se ha encontrado
+     */
+    const std::string &getParam(unsigned int index) const {
+        if (index < params.size()) {
+            return params.at(index);
+        }
+        static const std::string emptyString("");
+        return emptyString;
     }
 
     /**
      * Comprueba si una opción se ha especificado
-     * @author iain (https://stackoverflow.com/users/85381/iain)
      * @param option Opción a comprobar
      * @return true Existe la opción especificada
-     * @return false No existe la opción especificada
      */
-    bool optionExists(const std::string &option) const {
-        return std::find(this->tokens.begin(), this->tokens.end(), option) != this->tokens.end();
-    }
-
-    /**
-     * Obtiene el valor en la posición especificada
-     * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
-     * @param index Posición del valor a recuperar
-     * @return String con los datos de la opción o string vacío si no se ha encontrado
-     */
-    const std::string &getOption(const uint8_t index) const {
-        if (index < tokens.size()) {
-            return tokens.at(index);
+    bool hasParam(const std::string &option) const {
+        for (auto &p : params) {
+            if (p == option) {
+                return true;
+            }
         }
-        static const std::string empty_string("");
-        return empty_string;
+        return false;
     }
-
-   private:
-    std::vector<std::string> tokens;
 };
 
 #endif  // INPUTPARSER_CLASS_H

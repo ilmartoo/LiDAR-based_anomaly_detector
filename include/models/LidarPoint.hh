@@ -21,8 +21,8 @@
  */
 class LidarPoint : public Point {
    private:
-    Timestamp timestamp;   ///< Timestamp del punto
-    uint8_t reflectivity;  ///< Reflectividad del punto
+    Timestamp timestamp;    ///< Timestamp del punto
+    uint32_t reflectivity;  ///< Reflectividad del punto
 
    public:
     /**
@@ -33,7 +33,7 @@ class LidarPoint : public Point {
      * @param y Posición en y del punto
      * @param z Posición en z del punto
      */
-    LidarPoint(const Timestamp timestamp, uint8_t reflectivity, double x, double y, double z) : timestamp(timestamp), reflectivity(reflectivity), Point(x, y, z) {}
+    LidarPoint(const Timestamp &timestamp, uint32_t reflectivity, double x, double y, double z) : timestamp(timestamp), reflectivity(reflectivity), Point(x, y, z) {}
     /**
      * Constructor
      * @param timestamp Timestamp del punto
@@ -42,7 +42,20 @@ class LidarPoint : public Point {
      * @param y Posición en y del punto
      * @param z Posición en z del punto
      */
-    LidarPoint(const Timestamp timestamp, uint8_t reflectivity, int x, int y, int z) : timestamp(timestamp), reflectivity(reflectivity), Point((double)x, (double)y, (double)z) {}
+    LidarPoint(const Timestamp &timestamp, uint32_t reflectivity, int x, int y, int z) : timestamp(timestamp), reflectivity(reflectivity), Point((double)x, (double)y, (double)z) {}
+    /**
+     * Constructor
+     * @param timestamp Timestamp del punto
+     * @param reflectivity Reflectividad del punto
+     * @param p Punto a compiar
+     */
+    LidarPoint(const Timestamp &timestamp, uint32_t reflectivity, const Point& p) : timestamp(timestamp), reflectivity(reflectivity), Point(p) {}
+    /**
+     * Constructor
+     * @param timestamp Timestamp del punto
+     * @param reflectivity Reflectividad del punto
+     */
+    LidarPoint(const Timestamp &timestamp, uint32_t reflectivity) : timestamp(timestamp), reflectivity(reflectivity), Point() {}
     /**
      * Constructor
      * @param p Punto a copiar
@@ -70,7 +83,7 @@ class LidarPoint : public Point {
      * Devuelve la reflectividad del punto
      * @return Reflectividad del punto
      */
-    const uint8_t getReflectivity() const { return reflectivity; }
+    const uint32_t getReflectivity() const { return reflectivity; }
 
     ////// Setters
     /**
@@ -82,7 +95,7 @@ class LidarPoint : public Point {
      * Setter de la reflectividad
      * @param r reflectividad a establecer
      */
-    void setReflectivity(uint8_t r) { this->reflectivity = r; }
+    void setReflectivity(uint32_t r) { this->reflectivity = r; }
 
     ////// Strings e impresión
     /**

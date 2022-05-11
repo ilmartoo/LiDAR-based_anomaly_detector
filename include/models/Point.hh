@@ -104,6 +104,18 @@ class Point {
      */
     double operator[](int i) const { return (i < 0 || i > 2 ? 0 : (i == 0 ? this->x : (i == 1 ? this->y : this->z))); }
     /**
+     * Operador de igualdad
+     * @param p Punto a igualar
+     * @return true si los puntos tienen las mismas coordenadas
+     */
+    bool operator==(const Point &p) const { return (this->x == p.x && this->y == p.y && this->z == p.z); }
+    /**
+     * Operador de desigualdad
+     * @param p Punto a comparar
+     * @return true si los puntos tienen distintas coordenadas
+     */
+    bool operator!=(const Point &p) const { return !(*this == p); }
+    /**
      * Operador de resta de puntos
      * @param p Punto a restar
      * @return Punto resultado de la operacion con timestamp y reflectividad del punto original

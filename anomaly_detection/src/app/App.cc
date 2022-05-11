@@ -30,8 +30,6 @@ void App::close() {
     // ad->stop();
 }
 
-// Macro de comparación de string con c_string
-#define STR_STRC_CMP(string, c_string) (string.compare(c_string) == 0)
 // Impresión cuando se detecta un comando desconocido
 void inline unknownCommand(const char *command) { CLI_STDERR("Unknown command: Execute <help " << command << "> to get info about valid commands"); }
 void inline unknownCommand() { unknownCommand("[command]"); }
@@ -186,14 +184,14 @@ void App::cli() {
             // CHRONO
             case kChrono: {
                 bool newChrono;
-                if (command.numParams() == 2 && ((newChrono = STR_STRC_CMP(command[0], "set")) || STR_STRC_CMP(command[0], "unset"))) {
-                    if (STR_STRC_CMP(command[1], "define")) {
+                if (command.numParams() == 2 && ((newChrono = (command[0] == "set")) || command[0] == "unset")) {
+                    if (command[1] == "define") {
                         oc->setChrono(newChrono);
 
-                    } else if (STR_STRC_CMP(command[1], "analyze")) {
+                    } else if (command[1] == "analyze") {
                         ad->setChrono(newChrono);
 
-                    } else if (STR_STRC_CMP(command[1], "all")) {
+                    } else if (command[1] == "all") {
                         oc->setChrono(newChrono);
                         ad->setChrono(newChrono);
 
@@ -208,10 +206,10 @@ void App::cli() {
 
             // DEFINE
             case kDefine: {
-                if (STR_STRC_CMP(command[0], "background")) {
+                if (command[0] == "background") {
                     oc->defineBackground();
 
-                } else if (STR_STRC_CMP(command[0], "object")) {
+                } else if (command[0] == "object") {
                     CharacterizedObject obj = oc->defineObject();
 
                     std::pair<bool, std::string> p;
@@ -236,19 +234,19 @@ void App::cli() {
             case kSet: {
                 if (command.numParams() == 2) {
                     try {
-                        if (STR_STRC_CMP(command[0], "backframe")) {
+                        if (command[0] == "backframe") {
                             oc->setBackFrame(static_cast<uint32_t>(std::stoi(command[1])));
                             CLI_STDOUT("New background frame set at " << command[1] << " ms");
 
-                        } else if (STR_STRC_CMP(command[0], "objframe")) {
+                        } else if (command[0] == "objframe") {
                             oc->setObjFrame(static_cast<uint32_t>(std::stoi(command[1])));
                             CLI_STDOUT("New object frame set at " << command[1] << " ms");
 
-                        } else if (STR_STRC_CMP(command[0], "backthreshold")) {
+                        } else if (command[0] == "backthreshold") {
                             oc->setBackDistance(std::stof(command[1]));
                             CLI_STDOUT("New background distance threshold set at " << command[1] << " m");
 
-                        } else if (STR_STRC_CMP(command[0], "reflthreshold")) {
+                        } else if (command[0] == "reflthreshold") {
                             oc->setMinReflectivity(std::stof(command[1]));
                             CLI_STDOUT("New minimun reflectivity set at " << command[1] << " points");
 
@@ -281,7 +279,7 @@ void App::cli() {
 
             // MODEL
             case kModel: {
-                if (command.numParams() == 4 && STR_STRC_CMP(command[0], "save")) {
+                if (command.numParams() == 4 && command[0] == "save") {
                     if (command[3].size() == 1) {
                         switch (command[3][0]) {
                             case 'f': {
@@ -340,14 +338,14 @@ void App::cli() {
                         unknownCommand("model");
                     }
 
-                } else if (command.numParams() == 3 && STR_STRC_CMP(command[0], "write")) {
+                } else if (command.numParams() == 3 && command[0] == "write") {
                     if (om->writeModel(command[2], command[1])) {
                         CLI_STDOUT("Model " << command[1] << " written into file " << command[2]);
                     } else {
                         CLI_STDERR("Could not write model " << command[1] << " into file " << command[2]);
                     }
 
-                } else if (command.numParams() == 2 && STR_STRC_CMP(command[0], "load")) {
+                } else if (command.numParams() == 2 && command[0] == "load") {
                     std::pair<bool, std::string> p = om->loadModel(command[1]);
                     if (p.first) {
                         CLI_STDOUT("Model " << p.second << " loaded");
@@ -373,7 +371,7 @@ void App::cli() {
 
             // LIST
             case kList: {
-                if (STR_STRC_CMP(command[0], "objects")) {
+                if (command[0] == "objects") {
                     if (om->getObjects().size() > 0) {
                         CLI_STDOUT("Defined objects list:");
                         for (auto &o : om->getObjects()) {
@@ -383,7 +381,7 @@ void App::cli() {
                         CLI_STDOUT("No objects were created yet");
                     }
 
-                } else if (STR_STRC_CMP(command[0], "models")) {
+                } else if (command[0] == "models") {
                     if (om->getModels().size() > 0) {
                         CLI_STDOUT("Models list:");
                         for (auto &m : om->getModels()) {

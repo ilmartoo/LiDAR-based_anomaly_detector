@@ -59,43 +59,43 @@ class CLICommand {
 
         if (params.size() > 0) {
             // EXIT
-            if (params[0].compare("exit") == 0) {
+            if (params[0] == "exit") {
                 return {kExit, params};
             }
             // HELP
-            else if (params[0].compare("help") == 0) {
+            else if (params[0] == "help") {
                 return {kHelp, params};
             }
             // CHRONO
-            else if (params[0].compare("chrono") == 0) {
+            else if (params[0] == "chrono") {
                 return {kChrono, params};
             }
             // DEFINE
-            else if (params[0].compare("define") == 0) {
+            else if (params[0] == "define") {
                 return {kDefine, params};
             }
             // SET
-            else if (params[0].compare("set") == 0) {
+            else if (params[0] == "set") {
                 return {kSet, params};
             }
             // DISCARD
-            else if (params[0].compare("discard") == 0) {
+            else if (params[0] == "discard") {
                 return {kDiscard, params};
             }
             // MODEL
-            else if (params[0].compare("model") == 0) {
+            else if (params[0] == "model") {
                 return {kModel, params};
             }
             // INFO
-            else if (params[0].compare("info") == 0) {
+            else if (params[0] == "info") {
                 return {kInfo, params};
             }
             // LIST
-            else if (params[0].compare("list") == 0) {
+            else if (params[0] == "list") {
                 return {kList, params};
             }
             // ANALYZE
-            else if (params[0].compare("analyze") == 0) {
+            else if (params[0] == "analyze") {
                 return {kAnalyze, params};
             }
         }
