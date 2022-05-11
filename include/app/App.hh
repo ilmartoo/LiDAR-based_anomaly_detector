@@ -36,7 +36,6 @@ enum ChronoMode {
 
 class App {
    private:
-    IScanner *scanner;          ///< Escaner de puntos
     ObjectCharacterizator *oc;  ///< Caracterizador de objetos
     ObjectManager *om;          ///< Gestor de objetos y modelos
     AnomalyDetector *ad;        ///< Detector de anomalías
@@ -53,6 +52,8 @@ class App {
      */
     App(const std::string &filename, ChronoMode chronoMode, uint32_t objFrame, uint32_t backFrame, float minReflectivity,
         float backDistance) {
+        IScanner *scanner;
+
         // Obtenemos extensión del archivo
         size_t loc = filename.find_last_of('.');
         std::string ext = filename.substr(++loc);
@@ -71,8 +72,7 @@ class App {
             return;
         }
 
-        oc = new ObjectCharacterizator(scanner, objFrame, backFrame, minReflectivity, backDistance,
-                                       chronoMode & kChronoCharacterization);
+        oc = new ObjectCharacterizator(scanner, objFrame, backFrame, minReflectivity, backDistance, chronoMode & kChronoCharacterization);
         om = new ObjectManager();
         ad = new AnomalyDetector(chronoMode & kChronoAnomalyDetection);
 
@@ -90,9 +90,8 @@ class App {
      */
     App(const char *broadcastCode, ChronoMode chronoMode, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance,
         bool iterativeMode) {
-        scanner = ScannerLidar::create(broadcastCode);
-        oc = new ObjectCharacterizator(scanner, objFrame, backFrame, minReflectivity, backDistance,
-                                       chronoMode & kChronoCharacterization);
+        IScanner *scanner = ScannerLidar::create(broadcastCode);
+        oc = new ObjectCharacterizator(scanner, objFrame, backFrame, minReflectivity, backDistance, chronoMode & kChronoCharacterization);
         om = new ObjectManager();
         ad = new AnomalyDetector(chronoMode & kChronoAnomalyDetection);
 

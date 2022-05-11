@@ -22,12 +22,10 @@
 
 void App::init() {
     oc->init();
-    // ad->init();
 }
 
 void App::close() {
     oc->stop();
-    // ad->stop();
 }
 
 // Impresión cuando se detecta un comando desconocido
