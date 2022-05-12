@@ -7,7 +7,7 @@
  *
  */
 
-#include "catch_ext.hpp"
+#include "catch_ext.hh"
 
 #include "models/Timestamp.hh"
 #include "models/Point.hh"
