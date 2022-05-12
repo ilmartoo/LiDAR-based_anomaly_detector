@@ -1,12 +1,9 @@
 # Excluded folders & files
 build/
 tmp/
-libs/
-bin/
 doxygen/
-
-# Temporal excludes
 models/
+lib/
 .vscode/
 
 # vscode files

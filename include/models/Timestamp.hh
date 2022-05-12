@@ -103,7 +103,7 @@ class Timestamp {
      * @param ns Nanosegundos a sumar
      * @return Timestamp resultado
      */
-    Timestamp operator+(const uint64_t ns) const { return {this->seconds + ns / NANO_DIGITS, this->nanoseconds + ns % NANO_DIGITS}; }
+    Timestamp operator+(const uint64_t ns) const { return {this->seconds + static_cast<uint32_t>(ns / NANO_DIGITS), this->nanoseconds + static_cast<uint32_t>(ns % NANO_DIGITS)}; }
     /**
      * Suma dos timestamps
      * @param t Timestamp a sumar

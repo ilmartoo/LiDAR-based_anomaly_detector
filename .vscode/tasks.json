@@ -29,8 +29,8 @@
                 "-D",
                 "CMAKE_BUILD_TYPE=Debug",
                 "-D",
-                "DEBUG_SCANNED_POINTS=ON"
-                // "DEBUG_SCANNED_POINTS=OFF"
+                // "DEBUG_SCANNED_POINTS=ON"
+                "DEBUG_SCANNED_POINTS=OFF"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

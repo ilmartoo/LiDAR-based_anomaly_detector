@@ -40,7 +40,7 @@ void getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void 
 
             for (uint32_t i = 0; !ScannerLidar::getInstance()->scanning && i < data_num; ++i)
                 if (ScannerLidar::getInstance()->callback) {
-                    ScannerLidar::getInstance()->callback({Timestamp(data->timestamp), (float)p_data[i].reflectivity, p_data[i].x, p_data[i].y, p_data[i].z});
+                    ScannerLidar::getInstance()->callback({Timestamp(data->timestamp), p_data[i].reflectivity, p_data[i].x, p_data[i].y, p_data[i].z});
                 }
         }
         // Dato de tipo incorrecto

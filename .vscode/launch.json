@@ -17,9 +17,7 @@
 				"-f",
 				"data/caja_cerca.lvx",
 				"-c",
-				"char",
-				// "-g",
-				// "1000"
+				"all"
 			],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",

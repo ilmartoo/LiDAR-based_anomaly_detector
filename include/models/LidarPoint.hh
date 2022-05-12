@@ -33,7 +33,7 @@ class LidarPoint : public Point {
      * @param y Posición en y del punto
      * @param z Posición en z del punto
      */
-    LidarPoint(const Timestamp &timestamp, uint32_t reflectivity, double x, double y, double z) : timestamp(timestamp), reflectivity(reflectivity), Point(x, y, z) {}
+    LidarPoint(const Timestamp &timestamp, uint32_t reflectivity, double x, double y, double z) : Point(x, y, z), timestamp(timestamp), reflectivity(reflectivity) {}
     /**
      * Constructor
      * @param timestamp Timestamp del punto
@@ -42,36 +42,36 @@ class LidarPoint : public Point {
      * @param y Posición en y del punto
      * @param z Posición en z del punto
      */
-    LidarPoint(const Timestamp &timestamp, uint32_t reflectivity, int x, int y, int z) : timestamp(timestamp), reflectivity(reflectivity), Point((double)x, (double)y, (double)z) {}
+    LidarPoint(const Timestamp &timestamp, uint32_t reflectivity, int x, int y, int z) : Point((double)x, (double)y, (double)z), timestamp(timestamp), reflectivity(reflectivity) {}
     /**
      * Constructor
      * @param timestamp Timestamp del punto
      * @param reflectivity Reflectividad del punto
      * @param p Punto a compiar
      */
-    LidarPoint(const Timestamp &timestamp, uint32_t reflectivity, const Point& p) : timestamp(timestamp), reflectivity(reflectivity), Point(p) {}
+    LidarPoint(const Timestamp &timestamp, uint32_t reflectivity, const Point &p) : Point(p), timestamp(timestamp), reflectivity(reflectivity) {}
     /**
      * Constructor
      * @param timestamp Timestamp del punto
      * @param reflectivity Reflectividad del punto
      */
-    LidarPoint(const Timestamp &timestamp, uint32_t reflectivity) : timestamp(timestamp), reflectivity(reflectivity), Point() {}
+    LidarPoint(const Timestamp &timestamp, uint32_t reflectivity) : Point(), timestamp(timestamp), reflectivity(reflectivity) {}
     /**
      * Constructor
      * @param p Punto a copiar
      */
-    LidarPoint(const Point &p) : timestamp(0, 0), reflectivity(0), Point(p) {}
+    LidarPoint(const Point &p) : Point(p), timestamp(0, 0), reflectivity(0) {}
     /**
      * Constructor del objeto solo con las coordenadas
      * @param x Posición en x del punto
      * @param y Posición en y del punto
      * @param z Posición en z del punto
      */
-    LidarPoint(double x, double y, double z) : timestamp(0, 0), reflectivity(0), Point(x, y, z) {}
+    LidarPoint(double x, double y, double z) : Point(x, y, z), timestamp(0, 0), reflectivity(0) {}
     /**
      * Constructor vacío del objeto
      */
-    LidarPoint() : timestamp(0, 0), reflectivity(0), Point() {}
+    LidarPoint() : Point(), timestamp(0, 0), reflectivity(0) {}
 
     ////// Getters
     /**
@@ -113,7 +113,7 @@ class LidarPoint : public Point {
         return std::to_string(getX()) + "," + std::to_string(getY()) + "," + std::to_string(getZ()) + "," + std::to_string(timestamp.getSeconds()) + std::to_string(timestamp.getNanoseconds()) + "," + std::to_string(reflectivity);
     }
     // Imprime la información del punto p
-    friend std::ostream &operator<<(std::ostream &strm, const Point &p) { return strm << p.string(); }
+    friend std::ostream &operator<<(std::ostream &strm, const LidarPoint &p) { return strm << p.string(); }
 };
 
 #endif  // LIDARPOINT_CLASS_H

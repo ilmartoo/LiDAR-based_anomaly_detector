@@ -138,7 +138,7 @@ ScanCode ScannerLVX::readData() {
 
                     // Llamada al callback
                     if (this->callback) {
-                        this->callback({Timestamp(eth_packet->timestamp), (float)point->reflectivity, point->x, point->y, point->z});
+                        this->callback({Timestamp(eth_packet->timestamp), point->reflectivity, point->x, point->y, point->z});
                     }
                 }
                 packetOffset = i == points_in_packet ? 0 : packetOffset;

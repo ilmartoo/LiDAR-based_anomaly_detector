@@ -17,6 +17,8 @@
 
 #include "models/Octree.hh"
 #include "models/Point.hh"
+#include "models/LidarPoint.hh"
+#include "models/Timestamp.hh"
 
 class OctreeMap {
    private:
@@ -39,7 +41,7 @@ class OctreeMap {
      * Inserta un punto nuevo en el vector de puntos. Si el punto ya se encuentra en el vector, se descarta
      * @param p Punto a añadir
      */
-    void insert(const Point &p) {
+    void insert(const LidarPoint &p) {
         auto isNew = keys.insert(std::to_string(p.getX()) + std::to_string(p.getY()) + std::to_string(p.getZ()));
         if (isNew.second) {
             points.push_back(p);

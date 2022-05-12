@@ -71,8 +71,8 @@ inline bool is_alphanumeric(std::string s) {
 
 // Main function
 int main(int argc, char *argv[]) {
-    struct InputParams pi = {argv[0]};  // Generate struct
-    pi.parse(argc, argv);               // Parse input
+    struct InputParams pi = {argv[0]};                // Generate struct
+    pi.parse(argc, const_cast<const char **>(argv));  // Parse input
 
     if (pi.is_ok) {
         if (pi.is_lidar) {
