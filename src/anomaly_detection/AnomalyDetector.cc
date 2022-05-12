@@ -15,7 +15,7 @@
 #include "app/CLICommand.hh"
 
 Anomalies AnomalyDetector::compare(const CharacterizedObject& obj, const Model& model) {
-    bool first = false;
+    bool first = true;
     bool isAnomaly[3];
 
     ModelFace bestFace;

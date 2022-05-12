@@ -26,7 +26,7 @@ class Point {
     /**
      * Constructor
      */
-    Point() {}
+    Point() : x(), y(), z() {}
     /**
      * Constructor
      * @param x Posición en x del punto

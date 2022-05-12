@@ -149,7 +149,7 @@ ScanCode ScannerCSV::readData() {
         // Llamada al callback
         if (this->callback) {
             try {
-                this->callback({Timestamp(data[0]),  std::stoi(data[1]), std::stod(data[2]), std::stod(data[3]), std::stod(data[4])});
+                this->callback({Timestamp(data[0]),  static_cast<uint32_t>(std::stol(data[1])), std::stod(data[2]), std::stod(data[3]), std::stod(data[4])});
 
             } catch (std::exception &e) {
                 CLI_STDERR("Data conversion error");

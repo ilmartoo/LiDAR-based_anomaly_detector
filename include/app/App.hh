@@ -50,8 +50,7 @@ class App {
      * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      * @param backDistance Distancia mínima a la que tiene que estar un punto para no pertenecer al background
      */
-    App(const std::string &filename, ChronoMode chronoMode, uint32_t objFrame, uint32_t backFrame, float minReflectivity,
-        float backDistance) {
+    App(const std::string &filename, ChronoMode chronoMode, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance) {
         IScanner *scanner;
 
         // Obtenemos extensión del archivo
@@ -78,7 +77,6 @@ class App {
 
         execution();
     }
-
     /**
      * Constructor de la app para input de sensor lidar
      * @param broadcastCode Codigo de broadcast del sensor lidar
@@ -88,8 +86,7 @@ class App {
      * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      * @param backDistance Distancia mínima a la que tiene que estar un punto para no pertenecer al background
      */
-    App(const char *broadcastCode, ChronoMode chronoMode, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance,
-        bool iterativeMode) {
+    App(const char *broadcastCode, ChronoMode chronoMode, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance) {
         IScanner *scanner = ScannerLidar::create(broadcastCode);
         oc = new ObjectCharacterizator(scanner, objFrame, backFrame, minReflectivity, backDistance, chronoMode & kChronoCharacterization);
         om = new ObjectManager();

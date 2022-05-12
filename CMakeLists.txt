@@ -13,22 +13,11 @@ project(${ANOMALY_PROJECT_NAME})
 # Options
 #
 option(DEBUG_POINTS "Debuggin option to print scanned points" OFF) # Default: Do not print scanned points
-option(BUILD_TESTING "Enables unit tests" OFF)                     # Default: Do not create unit tests
+option(BUILD_TESTS "Enables unit tests" OFF)                       # Default: Do not create unit tests
 #
-# Compilation setup
+# C++ standard
 #
-set(CMAKE_CXX_STANDARD 17) 					# C++ standard
-set(CMAKE_CXX_FLAGS "-Wall -g3")            # Compiler flags
-message("------------------------------->${CMAKE_BUILD_TYPE}<------------------------------")
-string(TOLOWER ${CMAKE_BUILD_TYPE} build_type)
-if(NOT build_type STREQUAL "debug" AND NOT build_type STREQUAL "release")
-	message(FATAL_ERROR "Unknown build type")
-endif()
-set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG") # Release compiler flags
-set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG") 		# Debug compiler flags
-if(DEBUG_SCANNED_POINTS)
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_POINTS") # Debug extra compiler flags
-endif()
+set(CMAKE_CXX_STANDARD 17)
 
 # ------------------------------ #
 #             CONFIG             #
@@ -96,6 +85,19 @@ link_directories(${ARMADILLO_DIR})
 # ------------------------------ #
 
 #
+# Compilation setup
+#
+set(CMAKE_CXX_FLAGS "-Wall -g3")            # Compiler flags
+string(TOLOWER ${CMAKE_BUILD_TYPE} build_type)
+if(NOT build_type STREQUAL "debug" AND NOT build_type STREQUAL "release")
+	message(FATAL_ERROR "Unknown build type")
+endif()
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG") # Release compiler flags
+set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG") 		# Debug compiler flags
+if(DEBUG_SCANNED_POINTS)
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_POINTS") # Debug extra compiler flags
+endif()
+#
 # Application source code
 #
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS
@@ -131,7 +133,7 @@ add_executable(${ANOMALY_PROJECT_NAME}
 #
 # Enables testing
 #
-if(BUILD_TESTING)
+if(BUILD_TESTS AND build_type STREQUAL "release")
 	include(CTest)
 	enable_testing()
 	#
