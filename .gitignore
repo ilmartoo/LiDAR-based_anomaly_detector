@@ -5,6 +5,10 @@ libs/
 bin/
 doxygen/
 
+# Temporal excludes
+models/
+.vscode/
+
 # vscode files
 *.code-workspace
 
