@@ -30,31 +30,33 @@ The project was developed and tested in `Ubuntu 20.04.4` and `Ubuntu 21.04`.
 
 ## Library instalation
 
-Firstly, download the required libraries:
+The following libraries are needed for the project to compile:
 
 - [`livox-sdk 2.3.0`](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
 - [`read_lvx`](https://github.com/michalpelka/read_lvx) (*Master branch, no version provided*)
 - [`armadillo 10.0.0`](https://sourceforge.net/projects/arma/files/)
 
-Insert the downloaded files (`.zip`/`.tar.xz`) into the `lib/` folder and decompress them:
+You can download and place them in the `lib/` folder like so:
 
 ```bash
-unzip Livox-SDK-2.3.0.zip
-unzip read_lvx-master.zip
-tar -xf armadillo-11.0.0.tar.xz
+wget https://github.com/Livox-SDK/Livox-SDK/archive/refs/tags/v2.3.0.zip && unzip Livox-SDK-2.3.0.zip -d lib/ && rm Livox-SDK-2.3.0.zip
+wget https://github.com/michalpelka/read_lvx/archive/refs/heads/master.zip && unzip read_lvx-master.zip -d lib/ && rm read_lvx-master.zip
+wget https://sourceforge.net/projects/arma/files/armadillo-11.0.0.tar.xz && tar -xf armadillo-11.0.0.tar.xz -C lib/ && rm armadillo-11.0.0.tar.xz
 ```
 
 > **Libraries for unit testing**
 >
-> If you want to compile and execute the unit tests you must download the `catch.hpp` from the [`Catch 2.13.8`](https://github.com/catchorg/Catch2/releases/tag/v2.13.8) release.
+> If you want to compile and execute the unit tests you must download the `catch.hpp` from the [`Catch 2.13.8`](https://github.com/catchorg/Catch2/releases/tag/v2.13.8) release and place it in the `lib/` folder:
 >
-> Once downloaded the header file place it inside the `lib/` folder to have the library automaticaly linked when the project is built.
+> ```bash
+> wget https://github.com/catchorg/Catch2/releases/download/v2.13.8/catch.hpp && mv catch.hpp lib/
+> ```
 
 You are done! The `CMakeLists.txt` file will compile and link them to the project for you automaticaly.
 
 > **Library folder modification**
 >
-> In the case you wish to change the root location for the libraries or rename any library folder, you may edit the [`CMakeLists.txt`](CMakeLists.txt) file like so:
+> In the case you wish to change the root location for the libraries or rename any library folder, you may edit the [`CMakeLists.txt`](CMakeLists.txt) file according to your modifications:
 >
 > ```cmake
 > # ------------------------------ #
