@@ -45,6 +45,11 @@ CharacterizedObject::CharacterizedObject(const OctreeMap &om)
                 if (!faces.insert({normal, {1, p}}).second) {
                     faces.find(normal)->second.push_back(p);
                 }
+
+                // Añadimos puntos vecinos a pendientes
+                for (auto &p : neighbours) {
+                    pending.push(*p);
+                }
             }
         }
 
