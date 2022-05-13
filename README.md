@@ -43,6 +43,13 @@ wget https://github.com/Livox-SDK/Livox-SDK/archive/refs/tags/v2.3.0.zip && unzi
 wget https://github.com/michalpelka/read_lvx/archive/refs/heads/master.zip && unzip read_lvx-master.zip -d lib/ && rm read_lvx-master.zip
 wget https://sourceforge.net/projects/arma/files/armadillo-11.0.0.tar.xz && tar -xf armadillo-11.0.0.tar.xz -C lib/ && rm armadillo-11.0.0.tar.xz
 ```
+> One of `OpenBLAS` or `LAPACK` libraries are required for `armadillo-11.0.0` to have the needed functionalities. You may install them with your favourite package manager:
+> 
+> ```bash
+> sudo apt install libopenblas-dev liblapack-dev
+> ```
+
+You are done! The `CMakeLists.txt` file will compile and link them to the project for you automaticaly.
 
 > **Libraries for unit testing**
 >
@@ -51,8 +58,6 @@ wget https://sourceforge.net/projects/arma/files/armadillo-11.0.0.tar.xz && tar 
 > ```bash
 > wget https://github.com/catchorg/Catch2/releases/download/v2.13.8/catch.hpp && mv catch.hpp lib/
 > ```
-
-You are done! The `CMakeLists.txt` file will compile and link them to the project for you automaticaly.
 
 > **Library folder modification**
 >

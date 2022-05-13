@@ -42,13 +42,18 @@ class OctreeMap {
      * @param p Punto a añadir
      */
     void insert(const LidarPoint &p) {
-        auto isNew = keys.insert(std::to_string(p.getX()) + std::to_string(p.getY()) + std::to_string(p.getZ()));
-        if (isNew.second) {
-            points.push_back(p);
-        }
-        if (!startTime.first) {
-            startTime.first = true;
-            startTime.second = p.getTimestamp();
+        if (keys.insert(p.ID()).second) {
+            switch (startTime.first) {
+                // Primer punto
+                case false: {
+                    startTime.first = true;
+                    startTime.second = p.getTimestamp();
+                }
+                // Puntos intermedios
+                case true: {
+                    points.push_back(p);
+                }
+            }
         }
     }
 

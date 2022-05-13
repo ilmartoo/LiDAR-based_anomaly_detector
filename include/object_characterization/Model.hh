@@ -27,7 +27,7 @@ enum ModelFace {
 
 class Model {
    public:
-    static const int numFaces = 6;  ///< Constante del numero de caras de los modelos
+    const int numFaces;  ///< Constante del numero de caras del modelo
 
    private:
     std::string name;                        ///< Nombre del modelo

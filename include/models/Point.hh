@@ -87,6 +87,11 @@ class Point {
 
     ////// Strings e impresión
     /**
+     * Crea un ID del punto según sus coordenadas
+     * @return ID del punto
+     */
+    const std::string ID() const { return std::to_string(this->x) + std::to_string(this->y) + std::to_string(this->z); }
+    /**
      * Obtiene un string con los datos del punto
      * @return String con los datos del punto
      */
@@ -118,51 +123,57 @@ class Point {
     /**
      * Operador de resta de puntos
      * @param p Punto a restar
-     * @return Punto resultado de la operacion con timestamp y reflectividad del punto original
+     * @return Punto resultado de la operacion
      */
     Point operator-(const Point &p) const { return Point(this->x - p.x, this->y - p.y, this->z - p.z); }
     /**
      * Operador de resta de puntos
      * @param d double a restar
-     * @return Punto resultado de la operacion con timestamp y reflectividad del punto original
+     * @return Punto resultado de la operacion
      */
     Point operator-(double d) const { return Point(this->x - d, this->y - d, this->z - d); }
     /**
      * Operador de suma de puntos
      * @param p Punto a sumar
-     * @return Punto resultado de la operacion con timestamp y reflectividad del punto original
+     * @return Punto resultado de la operacion
      */
     Point operator+(const Point &p) const { return Point(this->x + p.x, this->y + p.y, this->z + p.z); }
     /**
      * Operador de suma de puntos
      * @param d double a sumar
-     * @return Punto resultado de la operacion con timestamp y reflectividad del punto original
+     * @return Punto resultado de la operacion
      */
     Point operator+(double d) const { return Point(this->x + d, this->y + d, this->z + d); }
     /**
      * Operador de división de puntos
      * @param p Punto a dividir
-     * @return Punto resultado de la operacion con timestamp y reflectividad del punto original
+     * @return Punto resultado de la operacion
      */
     Point operator/(const Point &p) const { return Point(this->x / p.x, this->y / p.y, this->z / p.z); }
     /**
      * Operador de división de puntos
      * @param d double a dividir
-     * @return Punto resultado de la operacion con timestamp y reflectividad del punto original
+     * @return Punto resultado de la operacion
      */
     Point operator/(double d) const { return Point(this->x / d, this->y / d, this->z / d); }
     /**
      * Operador de multiplicación de puntos
      * @param p Punto a multiplicar
-     * @return Punto resultado de la operacion con timestamp y reflectividad del punto original
+     * @return Punto resultado de la operacion
      */
     Point operator*(const Point &p) const { return Point(this->x * p.x, this->y * p.y, this->z * p.z); }
     /**
      * Operador de multiplicación de puntos
      * @param d double a multiplicar
-     * @return Punto resultado de la operacion con timestamp y reflectividad del punto original
+     * @return Punto resultado de la operacion
      */
     Point operator*(double d) const { return Point(this->x * d, this->y * d, this->z * d); }
+    /**
+     * Comparador de IDs de puntos
+     * @param p Punto a comparar
+     * @return Punto resultado de la operacion
+     */
+    bool operator<(const Point &p) const { return ID() < p.ID(); }
 };
 
 typedef Point Vector;  ///< Definición de Vector como un Point

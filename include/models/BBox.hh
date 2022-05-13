@@ -16,7 +16,7 @@
 class BBox : public Box {
    private:
     Point center;  ///< Centro de la bounding box
-    Vector radii;  ///< Radio de la bounding box
+    Vector radii;  ///< Diagonales de la bounding box
 
    public:
     /**
