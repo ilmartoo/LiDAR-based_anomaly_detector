@@ -20,7 +20,6 @@
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "object_characterization/ObjectManager.hh"
 #include "object_characterization/CharacterizedObject.hh"
-#include "object_characterization/Model.hh"
 #include "anomaly_detection/AnomalyDetector.hh"
 #include "app/CLICommand.hh"
 

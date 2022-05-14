@@ -14,7 +14,6 @@
 #include <thread>
 
 #include "object_characterization/CharacterizedObject.hh"
-#include "object_characterization/Model.hh"
 #include "anomaly_detection/Anomalies.hh"
 
 class AnomalyDetector {

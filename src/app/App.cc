@@ -108,15 +108,9 @@ void printHelp(CLICommandType ct) {
         // MODEL
         case kModel: {
             CLI_STDOUT(bold("model <...>") "                    Management of models:");
-            CLI_STDOUT("  - save <obj> <model> <...>      Saves an object as a specified face of a existing or new model:");
-            CLI_STDOUT("     - f                             Front face");
-            CLI_STDOUT("     - b                             Back face");
-            CLI_STDOUT("     - l                             Left face");
-            CLI_STDOUT("     - r                             Right face");
-            CLI_STDOUT("     - c                             Ceil face");
-            CLI_STDOUT("     - t                             Bottom face");
-            CLI_STDOUT("  - load <file>                   Loads a model from a file");
-            CLI_STDOUT("  - write <model> <file>          Writes a model into a file");
+            CLI_STDOUT("  - save <obj> <new_model>        Saves an object as a new model with the given name");
+            CLI_STDOUT("  - load <new_model> <file>       Loads the contents of a file as a new model with the given name");
+            CLI_STDOUT("  - write <model> <file>          Writes the given model into a file");
             if (doBreak) {
                 break;
             }
@@ -212,7 +206,7 @@ void App::cli() {
 
                     std::pair<bool, std::string> p;
                     if (command.numParams() == 2) {
-                        p = om->newObject(command[1], obj);
+                        p = {om->newObject(command[1], obj), command[1]};
                     } else {
                         p = om->newObject(obj);
                     }
@@ -277,80 +271,28 @@ void App::cli() {
 
             // MODEL
             case kModel: {
-                if (command.numParams() == 4 && command[0] == "save") {
-                    if (command[3].size() == 1) {
-                        switch (command[3][0]) {
-                            case 'f': {
-                                if (om->newModel(command[1], command[2], mFrontal).first) {
-                                    CLI_STDOUT("Saved " << command[1] << " as front face of model " << command[2]);
-                                } else {
-                                    CLI_STDERR("Could not save " << command[1] << " as front face of model " << command[2]);
-                                }
-                            } break;
-
-                            case 'b': {
-                                if (om->newModel(command[1], command[2], mBack).first) {
-                                    CLI_STDOUT("Saved " << command[1] << " as back face of model " << command[2]);
-                                } else {
-                                    CLI_STDERR("Could not save " << command[1] << " as back face of model " << command[2]);
-                                }
-                            } break;
-
-                            case 'r': {
-                                if (om->newModel(command[1], command[2], mRSide).first) {
-                                    CLI_STDOUT("Saved " << command[1] << " as right face of model " << command[2]);
-                                } else {
-                                    CLI_STDERR("Could not save " << command[1] << " as right face of model " << command[2]);
-                                }
-                            } break;
-
-                            case 'l': {
-                                if (om->newModel(command[1], command[2], mLSide).first) {
-                                    CLI_STDOUT("Saved " << command[1] << " as left face of model " << command[2]);
-                                } else {
-                                    CLI_STDERR("Could not save " << command[1] << " as left face of model " << command[2]);
-                                }
-                            } break;
-
-                            case 'c': {
-                                if (om->newModel(command[1], command[2], mCeil).first) {
-                                    CLI_STDOUT("Saved " << command[1] << " as ceil face of model " << command[2]);
-                                } else {
-                                    CLI_STDERR("Could not save " << command[1] << " as ceil face of model " << command[2]);
-                                }
-                            } break;
-
-                            case 't': {
-                                if (om->newModel(command[1], command[2], mBottom).first) {
-                                    CLI_STDOUT("Saved " << command[1] << " as bottom face of model " << command[2]);
-                                } else {
-                                    CLI_STDERR("Could not save " << command[1] << " as bottom face of model " << command[2]);
-                                }
-                            } break;
-
-                            default: {
-                                CLI_STDERR("Inexistent face");
-                            }
+                if (command.numParams() == 3) {
+                    if (command[0] == "save") {
+                        if (om->newModel(command[1], command[2])) {
+                            CLI_STDOUT("Saved " << command[1] << " as model " << command[2]);
+                        } else {
+                            CLI_STDERR("Could not save " << command[1] << " as model " << command[2]);
+                        }
+                    } else if (command[0] == "write") {
+                        if (om->writeModel(command[2], command[1])) {
+                            CLI_STDOUT("Model " << command[1] << " written into file " << command[2]);
+                        } else {
+                            CLI_STDERR("Could not write model " << command[1] << " into file " << command[2]);
+                        }
+                    } else if (command[0] == "load") {
+                        if (om->loadModel(command[2], command[1])) {
+                            CLI_STDOUT("Model " << command[1] << " loaded from file " << command[2]);
+                        } else {
+                            CLI_STDERR("Could not load model " << command[1] << " from file " << command[2]);
                         }
                     } else {
                         unknownCommand("model");
                     }
-
-                } else if (command.numParams() == 3 && command[0] == "write") {
-                    if (om->writeModel(command[2], command[1])) {
-                        CLI_STDOUT("Model " << command[1] << " written into file " << command[2]);
-                    } else {
-                        CLI_STDERR("Could not write model " << command[1] << " into file " << command[2]);
-                    }
-
-                } else if (command.numParams() == 2 && command[0] == "load") {
-                    std::pair<bool, std::string> p = om->loadModel(command[1]);
-                    if (p.first) {
-                        CLI_STDOUT("Model " << p.second << " loaded");
-                    } else {
-                        CLI_STDERR("Could not load model " << command[1]);
-                    }
-
                 } else {
                     unknownCommand("model");
                 }

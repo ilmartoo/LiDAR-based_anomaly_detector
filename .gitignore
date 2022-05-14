@@ -2,7 +2,6 @@
 build/
 tmp/
 doxygen/
-models/
 lib/
 .vscode/
 

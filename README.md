@@ -39,8 +39,8 @@ The following libraries are needed for the project to compile:
 You can download and place them in the `lib/` folder like so:
 
 ```bash
-wget https://github.com/Livox-SDK/Livox-SDK/archive/refs/tags/v2.3.0.zip && unzip Livox-SDK-2.3.0.zip -d lib/ && rm Livox-SDK-2.3.0.zip
-wget https://github.com/michalpelka/read_lvx/archive/refs/heads/master.zip && unzip read_lvx-master.zip -d lib/ && rm read_lvx-master.zip
+wget https://github.com/Livox-SDK/Livox-SDK/archive/refs/tags/v2.3.0.zip && unzip v2.3.0.zip -d lib/ && rm v2.3.0.zip
+wget https://github.com/michalpelka/read_lvx/archive/refs/heads/master.zip && unzip master.zip -d lib/ && rm master.zip
 wget https://sourceforge.net/projects/arma/files/armadillo-11.0.0.tar.xz && tar -xf armadillo-11.0.0.tar.xz -C lib/ && rm armadillo-11.0.0.tar.xz
 ```
 > One of `OpenBLAS` or `LAPACK` libraries are required for `armadillo-11.0.0` to have the needed functionalities. You may install them with your favourite package manager:

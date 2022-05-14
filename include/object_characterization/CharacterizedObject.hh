@@ -66,7 +66,7 @@ class CharacterizedObject {
      * @return El primer elemento es true si se ha cargado correctamente y
      * false en caso contrario, siendo el segundo elemento el objeto cargado o un objeto vacío
      */
-    static std::pair<bool, CharacterizedObject> write(const std::string &filename);
+    static std::pair<bool, CharacterizedObject> load(const std::string &filename);
 
     ////// Getters
     /**
@@ -80,5 +80,7 @@ class CharacterizedObject {
      */
     const std::map<Vector, std::vector<Point>>& getFaces() const { return faces; }
 };
+
+typedef CharacterizedObject Model; ///< Definición de los modelos
 
 #endif  // CHARACTERIZEDOBJECT_CLASS_H

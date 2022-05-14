@@ -15,6 +15,8 @@
 
 #include "object_characterization/CharacterizedObject.hh"
 #include "object_characterization/PlaneUtils.hh"
+#include "models/OctreeMap.hh"
+#include "models/Point.hh"
 
 CharacterizedObject::CharacterizedObject(const OctreeMap &om)
     : bbox(om.getMap().getCenter(),
@@ -60,12 +62,14 @@ CharacterizedObject::CharacterizedObject(const OctreeMap &om)
 bool CharacterizedObject::write(const std::string &filename) {
     std::ofstream outfile(filename);
     if (outfile.is_open()) {
-        outfile.write((char *)&bbox(), sizeof(BBox));          // Bounding box
-        outfile.write((char *)&faces.size(), sizeof(size_t));  // Numero de caras
+        outfile.write((char *)&bbox, sizeof(BBox));  // Bounding box
+        size_t len = faces.size();
+        outfile.write((char *)&len, sizeof(size_t));  // Numero de caras
 
         for (auto &f : faces) {
-            outfile.write((char *)&f.first(), sizeof(Vector));        // Vector normal de la cara
-            outfile.write((char *)&f.second.size(), sizeof(size_t));  // Numero de puntos de la cara
+            outfile.write((char *)&f.first, sizeof(Vector));          // Vector normal de la cara
+            len = f.second.size();
+            outfile.write((char *)&len, sizeof(size_t));  // Numero de puntos de la cara
 
             for (auto &p : f.second) {
                 outfile.write((char *)&p, sizeof(Point));  // Punto de la cara
@@ -80,7 +84,7 @@ bool CharacterizedObject::write(const std::string &filename) {
     }
 }
 
-std::pair<bool, CharacterizedObject> CharacterizedObject::write(const std::string &filename) {
+std::pair<bool, CharacterizedObject> CharacterizedObject::load(const std::string &filename) {
     std::ifstream infile(filename);
     if (infile.is_open()) {
         size_t nfaces, npoints;
@@ -91,12 +95,12 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::write(const std::strin
         std::map<Vector, std::vector<Point>> faces;
         Vector normal;
         Point point;
-        for (int i = 0; i < faces; ++i) {
-            infile.read((char *)&normal(), sizeof(Vector));  // Vector normal de la cara
+        for (unsigned i = 0; i < nfaces; ++i) {
+            infile.read((char *)&normal, sizeof(Vector));  // Vector normal de la cara
             std::vector<Point> &vref = faces.insert({normal, {}}).first->second;
 
             infile.read((char *)&npoints, sizeof(size_t));  // Numero de puntos de la cara
-            for (int j = 0; j < npoints; ++j) {
+            for (unsigned j = 0; j < npoints; ++j) {
                 infile.read((char *)&point, sizeof(Point));  // Punto de la cara
                 vref.push_back(point);
             }
