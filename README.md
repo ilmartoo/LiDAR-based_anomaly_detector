@@ -15,16 +15,16 @@ To compile the project you will need:
 
 We also need the following libraries for the project to work:
 
-- [`livox-sdk 2.3.0`](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
+- [`livox-sdk v2.3.0`](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
 - [`read_lvx`](https://github.com/michalpelka/read_lvx) (*Master branch, no version provided*)
-- [`armadillo 10.0.0`](https://sourceforge.net/projects/arma/files/)
-- [`Catch 2.13.8`](https://github.com/catchorg/Catch2/releases/tag/v2.13.8) (*Only if you want to build and execute unit tests*)
+- [`armadillo v11.0.0`](https://sourceforge.net/projects/arma/files/)
+- [`catch2 v2.13.8`](https://github.com/catchorg/Catch2/releases/tag/v2.13.8) (*Only if you want to build and execute unit tests*)
 
 ---
 
 ## Developing enviroment
 
-The project was developed and tested in `Ubuntu 20.04.4` and `Ubuntu 21.04`.
+The project was developed and tested in a `Ubuntu 20.04.4` OS.
 
 ---
 
@@ -32,18 +32,18 @@ The project was developed and tested in `Ubuntu 20.04.4` and `Ubuntu 21.04`.
 
 The following libraries are needed for the project to compile:
 
-- [`livox-sdk 2.3.0`](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
-- [`read_lvx`](https://github.com/michalpelka/read_lvx) (*Master branch, no version provided*)
-- [`armadillo 10.0.0`](https://sourceforge.net/projects/arma/files/)
+- [`livox-sdk v2.3.0`](https://github.com/Livox-SDK/Livox-SDK/releases/tag/v2.3.0)
+- [`read_lvx`](https://github.com/michalpelka/read_lvx) (*commit `b62b78da613fdb0c12cbde739916a992093ffac4` to master at 13/03/2022*)
+- [`armadillo v11.0.0`](https://sourceforge.net/projects/arma/files/)
 
 You can download and place them in the `lib/` folder like so:
 
 ```bash
-wget https://github.com/Livox-SDK/Livox-SDK/archive/refs/tags/v2.3.0.zip && unzip Livox-SDK-2.3.0.zip -d lib/ && rm Livox-SDK-2.3.0.zip
-wget https://github.com/michalpelka/read_lvx/archive/refs/heads/master.zip && unzip read_lvx-master.zip -d lib/ && rm read_lvx-master.zip
+wget https://github.com/Livox-SDK/Livox-SDK/archive/refs/tags/v2.3.0.zip && unzip v2.3.0.zip -d lib/ && rm 2.3.0.zip
+wget https://github.com/michalpelka/read_lvx/archive/refs/heads/master.zip && unzip master.zip -d lib/ && rm master.zip
 wget https://sourceforge.net/projects/arma/files/armadillo-11.0.0.tar.xz && tar -xf armadillo-11.0.0.tar.xz -C lib/ && rm armadillo-11.0.0.tar.xz
 ```
-> One of `OpenBLAS` or `LAPACK` libraries are required for `armadillo-11.0.0` to have the needed functionalities. You may install them with your favourite package manager:
+> One of `OpenBLAS` or `LAPACK` libraries are required for `armadillo` to have the needed functionalities. You may install them with your favourite package manager:
 > 
 > ```bash
 > sudo apt install libopenblas-dev liblapack-dev
@@ -53,7 +53,7 @@ You are done! The `CMakeLists.txt` file will compile and link them to the projec
 
 > **Libraries for unit testing**
 >
-> If you want to compile and execute the unit tests you must download the `catch.hpp` from the [`Catch 2.13.8`](https://github.com/catchorg/Catch2/releases/tag/v2.13.8) release and place it in the `lib/` folder:
+> If you want to compile and execute the unit tests you must download the `catch.hpp` from the [`catch2 v2.13.8`](https://github.com/catchorg/Catch2/releases/tag/v2.13.8) release and place it in the `lib/` folder:
 >
 > ```bash
 > wget https://github.com/catchorg/Catch2/releases/download/v2.13.8/catch.hpp && mv catch.hpp lib/
