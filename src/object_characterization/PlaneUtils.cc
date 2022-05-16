@@ -14,7 +14,7 @@
 #include "object_characterization/PlaneUtils.hh"
 #include "models/Point.hh"
 
-Point computeCentroid(const std::vector<Point> &points) {
+Point PlaneUtils::computeCentroid(const std::vector<Point> &points) {
     double x = 0., y = 0., z = 0.;
     size_t numPoints = points.size();
 
@@ -31,7 +31,7 @@ Point computeCentroid(const std::vector<Point> &points) {
     return Point(x, y, z);
 }
 
-Point computeCentroid(const std::vector<Point *> &points) {
+Point PlaneUtils::computeCentroid(const std::vector<Point *> &points) {
     double x = 0., y = 0., z = 0.;
     size_t numPoints = points.size();
 
@@ -48,7 +48,7 @@ Point computeCentroid(const std::vector<Point *> &points) {
     return Point(x, y, z);
 }
 
-void computeSVD(const std::vector<Point> &points, arma::mat &U, arma::vec &s, arma::mat &V) {
+void PlaneUtils::computeSVD(const std::vector<Point> &points, arma::mat &U, arma::vec &s, arma::mat &V) {
     arma::mat P(3, points.size());
 
     size_t idx = 0;
@@ -68,7 +68,7 @@ void computeSVD(const std::vector<Point> &points, arma::mat &U, arma::vec &s, ar
     arma::svd_econ(U, s, V, P);
 }
 
-void computeSVD(const std::vector<Point *> &points, arma::mat &U, arma::vec &s, arma::mat &V) {
+void PlaneUtils::computeSVD(const std::vector<Point *> &points, arma::mat &U, arma::vec &s, arma::mat &V) {
     arma::mat P(3, points.size());
 
     size_t idx = 0;
@@ -88,7 +88,7 @@ void computeSVD(const std::vector<Point *> &points, arma::mat &U, arma::vec &s, 
     arma::svd_econ(U, s, V, P);
 }
 
-Vector computeNormal(const std::vector<Point> &points) {
+Vector PlaneUtils::computeNormal(const std::vector<Point> &points) {
     arma::vec vnormal(3);
 
     arma::mat U, V;
@@ -100,7 +100,7 @@ Vector computeNormal(const std::vector<Point> &points) {
     return Vector(vnormal[0], vnormal[1], vnormal[2]);
 }
 
-Vector computeNormal(const std::vector<Point *> &points) {
+Vector PlaneUtils::computeNormal(const std::vector<Point *> &points) {
     arma::vec vnormal(3);
 
     arma::mat U, V;
@@ -112,7 +112,7 @@ Vector computeNormal(const std::vector<Point *> &points) {
     return Vector(vnormal[0], vnormal[1], vnormal[2]);
 }
 
-arma::vec computePlane(const Vector &vnormal, const Point &centroid) {
+arma::vec PlaneUtils::computePlane(const Vector &vnormal, const Point &centroid) {
     arma::vec plane(4);
 
     plane[0] = vnormal[0];
@@ -123,7 +123,7 @@ arma::vec computePlane(const Vector &vnormal, const Point &centroid) {
     return plane;
 }
 
-arma::vec computePlane(const std::vector<Point> &points) {
+arma::vec PlaneUtils::computePlane(const std::vector<Point> &points) {
     arma::vec plane(4);
 	Vector vnormal = computeNormal(points); 
 	Point centroid = computeNormal(points);
@@ -136,7 +136,7 @@ arma::vec computePlane(const std::vector<Point> &points) {
     return plane;
 }
 
-arma::vec computePlane(const std::vector<Point *> &points) {
+arma::vec PlaneUtils::computePlane(const std::vector<Point *> &points) {
     arma::vec plane(4);
     Vector vnormal = computeNormal(points);
     Point centroid = computeNormal(points);

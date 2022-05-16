@@ -116,6 +116,8 @@ link_libraries(
 	${LIVOX_SDK_LIB}_static
 	${READ_LVX_LIB}
 	${ARMADILLO_LIB}
+	lapack
+	openblas
 	pthread
 	m
 )
