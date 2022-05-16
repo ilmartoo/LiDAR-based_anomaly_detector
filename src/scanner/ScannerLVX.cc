@@ -26,7 +26,6 @@
 
 #include "logging/debug.hh"
 
-
 bool ScannerLVX::init() {
     DEBUG_STDOUT("Initializing lvx file scanner");
 
@@ -40,7 +39,6 @@ bool ScannerLVX::init() {
     packets_of_frame.buffer_capacity = kMaxPacketsNumOfFrame * sizeof(livox_ros::LvxFilePacket);
     packets_of_frame.packet = new uint8_t[kMaxPacketsNumOfFrame * sizeof(livox_ros::LvxFilePacket)];
 
-    fileOffset = 0;
     frameOffset = 0;
     packetOffset = 0;
 
@@ -53,13 +51,9 @@ ScanCode ScannerLVX::scan() {
     DEBUG_STDOUT("Starting point scanning");
 
     // Reabre el archivo si no está abierto
-    if (lvx_file.GetLvxFileReadProgress() == 100) {
+    if (frameOffset == 0 && packetOffset == 0 && lvx_file.GetFileState() == livox_ros::kLvxFileAtEnd) {
         lvx_file.CloseLvxFile();
         lvx_file.Open(filename.c_str(), std::ios::in);
-
-        fileOffset = 0;
-        frameOffset = 0;
-        packetOffset = 0;
     }
 
     if (lvx_file.GetFileState() == livox_ros::kLvxFileOk) {
@@ -115,12 +109,14 @@ ScanCode ScannerLVX::readData() {
 
     uint8_t *packet_base;        // Array de paquetes ethernet
     LivoxEthPacket *eth_packet;  // Puntero al paquete de datos
+    LivoxExtendRawPoint *point;  // Puntero de punto de datos
 
     if (packetOffset == 0 && frameOffset == 0) {
         fileState = lvx_file.GetPacketsOfFrame(&packets_of_frame);
     }
-    for (; scanning && fileState == livox_ros::kLvxFileOk; ++fileOffset, fileState = lvx_file.GetPacketsOfFrame(&packets_of_frame)) {
-        for (packet_base = packets_of_frame.packet; scanning && frameOffset < packets_of_frame.data_size; frameOffset += (livox_ros::GetEthPacketLen(eth_packet->data_type) + 1)) {
+    while (fileState == livox_ros::kLvxFileOk) {
+        packet_base = packets_of_frame.packet;
+        while (frameOffset < packets_of_frame.data_size) {
             // V1 Point packet
             if (lvx_file.GetFileVersion() != 0) {
                 eth_packet = (LivoxEthPacket *)(&((livox_ros::LvxFilePacket *)&packet_base[frameOffset])->version);
@@ -132,23 +128,44 @@ ScanCode ScannerLVX::readData() {
 
             if (eth_packet->data_type == kExtendCartesian) {
                 const uint32_t points_in_packet = livox_ros::GetPointsPerPacket(eth_packet->data_type);
-                uint32_t i;
-                for (i = packetOffset / sizeof(LivoxExtendRawPoint); scanning && i < points_in_packet; ++i, packetOffset += sizeof(LivoxExtendRawPoint)) {
-                    LivoxExtendRawPoint *point = reinterpret_cast<LivoxExtendRawPoint *>(eth_packet->data + packetOffset);
+                uint32_t i = packetOffset / sizeof(LivoxExtendRawPoint);
+                while (i < points_in_packet) {
+                    point = reinterpret_cast<LivoxExtendRawPoint *>(eth_packet->data + packetOffset);
 
                     // Llamada al callback
                     if (this->callback) {
                         this->callback({Timestamp(eth_packet->timestamp), point->reflectivity, point->x, point->y, point->z});
                     }
+
+                    if (scanning) {
+                        ++i;
+                        packetOffset += sizeof(LivoxExtendRawPoint);
+                    } else {
+                        break;
+                    }
                 }
-                packetOffset = i == points_in_packet ? 0 : packetOffset;
+            }
+
+            if (scanning) {
+                packetOffset = 0;
+                frameOffset += (livox_ros::GetEthPacketLen(eth_packet->data_type) + 1);
+            } else {
+                break;
             }
         }
-        frameOffset = frameOffset == packets_of_frame.data_size ? 0 : frameOffset;
+
+        if (scanning) {
+            frameOffset = 0;
+            fileState = lvx_file.GetPacketsOfFrame(&packets_of_frame);
+        } else {
+            break;
+        }
     }
 
-    if (lvx_file.GetLvxFileReadProgress() == 100) {
+    if (frameOffset == 0 && packetOffset == 0 && lvx_file.GetFileState() == livox_ros::kLvxFileAtEnd) {
         CLI_STDERR("EOF reached");
+
+        DEBUG_STDOUT("FO: " << frameOffset << " PO: " << packetOffset);
 
         scanning = false;
         return ScanCode::kScanEof;

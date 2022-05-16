@@ -155,8 +155,6 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
                 else {
                     state = defStopped;
 
-                    discardStartTime.first = false;
-
                     CLI_STDOUT("A total of " << p_count << " points where discarded during " << discardTime / 1000000 << " ms");
 
                     DEBUG_STDOUT("Last discarded point timestamp: " << p.getTimestamp().string() << ".");
@@ -180,7 +178,7 @@ void ObjectCharacterizator::init() {
     DEBUG_STDOUT("Initializing characterizator");
 
     scanner->init();
-    scanner->setCallback(([this](const Point &p) { this->newPoint(p); }));
+    scanner->setCallback(([this](const LidarPoint &p) { this->newPoint(p); }));
 };
 
 void ObjectCharacterizator::stop() {
@@ -211,6 +209,7 @@ CharacterizedObject ObjectCharacterizator::defineObject() {
 
 void ObjectCharacterizator::wait(uint32_t miliseconds) {
     discardTime = static_cast<uint64_t>(miliseconds) * 1000000;
+    discardStartTime.first = false;
 
     state = defDiscard;
 
