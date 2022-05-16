@@ -6,8 +6,7 @@
             "command": "mkdir",
             "args": [
                 "-p",
-                "build/anomaly_detection",
-                "build/error_measuring"
+                "build"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -22,15 +21,16 @@
             "label": "CMake create DEBUG",
             "command": "cmake",
             "args": [
-                "-S",
-                "anomaly_detection",
+                ".",
                 "-B",
-                "build/anomaly_detection",
+                "build",
                 "-D",
                 "CMAKE_BUILD_TYPE=Debug",
                 "-D",
-                // "DEBUG_SCANNED_POINTS=ON"
-                "DEBUG_SCANNED_POINTS=OFF"
+                // "DEBUG_SCANNED_POINTS=ON",
+                "DEBUG_SCANNED_POINTS=OFF",
+                "-D",
+                "BUILD_TESTS=ON"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -49,7 +49,7 @@
             "command": "cmake",
             "args": [
                 "--build",
-                "build/anomaly_detection"
+                "build"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -67,12 +67,13 @@
             "label": "CMake create RELEASE",
             "command": "cmake",
             "args": [
-                "-S",
-                "anomaly_detection",
+                ".",
                 "-B",
-                "build/anomaly_detection",
+                "build",
                 "-D",
-                "CMAKE_BUILD_TYPE=Release"
+                "CMAKE_BUILD_TYPE=Release",
+                "-D",
+                "BUILD_TESTS=ON"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -91,7 +92,7 @@
             "command": "cmake",
             "args": [
                 "--build",
-                "build/anomaly_detection"
+                "build"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

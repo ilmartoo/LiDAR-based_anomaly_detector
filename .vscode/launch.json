@@ -8,7 +8,7 @@
 			"name": "Debug anomaly_detector DEBUG",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/anomaly_detection/anomaly_detector",
+			"program": "${workspaceFolder}/build/anomaly_detector",
 			// "args": [
 			// 	"-b",
 			// 	"default"
@@ -42,7 +42,7 @@
 			"name": "Debug anomaly_detector RELEASE",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/anomaly_detection/anomaly_detector",
+			"program": "${workspaceFolder}/build/anomaly_detector",
 			// "args": [
 			// 	"-b",
 			// 	"default"
@@ -50,8 +50,8 @@
 			"args": [
 				"-f",
 				"data/caja_cerca.lvx",
-				// "-g",
-				// "1000"
+				"-c",
+				"all"
 			],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",
