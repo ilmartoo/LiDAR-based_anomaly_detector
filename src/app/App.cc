@@ -202,19 +202,23 @@ void App::cli() {
                     oc->defineBackground();
 
                 } else if (command[0] == "object") {
-                    CharacterizedObject obj = oc->defineObject();
+                    std::pair<bool, CharacterizedObject> obj = oc->defineObject();
 
-                    std::pair<bool, std::string> p;
-                    if (command.numParams() == 2) {
-                        p = {om->newObject(command[1], obj), command[1]};
-                    } else {
-                        p = om->newObject(obj);
-                    }
+                    if (obj.first) {
+                        std::pair<bool, std::string> p;
+                        if (command.numParams() == 2) {
+                            p = {om->newObject(command[1], obj.second), command[1]};
+                        } else {
+                            p = om->newObject(obj.second);
+                        }
 
-                    if (p.first) {
-                        CLI_STDOUT("Object " << p.second << " created");
+                        if (p.first) {
+                            CLI_STDOUT("Object " << p.second << " created");
+                        } else {
+                            CLI_STDERR("Could not create object");
+                        }
                     } else {
-                        CLI_STDERR("Could not create object");
+                        CLI_STDERR("Scanned object frame does not contain object points");
                     }
 
                 } else {

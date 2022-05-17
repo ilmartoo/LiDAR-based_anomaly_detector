@@ -24,8 +24,10 @@
  */
 class CharacterizedObject {
    private:
-    BBox bbox;                                   ///< Bounding box
-    std::map<Vector, std::vector<Point>> faces;  ///< Caras del objeto
+    static const uint32_t proximityThreshold = 80;  ///< Proximidad máxima (mm) de un punto hacia uno origen para participar en el cálculo de su normal
+    static constexpr double normalThreshold = 0.2;  ///< Diferencia máxima entre normales para pertenecer a la misma cara
+    BBox bbox;                                      ///< Bounding box
+    std::map<Vector, std::vector<Point>> faces;     ///< Caras del objeto
 
    public:
     /**
@@ -34,9 +36,10 @@ class CharacterizedObject {
     CharacterizedObject() {}
     /**
      * Constructor
-     * @param om Mapa de puntos del objeto
+     * @param points Puntos del objeto
+     * @param chrono Comunica si se debe medir el tiempo que tarda en crearse el objeto
      */
-    CharacterizedObject(const OctreeMap& om);
+    CharacterizedObject(const std::vector<Point>& points, bool chrono);
     /**
      * Constructor
      * @param bbox Bounding box
@@ -58,7 +61,7 @@ class CharacterizedObject {
      * @param filename Nombre del archivo
      * @return true si se ha guardado correctamente
      */
-    bool write(const std::string &filename);
+    bool write(const std::string& filename);
 
     /**
      * Carga un objeto de un archivo
@@ -66,7 +69,7 @@ class CharacterizedObject {
      * @return El primer elemento es true si se ha cargado correctamente y
      * false en caso contrario, siendo el segundo elemento el objeto cargado o un objeto vacío
      */
-    static std::pair<bool, CharacterizedObject> load(const std::string &filename);
+    static std::pair<bool, CharacterizedObject> load(const std::string& filename);
 
     ////// Getters
     /**
@@ -81,6 +84,6 @@ class CharacterizedObject {
     const std::map<Vector, std::vector<Point>>& getFaces() const { return faces; }
 };
 
-typedef CharacterizedObject Model; ///< Definición de los modelos
+typedef CharacterizedObject Model;  ///< Definición de los modelos
 
 #endif  // CHARACTERIZEDOBJECT_CLASS_H

@@ -80,6 +80,7 @@ bool ScannerCSV::setCallback(const std::function<void(const LidarPoint &p)> func
 void ScannerCSV::wait() {
     DEBUG_STDOUT("Waiting for the scanner to end");
 
+    scanning = true;
     readData();
 
     DEBUG_STDOUT("Ended point scanning");

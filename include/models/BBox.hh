@@ -32,6 +32,13 @@ class BBox : public Box {
     /**
      * Constructor
      * @param center Centro de la bounding box
+     * @param max Punto con las coordenadas máximas
+     * @param min Punto con las coordenadas minimas
+     */
+    BBox(const Point &center, const Point &max, const Point &min) : Box(center, max - min), center(center), radii(max - min) {}
+    /**
+     * Constructor
+     * @param center Centro de la bounding box
      * @param xradius Radio en x
      * @param yradius Radio en y
      * @param zradius Radio en z
@@ -42,7 +49,7 @@ class BBox : public Box {
      * @param box bounding box
      */
     BBox(const Box &box) : Box(box) {
-        radii = Vector(box.max().getX() - box.min().getX(), box.max().getY() - box.min().getY(), box.max().getZ() - box.min().getZ());
+        radii = Vector(box.max() - box.min());
         center = radii / 2;
     }
 

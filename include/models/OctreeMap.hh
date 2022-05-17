@@ -43,17 +43,7 @@ class OctreeMap {
      */
     void insert(const LidarPoint &p) {
         if (keys.insert(p.ID()).second) {
-            switch (startTime.first) {
-                // Primer punto
-                case false: {
-                    startTime.first = true;
-                    startTime.second = p.getTimestamp();
-                }
-                // Puntos intermedios
-                case true: {
-                    points.push_back(p);
-                }
-            }
+            points.push_back(p);
         }
     }
 
@@ -71,8 +61,17 @@ class OctreeMap {
         startTime.first = false;
 
         map = Octree();
-        points.clear();
-        keys.clear();
+        points = {};
+        keys = {};
+    }
+
+    ////// Setters
+    /**
+     * Establece el timestamp inicial
+     * @param t Timestamp inicial
+     */
+    void setStartTime(const Timestamp &t) {
+        startTime = {true, t};
     }
 
     ////// Getters

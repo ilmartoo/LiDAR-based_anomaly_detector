@@ -87,6 +87,7 @@ bool ScannerLVX::setCallback(const std::function<void(const LidarPoint &p)> func
 void ScannerLVX::wait() {
     DEBUG_STDOUT("Waiting for the scanner to end");
 
+    scanning = true;
     readData();
 
     delete packets_of_frame.packet;
@@ -164,8 +165,6 @@ ScanCode ScannerLVX::readData() {
 
     if (frameOffset == 0 && packetOffset == 0 && lvx_file.GetFileState() == livox_ros::kLvxFileAtEnd) {
         CLI_STDERR("EOF reached");
-
-        DEBUG_STDOUT("FO: " << frameOffset << " PO: " << packetOffset);
 
         scanning = false;
         return ScanCode::kScanEof;

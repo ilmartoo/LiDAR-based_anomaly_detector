@@ -14,8 +14,7 @@
 #include <chrono>
 #include <fstream>
 #include <iomanip>
-#include <mutex>
-#include <condition_variable>
+#include <utility>
 
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "object_characterization/CharacterizedObject.hh"
@@ -27,8 +26,9 @@
 
 #include "logging/debug.hh"
 
+uint32_t p_count, tp_count;
+
 void ObjectCharacterizator::newPoint(const LidarPoint &p) {
-    static uint32_t p_count;
     static std::chrono::system_clock::time_point start, last_point, end;
 
     if (p.getReflectivity() >= minReflectivity) {
@@ -42,7 +42,8 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
                         start = std::chrono::high_resolution_clock::now();
                     }
 
-                    p_count = 1;
+                    ++p_count;
+                    background->setStartTime(p.getTimestamp());
                     background->insert(p);
                 }
 
@@ -70,7 +71,7 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
                         double point_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(last_point - start).count()) / 1.e9;
                         double total_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
 
-                        CLI_STDOUT("Background characterization lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << " s (Process speed: " << p_count / point_duration << " points/s)");
+                        CLI_STDOUT("Background scanning lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << " s (Process speed: " << p_count / point_duration << " points/s)");
                     }
 
                     CLI_STDOUT("Defined background contains " << p_count << " unique points");
@@ -84,26 +85,33 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
             // Punto del objeto
             case defObject: {
                 // Primer punto del marco temporal
-                if (!object->getStartTime().first) {
+                if (!objectStartTime.first) {
                     if (chrono) {
                         start = std::chrono::high_resolution_clock::now();
                     }
 
-                    if (!isBackground(p)) {
-                        DEBUG_STDOUT("First object point timestamp: " << p.getTimestamp().string());
+                    ++tp_count;
+                    objectStartTime = {true, p.getTimestamp()};
 
-                        p_count = 1;
-                        object->insert(p);
-                    }
-                }
+                    DEBUG_STDOUT("First point timestamp: " << p.getTimestamp().string());
 
-                // Punto dentro del marco temporal
-                else if (object->getStartTime().second + objFrame > p.getTimestamp()) {
                     if (!isBackground(p)) {
                         DEBUG_POINT_STDOUT("Point added to the object: " << p.string());
 
                         ++p_count;
-                        object->insert(p);
+                        object->push_back(p);
+                    }
+                }
+
+                // Punto dentro del marco temporal
+                else if (objectStartTime.second + objFrame > p.getTimestamp()) {
+                    ++tp_count;
+
+                    if (!isBackground(p)) {
+                        DEBUG_POINT_STDOUT("Point added to the object: " << p.string());
+
+                        ++p_count;
+                        object->push_back(p);
                     }
                 }
 
@@ -115,9 +123,7 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
                         last_point = std::chrono::high_resolution_clock::now();
                     }
 
-                    object->buildOctree();
-
-                    CLI_STDOUT("Defined object contains " << p_count << " unique points");
+                    CLI_STDOUT("Defined object contains " << p_count << " unique points (" << tp_count << " total points scanned)");
 
                     if (chrono) {
                         end = std::chrono::high_resolution_clock::now();
@@ -125,7 +131,7 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
                         double point_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(last_point - start).count()) / 1.e9;
                         double total_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
 
-                        CLI_STDOUT("Object characterization lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << " s (Process speed: " << p_count / point_duration << " points/s)");
+                        CLI_STDOUT("Object scanning lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << " s (Process speed: " << tp_count / point_duration << " points/s)");
                     }
 
                     DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string());
@@ -140,7 +146,7 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
                 if (!discardStartTime.first) {
                     DEBUG_STDOUT("First discarded point timestamp: " << p.getTimestamp().string());
 
-                    p_count = 1;
+                    ++p_count;
                     discardStartTime = {true, p.getTimestamp()};
                 }
 
@@ -185,31 +191,40 @@ void ObjectCharacterizator::stop() {
     DEBUG_STDOUT("Ending characterization");
 
     scanner->stop();
-    
+
     DEBUG_STDOUT("Ended characterization");
 }
 
 void ObjectCharacterizator::defineBackground() {
     background->clear();
+    p_count = 0;
 
     state = defBackground;
 
     scanner->scan();
 }
 
-CharacterizedObject ObjectCharacterizator::defineObject() {
-    object->clear();
+std::pair<bool, CharacterizedObject> ObjectCharacterizator::defineObject() {
+    *object = {};
+    p_count = 0;
+    tp_count = 0;
+    objectStartTime.first = false;
 
     state = defObject;
 
     scanner->scan();
 
-    return CharacterizedObject(*object);
+    if (object->size() == 0) {
+        return {false, {}};
+    }
+
+    return {true, CharacterizedObject(*object, chrono)};
 }
 
 void ObjectCharacterizator::wait(uint32_t miliseconds) {
     discardTime = static_cast<uint64_t>(miliseconds) * 1000000;
     discardStartTime.first = false;
+    p_count = 0;
 
     state = defDiscard;
 

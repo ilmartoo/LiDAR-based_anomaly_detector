@@ -7,56 +7,212 @@
  *
  */
 
-#include <queue>
-#include <set>
-#include <map>
 #include <utility>
+#include <vector>
+#include <list>
 #include <fstream>
+#include <chrono>
+#include <iomanip>
 
 #include "object_characterization/CharacterizedObject.hh"
 #include "object_characterization/PlaneUtils.hh"
-#include "models/OctreeMap.hh"
+#include "models/Octree.hh"
 #include "models/Point.hh"
+#include "app/CLICommand.hh"
 
-CharacterizedObject::CharacterizedObject(const OctreeMap &om)
-    : bbox(om.getMap().getCenter(),
-           om.getMap().getMax().getX() - om.getMap().getMin().getX(),
-           om.getMap().getMax().getY() - om.getMap().getMin().getY(),
-           om.getMap().getMax().getZ() - om.getMap().getMin().getZ()),
-      faces() {
-    std::queue<Point> pending;
-    std::set<std::string> visited;
+#include "logging/debug.hh"
 
-    pending.push(*om.getPoints().begin());
+CharacterizedObject::CharacterizedObject(const std::vector<Point> &points, bool chrono) {
+    std::chrono::system_clock::time_point start, end_agrupation, end;
+
+    if (chrono) {
+        start = std::chrono::high_resolution_clock::now();
+    }
+
+    //////////////////////////////////////////////
+    // Eliminación de subagrupaciones de puntos //
+    //////////////////////////////////////////////
+
+    std::vector<Point> &centroids = *new std::vector<Point>();
+    std::vector<std::vector<Point>> &groups = *new std::vector<std::vector<Point>>();
+    std::list<Point> &unasigned = *new std::list<Point>();
+
+    // Inicialización de primer centroide y agrupación de puntos
+    centroids.push_back(points[0]);
+    groups.push_back({1, centroids[0]});
+    for (size_t i = 1; i < points.size(); ++i) {
+        if (centroids[0].distance3D(points[i]) < proximityThreshold) {
+            groups[0].push_back(points[i]);
+            size_t new_gsize = groups[0].size();
+            centroids[0] = ((centroids[0] * (new_gsize - 1)) + points[i]) / new_gsize;
+        } else {
+            unasigned.push_back(points[i]);
+        }
+    }
+
+    // Inseción de los puntos restantes en sus respectivas agrupaciones
+    size_t last_size;
     do {
-        Point &p = pending.front();
+        last_size = unasigned.size();
 
-        // Comprobamos si hemos visitado el punto
-        if (visited.insert(p.ID()).second) {
-            std::vector<Point *> neighbours = om.getMap().searchNeighbors(p, 0.1, Kernel_t::sphere);
-            neighbours.push_back(&p);
+        auto itr = unasigned.begin();
+        while (itr != unasigned.end()) {
+            bool erased = false;
 
-            // No calculamos la normal para outliers
-            if (neighbours.size() > 3) {
-                Vector normal = PlaneUtils::computeNormal(neighbours);
-                if (normal[0] < 0.0) {
-                    normal = normal * -1.0;
+            // Comprobamos si el punto pertenece a algún grupo actual
+            for (size_t i = 0; i < centroids.size(); ++i) {
+                if (centroids[i].distance3D(*itr) < proximityThreshold) {
+                    groups[i].push_back(*itr);
+                    size_t new_gsize = groups[i].size();
+                    centroids[i] = ((centroids[i] * (new_gsize - 1)) + *itr) / new_gsize;
+
+                    itr = unasigned.erase(itr);
+                    erased = true;
+                    break;
                 }
-
-                // Añadimos el punto con normal nueva o insertamos punto en vector ya existente
-                if (!faces.insert({normal, {1, p}}).second) {
-                    faces.find(normal)->second.push_back(p);
-                }
-
-                // Añadimos puntos vecinos a pendientes
-                for (auto &p : neighbours) {
-                    pending.push(*p);
-                }
+            }
+            // Aumentamos iterador si se ha eliminado
+            if (!erased) {
+                ++itr;
             }
         }
 
-        pending.pop();
-    } while (!pending.empty());
+        // Creamos nueva agrupación si no se ha modificado la lista de puntos no asignados
+        if (last_size == unasigned.size()) {
+            centroids.push_back(unasigned.front());
+            groups.push_back({1, unasigned.front()});
+            unasigned.pop_front();
+        }
+
+    } while (unasigned.size() > 0);
+
+    // Escogemos el grupo de puntos con mayor número de puntos
+    int bestGroup = 0;
+    for (size_t i = 1; i < centroids.size(); ++i) {
+        if (groups[bestGroup].size() < groups[i].size()) {
+            bestGroup = i;
+        }
+    }
+
+    if (chrono) {
+        end_agrupation = std::chrono::high_resolution_clock::now();
+    }
+
+    ///////////////////////////////////////////////
+    // Cálculo de normales y separación de caras //
+    ///////////////////////////////////////////////
+
+    std::vector<Point> &opoints = *new std::vector<Point>(groups[bestGroup]);
+    Octree map(opoints);
+    std::vector<Vector> &normals = centroids;
+    groups = {};
+    normals = {};
+    unasigned = {};
+
+    // Inicialización de la primera normal y cara de puntos
+    for (size_t i = 0; i < opoints.size(); ++i) {
+        std::vector<Point *> neighbours = map.searchNeighbors(opoints[i], proximityThreshold * 3, Kernel_t::cube);
+        neighbours.push_back(&opoints[i]);
+
+        // Necesitamos 3 puntos mínimo para calcular la normal
+        if (neighbours.size() > 2) {
+            Vector normal = PlaneUtils::computeNormal(neighbours);
+            if (normal[0] < 0) {
+                normal = normal * -1.0;
+            }
+
+            if (normals.empty()) {
+                normals.push_back(normal);
+                groups.push_back({1, opoints[i]});
+
+            } else if (normals[0].distance3D(normal) < normalThreshold) {
+                groups[0].push_back(opoints[i]);
+                size_t new_gsize = groups[0].size();
+                normals[0] = ((normals[0] * (new_gsize - 1)) + normal) / new_gsize;
+            } else {
+                unasigned.push_back(opoints[i]);
+            }
+        }
+    }
+
+    // Calculo de normales restantes y agrupación por caras
+    while (unasigned.size() > 0) {
+        last_size = unasigned.size();
+
+        auto itr = unasigned.begin();
+        while (itr != unasigned.end()) {
+            bool erased = false;
+
+            std::vector<Point *> neighbours = map.searchNeighbors(*itr, proximityThreshold * 2, Kernel_t::sphere);
+            neighbours.push_back(&*itr);
+
+            Vector normal = PlaneUtils::computeNormal(neighbours);
+            if (normal[0] < 0) {
+                normal = normal * -1.0;
+            }
+
+            // Comprobamos si el punto pertenece a alguna cara actual
+            for (size_t i = 0; i < normals.size(); ++i) {
+                if (normals[i].distance3D(normal) < normalThreshold) {
+                    groups[i].push_back(*itr);
+                    size_t new_gsize = groups[i].size();
+                    normals[i] = ((normals[0] * (new_gsize - 1)) + normal) / new_gsize;
+
+                    itr = unasigned.erase(itr);
+                    erased = true;
+                    break;
+                }
+            }
+            // Aumentamos iterador si se ha eliminado
+            if (!erased) {
+                ++itr;
+            }
+        }
+
+        // Creamos nueva cara si no se ha modificado la lista de puntos no asignados
+        if (last_size == unasigned.size()) {
+            normals.push_back(unasigned.front());
+            groups.push_back({1, unasigned.front()});
+            unasigned.pop_front();
+        }
+    }
+
+    ////////////////////////////////////////////////
+    // Inicialización de las variables del objeto //
+    ////////////////////////////////////////////////
+
+    for (size_t i = 0; i < normals.size(); ++i) {
+        if (groups[i].size() > 2) {
+            faces.insert({normals[i], groups[i]});
+        }
+    }
+
+    Octree ot(opoints);
+    bbox = {ot.getCenter(), ot.getMax(), ot.getMin()};
+
+    DEBUG_CODE({
+        DEBUG_STDOUT("Characterized object with " << faces.size() << " faces");
+        for (auto &f : faces) {
+            DEBUG_STDOUT("Normal vector: (" + f.first.string() + ") - " + std::to_string(f.second.size()));
+        }
+    })
+
+    // Cronometro
+    if (chrono) {
+        end = std::chrono::high_resolution_clock::now();
+
+        double ag_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end_agrupation - start).count()) / 1.e9;
+        double nc_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - end_agrupation).count()) / 1.e9;
+
+        CLI_STDOUT("Point agrupation lasted " << std::setprecision(6) << ag_duration << std::setprecision(2) << " s");
+        CLI_STDOUT("Normal calculation lasted " << std::setprecision(6) << nc_duration << std::setprecision(2) << " s");
+    }
+
+    // Liberación de memoria
+    delete &groups;
+    delete &unasigned;
+    delete &centroids;
+    delete &opoints;
 }
 
 bool CharacterizedObject::write(const std::string &filename) {
@@ -67,7 +223,7 @@ bool CharacterizedObject::write(const std::string &filename) {
         outfile.write((char *)&len, sizeof(size_t));  // Numero de caras
 
         for (auto &f : faces) {
-            outfile.write((char *)&f.first, sizeof(Vector));          // Vector normal de la cara
+            outfile.write((char *)&f.first, sizeof(Vector));  // Vector normal de la cara
             len = f.second.size();
             outfile.write((char *)&len, sizeof(size_t));  // Numero de puntos de la cara
 
