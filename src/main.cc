@@ -24,7 +24,7 @@
 #define DEFAULT_OBJECT_FRAME_T      250                // Default frame time (ms)
 #define DEFAULT_BACKGROUND_FRAME_T  2000               // Default background time (ms)
 #define DEFAULT_MIN_RELECTIVITY     0.0f               // Default point reflectivity
-#define DEFAULT_BACKGROUND_DISTANCE 0.04f              // Default backgound distance (m)
+#define DEFAULT_BACKGROUND_DISTANCE 0.01f              // Default backgound distance (m)
 
 /* InputParams struct */
 struct InputParams {

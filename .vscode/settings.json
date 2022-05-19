@@ -62,7 +62,11 @@
 		"typeinfo": "cpp",
 		"variant": "cpp",
 		"queue": "cpp",
-		"complex": "cpp"
+		"complex": "cpp",
+		"bitset": "cpp",
+		"regex": "cpp",
+		"future": "cpp",
+		"shared_mutex": "cpp"
 	},
 	"cmake.configureOnOpen": false
 }

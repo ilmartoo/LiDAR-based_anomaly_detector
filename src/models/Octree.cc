@@ -670,18 +670,18 @@ int Octree::numOctreeNeighbors2DDiffGroup(const Point &point, float radius) {
 
 /** Calculate the radius in each axis and save the max radius of the bounding box */
 Vector mbbRadii(Vector &min, Vector &max, float &maxRadius) {
-    double x = (max.getZ() - min.getZ()) / 2.0;
+    double x = (max.getX() - min.getX()) / 2.0;
     double y = (max.getY() - min.getY()) / 2.0;
-    double z = (max.getX() - min.getX()) / 2.0;
+    double z = (max.getZ() - min.getZ()) / 2.0;
 
     Vector radii(x, y, z);
 
-    if (radii.getZ() >= radii.getY() && radii.getZ() >= radii.getX()) {
-        maxRadius = radii.getZ();
-    } else if (radii.getY() >= radii.getZ() && radii.getY() >= radii.getX()) {
+    if (radii.getX() >= radii.getY() && radii.getX() >= radii.getZ()) {
+        maxRadius = radii.getX();
+    } else if (radii.getY() >= radii.getX() && radii.getY() >= radii.getZ()) {
         maxRadius = radii.getY();
     } else {
-        maxRadius = radii.getX();
+        maxRadius = radii.getZ();
     }
 
     return radii;
@@ -689,7 +689,7 @@ Vector mbbRadii(Vector &min, Vector &max, float &maxRadius) {
 
 /** Calculate the center of the bounding box */
 Vector mbbCenter(Vector &min, Vector &radius) {
-    Vector center(min.getZ() + radius.getZ(), min.getY() + radius.getY(), min.getX() + radius.getX());
+    Vector center(min.getX() + radius.getX(), min.getY() + radius.getY(), min.getZ() + radius.getZ());
 
     return center;
 }
@@ -705,27 +705,27 @@ Vector mbb(const std::vector<Point> &points, float &maxRadius)
 {
     Vector center, min, max, radii;
 
-    min.setZ(std::numeric_limits<double>::max());
-    min.setY(std::numeric_limits<double>::max());
     min.setX(std::numeric_limits<double>::max());
+    min.setY(std::numeric_limits<double>::max());
+    min.setZ(std::numeric_limits<double>::max());
 
-    max.setZ(-std::numeric_limits<double>::max());
-    max.setY(-std::numeric_limits<double>::max());
     max.setX(-std::numeric_limits<double>::max());
+    max.setY(-std::numeric_limits<double>::max());
+    max.setZ(-std::numeric_limits<double>::max());
 
     for (const Point &p : points) {
-        if (p.getZ() < min.getZ())
-            min.setZ(p.getZ());
-        if (p.getZ() > max.getZ())
-            max.setZ(p.getZ());
-        if (p.getY() < min.getY())
-            min.setY(p.getY());
-        if (p.getY() > max.getY())
-            max.setY(p.getY());
         if (p.getX() < min.getX())
             min.setX(p.getX());
         if (p.getX() > max.getX())
             max.setX(p.getX());
+        if (p.getY() < min.getY())
+            min.setY(p.getY());
+        if (p.getY() > max.getY())
+            max.setY(p.getY());
+        if (p.getZ() < min.getZ())
+            min.setZ(p.getZ());
+        if (p.getZ() > max.getZ())
+            max.setZ(p.getZ());
     }
 
     radii = mbbRadii(min, max, maxRadius);

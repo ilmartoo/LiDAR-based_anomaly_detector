@@ -24,10 +24,10 @@
  */
 class CharacterizedObject {
    private:
-    static const uint32_t proximityThreshold = 80;  ///< Proximidad máxima (mm) de un punto hacia uno origen para participar en el cálculo de su normal
-    static constexpr double normalThreshold = 0.2;  ///< Diferencia máxima entre normales para pertenecer a la misma cara
-    BBox bbox;                                      ///< Bounding box
-    std::map<Vector, std::vector<Point>> faces;     ///< Caras del objeto
+    static const uint32_t proximityThreshold = 20;   ///< Proximidad máxima (mm) de un punto hacia uno origen para pertenecer al mismo cluster
+    static constexpr double normalThreshold = 0.15;  ///< Diferencia máxima entre normales para pertenecer a la misma cara
+    BBox bbox;                                       ///< Bounding box
+    std::map<Vector, std::vector<Point>> faces;      ///< Caras del objeto
 
    public:
     /**
@@ -36,10 +36,10 @@ class CharacterizedObject {
     CharacterizedObject() {}
     /**
      * Constructor
-     * @param points Puntos del objeto
+     * @param points Puntos del objeto de los cuales se realizará una clusterización, modificando su clusterID
      * @param chrono Comunica si se debe medir el tiempo que tarda en crearse el objeto
      */
-    CharacterizedObject(const std::vector<Point>& points, bool chrono);
+    CharacterizedObject(std::vector<Point>& points, bool chrono);
     /**
      * Constructor
      * @param bbox Bounding box
