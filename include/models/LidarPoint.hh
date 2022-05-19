@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <sstream>
 #include <ostream>
+#include <iomanip>
 
 #include "models/Point.hh"
 #include "models/Timestamp.hh"
@@ -114,7 +115,7 @@ class LidarPoint : public Point {
      */
     std::string CSV() const {
         std::stringstream line;
-        line << getX() << "," << getY() << "," << getZ() << "," << timestamp.getSeconds() << timestamp.getNanoseconds() << "," << reflectivity;
+        line << std::fixed << std::setprecision(6) << getX() << "," << getY() << "," << getZ() << "," << timestamp.getSeconds() << timestamp.getNanoseconds() << "," << reflectivity;
         return line.str();
     }
     /**
@@ -123,8 +124,9 @@ class LidarPoint : public Point {
      */
     std::string LivoxCSV() const {
         std::stringstream line;
-        line << "5,1,1,0,0x00000000,0,2," << timestamp.getSeconds() << timestamp.getNanoseconds()
-             << "," << getX() << "," << getY() << "," << getZ() << "," << reflectivity
+        line << std::fixed << std::setprecision(6) << "5,1,1,0,0x00000000,0,2,"
+             << timestamp.getSeconds() << std::setw(9) << std::setfill('0') << timestamp.getNanoseconds()
+             << "," << getX() / 1000 << "," << getY() / 1000 << "," << getZ() / 1000 << "," << reflectivity
              << ",0," << (int)getX() << "," << (int)getY() << "," << (int)getZ() << ",0,0,0";
         return line.str();
     }

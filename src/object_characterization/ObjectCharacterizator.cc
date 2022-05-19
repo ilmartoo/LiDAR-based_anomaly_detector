@@ -74,9 +74,9 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
                         CLI_STDOUT("Background scanning lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << " s (Process speed: " << p_count / point_duration << " points/s)");
                     }
 
-                    CLI_STDOUT("Defined background contains " << p_count << " unique points");
-
                     DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string());
+
+                    CLI_STDOUT("Defined background contains " << p_count << " unique points");
 
                     scanner->pause();
                 }
@@ -120,22 +120,17 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
                     state = defStopped;
 
                     if (chrono) {
-                        last_point = std::chrono::high_resolution_clock::now();
-                    }
-
-                    CLI_STDOUT("Defined object contains " << p_count << " unique points (" << tp_count << " total points scanned)");
-
-                    if (chrono) {
                         end = std::chrono::high_resolution_clock::now();
 
-                        double point_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(last_point - start).count()) / 1.e9;
                         double total_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
 
-                        CLI_STDOUT("Object scanning lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << " s (Process speed: " << tp_count / point_duration << " points/s)");
+                        CLI_STDOUT("Object scanning lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << " s (Process speed: " << tp_count / total_duration << " points/s)");
                     }
 
                     DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string());
 
+                    CLI_STDOUT("Defined object contains " << p_count << " unique points (A total of " << tp_count << " points were scanned)");
+                    
                     scanner->pause();
                 }
             } break;

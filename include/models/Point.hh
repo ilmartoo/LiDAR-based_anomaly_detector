@@ -12,6 +12,7 @@
 
 #include <ostream>
 #include <sstream>
+#include <iomanip>
 #include <cmath>
 #include <limits>
 
@@ -94,17 +95,17 @@ class Point {
      * Setter de la coordenada x
      * @param x Valor de x a establecer
      */
-    void setX(double x) { x = x; }
+    void setX(double x) { this->x = x; }
     /**
      * Setter de la coordenada y
      * @param y Valor de y a establecer
      */
-    void setY(double y) { y = y; }
+    void setY(double y) { this->y = y; }
     /**
      * Setter de la coordenada z
      * @param z Valor de z a establecer
      */
-    void setZ(double z) { z = z; }
+    void setZ(double z) { this->z = z; }
     /**
      * Setter del ID del cluster al que pertenece el punto
      * @param cID ID del nuevo cluster
@@ -117,9 +118,9 @@ class Point {
      * @return ID del punto
      */
     std::string ID() const {
-        std::stringstream line;
-        line << x << y << z;
-        return line.str();
+        std::stringstream id;
+        id << std::fixed << std::setprecision(6) << x << y << z;
+        return id.str();
     }
     /**
      * Obtiene un string con los datos del punto
@@ -127,22 +128,13 @@ class Point {
      */
     std::string string() const {
         std::stringstream line;
-        line << x << ", " << y << ", " << z;
+        line << std::fixed << std::setprecision(6) << x << ", " << y << ", " << z;
         return line.str();
     }
     // Imprime la información del punto p
     friend std::ostream &operator<<(std::ostream &strm, const Point &p) { return strm << p.string(); }
 
     ////// Operadores
-    /**
-     * Operador de acceso en array
-     * @param i Indice de la corrdenada
-     * @return Coordenada recuperada o 0 si es < 0 o > 2
-     */
-    double operator[](int i) const {
-        static const double *array[3] = {&x, &y, &z};
-        return (i < 0 || i > 2 ? 0 : *array[i]);
-    }
     /**
      * Operador de igualdad
      * @param p Punto a igualar

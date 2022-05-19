@@ -45,7 +45,7 @@ std::vector<std::vector<size_t>> DBScan::normals(double maxDistance, unsigned in
             // Debe tener mínimo 3 vecinos para el cálculo de la normal, sino el punto se descarta
             if (neighbours.size() > 2) {
                 Vector normal = PlaneUtils::computeNormal(neighbours);
-                if (normal[0] < 0) {
+                if (normal.getX() < 0) {
                     normal = normal * -1.0;
                 }
 
@@ -137,7 +137,7 @@ std::pair<bool, std::vector<size_t>> DBScan::expandNormal(const Vector &cnormal,
             // Debe tener mínimo 3 vecinos para el cálculo de la normal, sino el punto se descarta
             if (neighbours.size() > 2) {
                 Vector normal = PlaneUtils::computeNormal(neighbours);
-                if (normal[0] < 0) {
+                if (normal.getX() < 0) {
                     normal = normal * -1.0;
                 }
 
@@ -187,7 +187,7 @@ std::vector<size_t> DBScan::calculateNormal(const Vector &cnormal, const Point &
         // Debe tener mínimo 3 vecinos para el cálculo de la normal, sino el punto se descarta
         if (neighbours.size() > 2) {
             Vector normal = PlaneUtils::computeNormal(neighbours);
-            if (normal[0] < 0) {
+            if (normal.getX() < 0) {
                 normal = normal * -1.0;
             }
 

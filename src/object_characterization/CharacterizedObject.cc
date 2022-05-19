@@ -29,7 +29,7 @@ CharacterizedObject::CharacterizedObject(std::vector<Point> &points, bool chrono
     ///
     DEBUG_CODE({
         std::ofstream of("tmp/raw_object.csv");
-        of << LidarPoint::LivoxCSVHeader();
+        of << LidarPoint::LivoxCSVHeader() << "\n";
         for (auto &p : points)
             of << LidarPoint({0, 0}, 100, p).LivoxCSV() << "\n";
         of.close();
@@ -49,7 +49,7 @@ CharacterizedObject::CharacterizedObject(std::vector<Point> &points, bool chrono
     ///
     DEBUG_CODE({
         std::ofstream of("tmp/clusters_object.csv");
-        of << LidarPoint::LivoxCSVHeader();
+        of << LidarPoint::LivoxCSVHeader() << "\n";
         uint32_t partial;
         for (size_t j = 0; j < clusters.size(); ++j) {
             partial = 255 / clusters.size() * j;
@@ -93,7 +93,7 @@ CharacterizedObject::CharacterizedObject(std::vector<Point> &points, bool chrono
 
     DEBUG_CODE({
         std::ofstream of("tmp/caras_object.csv");
-        of << LidarPoint::LivoxCSVHeader();
+        of << LidarPoint::LivoxCSVHeader() << "\n";
         uint32_t partial;
         for (size_t j = 0; j < clusters.size(); ++j) {
             partial = 255 / clusters.size() * j;
@@ -110,7 +110,7 @@ CharacterizedObject::CharacterizedObject(std::vector<Point> &points, bool chrono
             fpoints.push_back(opoints[j]);
         }
         Vector normal = PlaneUtils::computeNormal(fpoints);
-        faces.insert({normal[0] > 0 ? normal : normal * -1, fpoints});
+        faces.insert({normal.getX() > 0 ? normal : normal * -1, fpoints});
     }
 
     Octree ot(opoints);
