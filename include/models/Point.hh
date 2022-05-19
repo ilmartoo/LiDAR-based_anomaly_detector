@@ -11,7 +11,19 @@
 #define POINT_CLASS_H
 
 #include <ostream>
+#include <sstream>
 #include <cmath>
+#include <limits>
+
+/**
+ * Enum de tipos de cluster
+ */
+enum PointCluster {
+    cUnclassified = -1,  ///< Punto no clasificado
+    cCorePoint = -2,     ///< Punto core
+    cBorderPoint = -3,   ///< Punto frontera
+    cNoise = -4          ///< Ruido
+};
 
 /**
  * Representación de un punto tridimensional
@@ -21,26 +33,27 @@ class Point {
     double x;  ///< Localización en el eje x del punto
     double y;  ///< Localización en el eje y del punto
     double z;  ///< Localización en el eje z del punto
+    int cID;   ///< Cluster ID
 
    public:
     /**
      * Constructor
      */
-    Point() : x(), y(), z() {}
+    Point() : x(), y(), z(), cID(cUnclassified) {}
     /**
      * Constructor
      * @param x Posición en x del punto
      * @param y Posición en y del punto
      * @param z Posición en z del punto
      */
-    Point(double x, double y, double z) : x(x), y(y), z(z) {}
+    Point(double x, double y, double z) : x(x), y(y), z(z), cID(cUnclassified) {}
     /**
      * Constructor
      * @param x Posición en x del punto
      * @param y Posición en y del punto
      * @param z Posición en z del punto
      */
-    Point(int x, int y, int z) : x((double)x), y((double)y), z((double)z) {}
+    Point(int x, int y, int z) : x((double)x), y((double)y), z((double)z), cID(cUnclassified) {}
 
     /**
      * Calcula la distancia euclidea entre dos puntos
@@ -48,7 +61,10 @@ class Point {
      * @return double distancia de separación entre los dos puntos
      */
     double distance3D(const Point &p) const {
-        return std::sqrt((this->x - p.x) * (this->x - p.x) + (this->y - p.y) * (this->y - p.y) + (this->z - p.z) * (this->z - p.z));
+        double dx = x - p.x;
+        double dy = y - p.y;
+        double dz = z - p.z;
+        return std::sqrt((dx * dx) + (dy * dy) + (dz * dz));
     }
 
     ////// Getters
@@ -67,36 +83,52 @@ class Point {
      * @return Posición en z del punto
      */
     double getZ() const { return z; }
+    /**
+     * Devuelve el ID del cluster al que pertenece el punto
+     * @return ID del cluster
+     */
+    int getClusterID() const { return cID; }
 
     ////// Setters
     /**
      * Setter de la coordenada x
      * @param x Valor de x a establecer
      */
-    void setX(double x) { this->x = x; }
+    void setX(double x) { x = x; }
     /**
      * Setter de la coordenada y
      * @param y Valor de y a establecer
      */
-    void setY(double y) { this->y = y; }
+    void setY(double y) { y = y; }
     /**
      * Setter de la coordenada z
      * @param z Valor de z a establecer
      */
-    void setZ(double z) { this->z = z; }
+    void setZ(double z) { z = z; }
+    /**
+     * Setter del ID del cluster al que pertenece el punto
+     * @param cID ID del nuevo cluster
+     */
+    void setClusterID(int cID) { this->cID = cID; }
 
     ////// Strings e impresión
     /**
      * Crea un ID del punto según sus coordenadas
      * @return ID del punto
      */
-    const std::string ID() const { return std::to_string(this->x) + std::to_string(this->y) + std::to_string(this->z); }
+    std::string ID() const {
+        std::stringstream line;
+        line << x << y << z;
+        return line.str();
+    }
     /**
      * Obtiene un string con los datos del punto
      * @return String con los datos del punto
      */
-    const std::string string() const {
-        return std::to_string(this->x) + ", " + std::to_string(this->y) + ", " + std::to_string(this->z);
+    std::string string() const {
+        std::stringstream line;
+        line << x << ", " << y << ", " << z;
+        return line.str();
     }
     // Imprime la información del punto p
     friend std::ostream &operator<<(std::ostream &strm, const Point &p) { return strm << p.string(); }
@@ -107,13 +139,16 @@ class Point {
      * @param i Indice de la corrdenada
      * @return Coordenada recuperada o 0 si es < 0 o > 2
      */
-    double operator[](int i) const { return (i < 0 || i > 2 ? 0 : (i == 0 ? this->x : (i == 1 ? this->y : this->z))); }
+    double operator[](int i) const {
+        static const double *array[3] = {&x, &y, &z};
+        return (i < 0 || i > 2 ? 0 : *array[i]);
+    }
     /**
      * Operador de igualdad
      * @param p Punto a igualar
      * @return true si los puntos tienen las mismas coordenadas
      */
-    bool operator==(const Point &p) const { return (this->x == p.x && this->y == p.y && this->z == p.z); }
+    bool operator==(const Point &p) const { return ((std::fabs(x - p.x) < std::numeric_limits<double>::epsilon()) && (std::fabs(y - p.y) < std::numeric_limits<double>::epsilon()) && (std::fabs(z - p.z) < std::numeric_limits<double>::epsilon())); }
     /**
      * Operador de desigualdad
      * @param p Punto a comparar
@@ -125,49 +160,49 @@ class Point {
      * @param p Punto a restar
      * @return Punto resultado de la operacion
      */
-    Point operator-(const Point &p) const { return Point(this->x - p.x, this->y - p.y, this->z - p.z); }
+    Point operator-(const Point &p) const { return Point(x - p.x, y - p.y, z - p.z); }
     /**
      * Operador de resta de puntos
      * @param d double a restar
      * @return Punto resultado de la operacion
      */
-    Point operator-(double d) const { return Point(this->x - d, this->y - d, this->z - d); }
+    Point operator-(double d) const { return Point(x - d, y - d, z - d); }
     /**
      * Operador de suma de puntos
      * @param p Punto a sumar
      * @return Punto resultado de la operacion
      */
-    Point operator+(const Point &p) const { return Point(this->x + p.x, this->y + p.y, this->z + p.z); }
+    Point operator+(const Point &p) const { return Point(x + p.x, y + p.y, z + p.z); }
     /**
      * Operador de suma de puntos
      * @param d double a sumar
      * @return Punto resultado de la operacion
      */
-    Point operator+(double d) const { return Point(this->x + d, this->y + d, this->z + d); }
+    Point operator+(double d) const { return Point(x + d, y + d, z + d); }
     /**
      * Operador de división de puntos
      * @param p Punto a dividir
      * @return Punto resultado de la operacion
      */
-    Point operator/(const Point &p) const { return Point(this->x / p.x, this->y / p.y, this->z / p.z); }
+    Point operator/(const Point &p) const { return Point(x / p.x, y / p.y, z / p.z); }
     /**
      * Operador de división de puntos
      * @param d double a dividir
      * @return Punto resultado de la operacion
      */
-    Point operator/(double d) const { return Point(this->x / d, this->y / d, this->z / d); }
+    Point operator/(double d) const { return Point(x / d, y / d, z / d); }
     /**
      * Operador de multiplicación de puntos
      * @param p Punto a multiplicar
      * @return Punto resultado de la operacion
      */
-    Point operator*(const Point &p) const { return Point(this->x * p.x, this->y * p.y, this->z * p.z); }
+    Point operator*(const Point &p) const { return Point(x * p.x, y * p.y, z * p.z); }
     /**
      * Operador de multiplicación de puntos
      * @param d double a multiplicar
      * @return Punto resultado de la operacion
      */
-    Point operator*(double d) const { return Point(this->x * d, this->y * d, this->z * d); }
+    Point operator*(double d) const { return Point(x * d, y * d, z * d); }
     /**
      * Comparador de IDs de puntos
      * @param p Punto a comparar

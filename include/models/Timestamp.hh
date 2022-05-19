@@ -59,19 +59,19 @@ class Timestamp {
      * Devuelve los segundos del timestamp
      * @return Segundos del timestamp
      */
-    inline const uint32_t &getSeconds() const { return this->seconds; }
+    uint32_t getSeconds() const { return this->seconds; }
     /**
      * Devuelve los nanosegundos del timestamp
      * @return Negundos del timestamp
      */
-    inline const uint32_t &getNanoseconds() const { return this->nanoseconds; }
+    uint32_t getNanoseconds() const { return this->nanoseconds; }
 
     ////// Formatting
     /**
      * Obtiene un string con los datos del timestamp
      * @return String con los datos del timestamp
      */
-    inline const std::string string() const { return std::to_string(seconds) + "s " + std::to_string(nanoseconds) + "ns"; }
+    std::string string() const { return std::to_string(seconds) + "s " + std::to_string(nanoseconds) + "ns"; }
 
     ////// Operators
     /**

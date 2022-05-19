@@ -112,8 +112,11 @@ TEST_CASE_METHOD(PointFixture, "point constructors", "[point]") {
 
 TEST_CASE_METHOD(PointFixture, "point equals", "[point]") {
     Point p(6., 6., 6.);
+    Point p0(0, 0, 0);
+    Point p1(0.0 * 6.0, 0.0 * 6.0, 0.0 * 6.0);
 
     CHECK_MESSAGE(p == pib, "Points are not the same");
+    CHECK_MESSAGE(p0 == p1, "Points are not the same");
     CHECK_MESSAGE(p != pia, "Points are the same");
 }
 
@@ -142,7 +145,7 @@ TEST_CASE_METHOD(PointFixture, "point product", "[point]") {
     Point p2 = pib * pdb;
     Point p3 = pdb * 6.0;
 
-    CHECK_MESSAGE(((p1.getX() < 1e-16 && p1.getX() > -1e-16) && (p1.getY() < 1e-16 && p1.getY() > -1e-16) && (p1.getZ() < 1e-16 && p1.getZ() > -1e-16)), "Product is not acurate");
+    CHECK_MESSAGE(p1 == Point(0, 0, 0), "Product is not acurate");
     CHECK_MESSAGE(p2 == Point(1.0 * 6.0, -1.1 * 6.0, 0.1 * 6.0), "Product is not acurate");
     CHECK_MESSAGE(p3 == Point(1.0 * 6.0, -1.1 * 6.0, 0.1 * 6.0), "Product is not acurate");
 }
@@ -152,7 +155,7 @@ TEST_CASE_METHOD(PointFixture, "point division", "[point]") {
     Point p2 = pib / pdb;
     Point p3 = pdb / 6.0;
 
-    CHECK_MESSAGE(((p1.getX() < 1e-16 && p1.getX() > -1e-16) && (p1.getY() < 1e-16 && p1.getY() > -1e-16) && (p1.getZ() < 1e-16 && p1.getZ() > -1e-16)), "Division is not acurate");
+    CHECK_MESSAGE(p1 == Point(0, 0, 0), "Division is not acurate");
     CHECK_MESSAGE(p2 == Point(6.0 / 1.0, 6.0 / (-1.1), 6.0 / 0.1), "Division is not acurate");
     CHECK_MESSAGE(p3 == Point(1.0 / 6.0, (-1.1) / 6.0, 0.1 / 6.0), "Division is not acurate");
 }

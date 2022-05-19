@@ -11,6 +11,7 @@
 #define LIDARPOINT_CLASS_H
 
 #include <stdint.h>
+#include <sstream>
 #include <ostream>
 
 #include "models/Point.hh"
@@ -83,7 +84,7 @@ class LidarPoint : public Point {
      * Devuelve la reflectividad del punto
      * @return Reflectividad del punto
      */
-    const uint32_t getReflectivity() const { return reflectivity; }
+    uint32_t getReflectivity() const { return reflectivity; }
 
     ////// Setters
     /**
@@ -102,15 +103,40 @@ class LidarPoint : public Point {
      * Obtiene un string con los datos del punto
      * @return String con los datos del punto
      */
-    const std::string string() const {
-        return "[Time: " + this->timestamp.string() + "] [Ref: " + std::to_string(this->reflectivity) + "] " + ((Point *)this)->string();
+    std::string string() const {
+        std::stringstream line;
+        line << "[Time: " << timestamp.string() << "] [Ref: " << reflectivity << "] " << ((Point *)this)->string();
+        return line.str();
     }
     /**
-     * Obtiene un string con los datos del punto en formato csv: x,y,z,time,reflec
-     * @return String con los datos del punto en formato csv
+     * Obtiene un string con los datos del punto en formato CSV
+     * @return String con los datos del punto en formato CSV < X,Y,Z,Timestamp,Reflectividad >
      */
-    const std::string csv_string() const {
-        return std::to_string(getX()) + "," + std::to_string(getY()) + "," + std::to_string(getZ()) + "," + std::to_string(timestamp.getSeconds()) + std::to_string(timestamp.getNanoseconds()) + "," + std::to_string(reflectivity);
+    std::string CSV() const {
+        std::stringstream line;
+        line << getX() << "," << getY() << "," << getZ() << "," << timestamp.getSeconds() << timestamp.getNanoseconds() << "," << reflectivity;
+        return line.str();
+    }
+    /**
+     * Obtiene un string con los datos del punto en formato CSV preparado para su lectura por Livox Viewer
+     * @return String con los datos del punto en formato CSV de Livox Viewer
+     */
+    std::string LivoxCSV() const {
+        std::stringstream line;
+        line << "5,1,1,0,0x00000000,0,2," << timestamp.getSeconds() << timestamp.getNanoseconds()
+             << "," << getX() << "," << getY() << "," << getZ() << "," << reflectivity
+             << ",0," << (int)getX() << "," << (int)getY() << "," << (int)getZ() << ",0,0,0";
+        return line.str();
+    }
+    /**
+     * Obtiene un string con los datos de la cabecera CSV de Livox Viewer
+     * @return String de cabecera de un archivo CSV de Livox Viewer
+     */
+    static const std::string &LivoxCSVHeader() {
+        static std::string livox_header("Version,Slot ID,LiDAR Index,Rsvd,Error Code,Timestamp Type,"
+                                        "Data Type,Timestamp,X,Y,Z,Reflectivity,Tag,"
+                                        "Ori_x,Ori_y,Ori_z,Ori_radius,Ori_theta,Ori_phi");
+        return livox_header;
     }
     // Imprime la información del punto p
     friend std::ostream &operator<<(std::ostream &strm, const LidarPoint &p) { return strm << p.string(); }
