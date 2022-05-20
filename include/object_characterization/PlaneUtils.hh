@@ -15,6 +15,9 @@
 #include "armadillo"
 
 #include "models/Point.hh"
+#include "models/Octree.hh"
+
+#define NORMAL_CALCULATION_THREADS 4
 
 class PlaneUtils {
    public:
@@ -43,6 +46,14 @@ class PlaneUtils {
      * @return Vector normal
      */
     static Vector computeNormal(const std::vector<Point *> &points);
+
+    /**
+     * Calculo de normales de un grupo de puntos
+     * @param points Puntos de los que se calcularán las normales
+     * @param distance Máxima distancia a la que pueden estar los puntos para considerarse vecinos
+     * @return vector de normales, siendo 0 aquellas de los puntos que no se les pudo calcular la normal
+     */
+    static std::vector<Vector> computeNormals(std::vector<Point> &points, double distance);
 
     /**
      * Obtiene el plano con el vector normal especificado y que pasa sobre el centroide

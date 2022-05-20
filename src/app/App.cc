@@ -179,13 +179,16 @@ void App::cli() {
                 if (command.numParams() == 2 && ((newChrono = (command[0] == "set")) || command[0] == "unset")) {
                     if (command[1] == "define") {
                         oc->setChrono(newChrono);
+                        CLI_STDOUT((newChrono ? "S" : "Uns") << "et define chronometer");
 
                     } else if (command[1] == "analyze") {
                         ad->setChrono(newChrono);
+                        CLI_STDOUT((newChrono ? "S" : "Uns") << "et analyze chronometer");
 
                     } else if (command[1] == "all") {
                         oc->setChrono(newChrono);
                         ad->setChrono(newChrono);
+                        CLI_STDOUT((newChrono ? "S" : "Uns") << "et all chronometers");
 
                     } else {
                         unknownCommand("chrono");
@@ -218,7 +221,7 @@ void App::cli() {
                             CLI_STDERR("Could not create object");
                         }
                     } else {
-                        CLI_STDERR("Scanned object frame does not contain object points");
+                        CLI_STDERR("Scanned object points are too sparse to correctly define an object");
                     }
 
                 } else {

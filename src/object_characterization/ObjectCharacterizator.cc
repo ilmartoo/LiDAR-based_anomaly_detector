@@ -35,7 +35,7 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
         switch (state) {
             case defBackground: {
                 // Primer punto del marco temporal
-                if (!background->getStartTime().first) {
+                if (!background.getStartTime().first) {
                     DEBUG_STDOUT("First background point timestamp: " << p.getTimestamp().string());
 
                     if (chrono) {
@@ -43,16 +43,16 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
                     }
 
                     ++p_count;
-                    background->setStartTime(p.getTimestamp());
-                    background->insert(p);
+                    background.setStartTime(p.getTimestamp());
+                    background.insert(p);
                 }
 
                 // Punto dentro del marco temporal
-                else if (background->getStartTime().second + backFrame > p.getTimestamp()) {
+                else if (background.getStartTime().second + backFrame > p.getTimestamp()) {
                     DEBUG_POINT_STDOUT("Point added to the background: " << p.string());
 
                     ++p_count;
-                    background->insert(p);
+                    background.insert(p);
                 }
 
                 // Punto fuera del marco temporal
@@ -63,7 +63,7 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
                         last_point = std::chrono::high_resolution_clock::now();
                     }
 
-                    background->buildOctree();
+                    background.buildOctree();
 
                     if (chrono) {
                         end = std::chrono::high_resolution_clock::now();
@@ -76,7 +76,7 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
 
                     DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string());
 
-                    CLI_STDOUT("Defined background contains " << p_count << " unique points");
+                    CLI_STDOUT("Scanned background contains " << p_count << " unique points");
 
                     scanner->pause();
                 }
@@ -99,7 +99,7 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
                         DEBUG_POINT_STDOUT("Point added to the object: " << p.string());
 
                         ++p_count;
-                        object->push_back(p);
+                        object.push_back(p);
                     }
                 }
 
@@ -111,7 +111,7 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
                         DEBUG_POINT_STDOUT("Point added to the object: " << p.string());
 
                         ++p_count;
-                        object->push_back(p);
+                        object.push_back(p);
                     }
                 }
 
@@ -129,8 +129,8 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
 
                     DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string());
 
-                    CLI_STDOUT("Defined object contains " << p_count << " unique points (A total of " << tp_count << " points were scanned)");
-                    
+                    CLI_STDOUT("Scanned object contains " << p_count << " unique points (a total of " << tp_count << " points were scanned)");
+
                     scanner->pause();
                 }
             } break;
@@ -191,7 +191,7 @@ void ObjectCharacterizator::stop() {
 }
 
 void ObjectCharacterizator::defineBackground() {
-    background->clear();
+    background = {};
     p_count = 0;
 
     state = defBackground;
@@ -200,7 +200,7 @@ void ObjectCharacterizator::defineBackground() {
 }
 
 std::pair<bool, CharacterizedObject> ObjectCharacterizator::defineObject() {
-    *object = {};
+    object = {};
     p_count = 0;
     tp_count = 0;
     objectStartTime.first = false;
@@ -209,11 +209,11 @@ std::pair<bool, CharacterizedObject> ObjectCharacterizator::defineObject() {
 
     scanner->scan();
 
-    if (object->size() == 0) {
+    if (object.size() == 0) {
         return {false, {}};
+    } else {
+        return CharacterizedObject::parse(object, chrono);
     }
-
-    return {true, CharacterizedObject(*object, chrono)};
 }
 
 void ObjectCharacterizator::wait(uint32_t miliseconds) {
@@ -227,7 +227,7 @@ void ObjectCharacterizator::wait(uint32_t miliseconds) {
 }
 
 bool ObjectCharacterizator::isBackground(const Point &p) const {
-    std::vector<Point *> neighbours = background->getMap().searchNeighbors(p, backDistance, Kernel_t::circle);
+    std::vector<Point *> neighbours = background.getMap().searchNeighbors(p, backDistance, Kernel_t::circle);
 
     for (Point *&pb : neighbours) {
         if (p.distance3D(*pb) < backDistance) {

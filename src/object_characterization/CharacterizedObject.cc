@@ -19,11 +19,13 @@
 #include "object_characterization/DBScan.hh"
 #include "models/Octree.hh"
 #include "models/Point.hh"
+#include "models/LidarPoint.hh"
+#include "models/Timestamp.hh"
 #include "app/CLICommand.hh"
 
 #include "logging/debug.hh"
 
-CharacterizedObject::CharacterizedObject(std::vector<Point> &points, bool chrono) {
+std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
     std::chrono::system_clock::time_point start, end_agrupation, end;
 
     ///
@@ -45,6 +47,11 @@ CharacterizedObject::CharacterizedObject(std::vector<Point> &points, bool chrono
     //////////////////////////////
 
     std::vector<std::vector<size_t>> clusters = DBScan::clusters(proximityThreshold, 10, points);
+
+    // Salida si no se han detectado clústeres de puntos
+    if (clusters.size() == 0) {
+        return {false, {}};
+    }
 
     ///
     DEBUG_CODE({
@@ -71,12 +78,6 @@ CharacterizedObject::CharacterizedObject(std::vector<Point> &points, bool chrono
 
     if (chrono) {
         end_agrupation = std::chrono::high_resolution_clock::now();
-
-        double ag_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end_agrupation - start).count()) / 1.e9;
-
-        CLI_STDOUT("Point agrupation lasted " << std::setprecision(6) << ag_duration << std::setprecision(2) << " s");
-
-        end_agrupation = std::chrono::high_resolution_clock::now(); // Recalculamos despues de imprimir
     }
 
     ///////////////////////////////////////////////
@@ -91,6 +92,12 @@ CharacterizedObject::CharacterizedObject(std::vector<Point> &points, bool chrono
 
     clusters = DBScan::normals(proximityThreshold * 2, 4, opoints, normalThreshold);
 
+    // Salida si no se han detectado caras del objeto
+    if (clusters.size() == 0) {
+        return {false, {}};
+    }
+
+    ///
     DEBUG_CODE({
         std::ofstream of("tmp/caras_object.csv");
         of << LidarPoint::LivoxCSVHeader() << "\n";
@@ -103,34 +110,42 @@ CharacterizedObject::CharacterizedObject(std::vector<Point> &points, bool chrono
         }
         of.close();
     });
+    ///
 
+    /// Bounding box
+    Octree opointsOct(opoints);
+    BBox boundingBox = {opointsOct.getCenter(), opointsOct.getMax(), opointsOct.getMin()};
+    /// Caras
+    std::vector<std::vector<Point>> faces;
     for (size_t i = 0; i < clusters.size(); ++i) {
-        std::vector<Point> fpoints;
+        faces.push_back({});
         for (auto &j : clusters[i]) {
-            fpoints.push_back(opoints[j]);
+            faces[i].push_back(opoints[j]);
         }
-        Vector normal = PlaneUtils::computeNormal(fpoints);
-        faces.insert({normal.getX() > 0 ? normal : normal * -1, fpoints});
     }
-
-    Octree ot(opoints);
-    bbox = {ot.getCenter(), ot.getMax(), ot.getMin()};
-
-    DEBUG_CODE({
-        DEBUG_STDOUT("Characterized object with " << faces.size() << " faces");
-        for (auto &f : faces) {
-            DEBUG_STDOUT("Normal vector: (" + f.first.string() + ") - " + std::to_string(f.second.size()));
-        }
-    })
+    /// Objecto
+    CharacterizedObject object(boundingBox, faces);
 
     // Cronometro
     if (chrono) {
         end = std::chrono::high_resolution_clock::now();
 
-        double nc_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - end_agrupation).count()) / 1.e9;
+        double cl_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end_agrupation - start).count()) / 1.e9;
+        double fd_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - end_agrupation).count()) / 1.e9;
 
-        CLI_STDOUT("Normal calculation lasted " << std::setprecision(6) << nc_duration << std::setprecision(2) << " s");
+        CLI_STDOUT("Object characterization lasted " << std::setprecision(6) << (cl_duration + fd_duration) << "s (clustering: " << cl_duration << " s, face detection:  " <<  fd_duration << std::setprecision(2) << " s)");
     }
+
+    DEBUG_CODE({
+        std::stringstream outstr;
+        outstr << "Characterized object with " << faces.size() << " faces:";
+        for (size_t i = 0; i < faces.size(); ++i) {
+            outstr << "\n[" << faces[i].size() << " points, normal vector: (" << object.normals[i].string() << ")]";
+        }
+        DEBUG_STDOUT(outstr.str());
+    })
+
+    return {true, std::move(object)};
 }
 
 bool CharacterizedObject::write(const std::string &filename) {
@@ -141,11 +156,9 @@ bool CharacterizedObject::write(const std::string &filename) {
         outfile.write((char *)&len, sizeof(size_t));  // Numero de caras
 
         for (auto &f : faces) {
-            outfile.write((char *)&f.first, sizeof(Vector));  // Vector normal de la cara
-            len = f.second.size();
+            len = f.size();
             outfile.write((char *)&len, sizeof(size_t));  // Numero de puntos de la cara
-
-            for (auto &p : f.second) {
+            for (auto &p : f) {
                 outfile.write((char *)&p, sizeof(Point));  // Punto de la cara
             }
         }
@@ -157,6 +170,22 @@ bool CharacterizedObject::write(const std::string &filename) {
         return false;
     }
 }
+bool CharacterizedObject::writeLivoxCSV(const std::string &filename) {
+    std::ofstream outfile(filename);
+    uint32_t partial;
+    Timestamp tmst(0, 0);
+
+    outfile << LidarPoint::LivoxCSVHeader() << "\n";
+    for (size_t i = 0; i < faces.size(); ++i) {
+        partial = 255 / faces.size() * i;
+        for (auto &p : faces[i]) {
+            outfile << LidarPoint(tmst, partial, p).LivoxCSV() << "\n";
+        }
+    }
+    outfile.close();
+
+    return !outfile.fail();
+}
 
 std::pair<bool, CharacterizedObject> CharacterizedObject::load(const std::string &filename) {
     std::ifstream infile(filename);
@@ -166,22 +195,21 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::load(const std::string
         infile.read((char *)&bbox, sizeof(BBox));      // Bounding box
         infile.read((char *)&nfaces, sizeof(size_t));  // Numero de caras
 
-        std::map<Vector, std::vector<Point>> faces;
+        std::vector<std::vector<Point>> faces;
         Vector normal;
         Point point;
         for (unsigned i = 0; i < nfaces; ++i) {
-            infile.read((char *)&normal, sizeof(Vector));  // Vector normal de la cara
-            std::vector<Point> &vref = faces.insert({normal, {}}).first->second;
+            faces.push_back({});
 
             infile.read((char *)&npoints, sizeof(size_t));  // Numero de puntos de la cara
             for (unsigned j = 0; j < npoints; ++j) {
                 infile.read((char *)&point, sizeof(Point));  // Punto de la cara
-                vref.push_back(point);
+                faces[i].push_back(point);
             }
         }
 
         infile.close();
-        return {!infile.fail(), CharacterizedObject(bbox, faces)};
+        return std::move(std::pair<bool, CharacterizedObject>(!infile.fail(), CharacterizedObject(bbox, faces)));
 
     } else {
         return {false, {}};

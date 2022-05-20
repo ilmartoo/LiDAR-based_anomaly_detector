@@ -112,12 +112,17 @@ include_directories(
 	${READ_LVX_DIR}/
 	${ARMADILLO_DIR}/include
 )
+find_package(OpenMP)
+if(NOT OpenMP_CXX_FOUND)
+	message(FATAL_ERROR "OpenMP not found")
+endif()
 link_libraries(
 	${LIVOX_SDK_LIB}_static
 	${READ_LVX_LIB}
 	${ARMADILLO_LIB}
 	lapack
 	openblas
+	OpenMP::OpenMP_CXX
 	pthread
 	m
 )

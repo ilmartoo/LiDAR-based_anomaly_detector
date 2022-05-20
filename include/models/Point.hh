@@ -56,8 +56,9 @@ class Point {
      */
     Point(int x, int y, int z) : x((double)x), y((double)y), z((double)z), cID(cUnclassified) {}
 
+    ////// Operaciones tridimensionales
     /**
-     * Calcula la distancia euclidea entre dos puntos
+     * Calcúla la distancia euclidea entre dos puntos
      * @param p Punto contra el que calcular la distancia
      * @return double distancia de separación entre los dos puntos
      */
@@ -67,6 +68,25 @@ class Point {
         double dz = z - p.z;
         return std::sqrt((dx * dx) + (dy * dy) + (dz * dz));
     }
+
+    ////// Operaciones vectoriales
+    /**
+     * Calcúla el módulo de un vector
+     * @return módulo del vector
+     */
+    double module() const { return std::sqrt((x * x) + (y * y) + (z * z)); }
+    /**
+     * Producto escalar de dos vectores
+     * @param v Vector contra el que realizar el producto escalar
+     * @return Resultado de la operación
+     */
+    double scalarProduct(const Point &v) const { return (x * v.x) + (y * v.y) + (z * v.z); }
+    /**
+     * Calcula la distancia angular entre dos vectores
+     * @param v Vector contra el que medir la distancia angular
+     * @return Distancia angular en radianes
+     */
+    double angularDistance(const Point &v) const { return std::acos(this->scalarProduct(v) / (this->module() * v.module())); }
 
     ////// Getters
     /**

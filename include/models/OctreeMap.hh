@@ -54,17 +54,6 @@ class OctreeMap {
         map = Octree(points);
     }
 
-    /**
-     * Borra el mapa de puntos al completo
-     */
-    void clear() {
-        startTime.first = false;
-
-        map = Octree();
-        points = {};
-        keys = {};
-    }
-
     ////// Setters
     /**
      * Establece el timestamp inicial

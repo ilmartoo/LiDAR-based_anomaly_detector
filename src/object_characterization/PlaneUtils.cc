@@ -2,12 +2,13 @@
  * @file PlaneUtils.cc
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 12/05/2022
- * 
+ *
  * Implementación del objeto PlaneUtils
- * 
+ *
  */
 
 #include <vector>
+#include <omp.h>
 
 #include "armadillo"
 
@@ -112,6 +113,27 @@ Vector PlaneUtils::computeNormal(const std::vector<Point *> &points) {
     return Vector(vnormal[0], vnormal[1], vnormal[2]);
 }
 
+std::vector<Vector> PlaneUtils::computeNormals(std::vector<Point> &points, double distance) {
+    std::vector<Vector> normals(points.size(), Vector(0, 0, 0));
+    Octree map(points);
+
+#pragma omp parallel for num_threads(NORMAL_CALCULATION_THREADS) shared(map, normals) schedule(guided)
+    for (size_t i = 0; i < points.size(); ++i) {
+        std::vector<Point *> neighbours = map.searchNeighbors(points[i], distance, Kernel_t::sphere);
+
+        // Para el cálculo de la normal se necesitan un mínimo de 3 puntos vecinos
+        // En el caso de no cumplir este requerimiento el punto no tendrá una normal válida asignada
+        if (neighbours.size() > 2) {
+            normals[i] = PlaneUtils::computeNormal(neighbours);
+            if (normals[i].getX() < 0) {
+                normals[i] = normals[i] * -1;
+            }
+        }
+    }
+
+    return normals;
+}
+
 arma::vec PlaneUtils::computePlane(const Vector &vnormal, const Point &centroid) {
     arma::vec plane(4);
 
@@ -125,8 +147,8 @@ arma::vec PlaneUtils::computePlane(const Vector &vnormal, const Point &centroid)
 
 arma::vec PlaneUtils::computePlane(const std::vector<Point> &points) {
     arma::vec plane(4);
-	Vector vnormal = computeNormal(points); 
-	Point centroid = computeNormal(points);
+    Vector vnormal = computeNormal(points);
+    Point centroid = computeNormal(points);
 
     plane[0] = vnormal.getX();
     plane[1] = vnormal.getY();
