@@ -21,8 +21,8 @@
 /* Defaults */
 #define DEFAULT_BROADCAST_CODE      "3WEDH7600101621"  // Broadcast code of the Livox Horizon scanner
 #define DEFAULT_TIMER_MODE          kNoChrono          // Default timer mode
-#define DEFAULT_OBJECT_FRAME_T      250                // Default frame time (ms)
-#define DEFAULT_BACKGROUND_FRAME_T  2000               // Default background time (ms)
+#define DEFAULT_OBJECT_FRAME_T      1500               // Default frame time (ms)
+#define DEFAULT_BACKGROUND_FRAME_T  5000               // Default background time (ms)
 #define DEFAULT_MIN_RELECTIVITY     0.0f               // Default point reflectivity
 #define DEFAULT_BACKGROUND_DISTANCE 0.01f              // Default backgound distance (m)
 

@@ -97,7 +97,7 @@ std::vector<std::vector<size_t>> DBScan::normals(double maxDistance, unsigned in
     int clusterID = 1;
     std::vector<std::vector<size_t>> faces;
 
-    std::vector<Vector> normals = PlaneUtils::computeNormals(points, normalDispersion);  // Cálculo de las normales
+    std::vector<Vector> normals = PlaneUtils::computeNormals(points, maxDistance);  // Cálculo de las normales
 
     for (size_t i = 0; i < points.size(); ++i) {
         if (points[i].getClusterID() == cUnclassified && normals[i] != Vector(0, 0, 0)) {

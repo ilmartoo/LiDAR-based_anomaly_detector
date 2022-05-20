@@ -45,9 +45,7 @@ class ObjectCharacterizator {
 
     enum CharacterizatorState state;  ///< Estado en el que se encuentra el caracterizador de objetos
     OctreeMap background;             ///< Mapa de puntos que forman el fondo
-
-    std::vector<Point> object;                   ///< Vector de puntos que forman el objeto
-    std::pair<bool, Timestamp> objectStartTime;  ///< Timestamp de inicio de la caracterización del objeto
+    OctreeMap object;                 ///< Vector de puntos que forman el objeto
 
     uint64_t discardTime;                         ///< Tiempo durante el cual se descartarán puntos
     std::pair<bool, Timestamp> discardStartTime;  ///< Timestamp de inicio del descarte de puntos
@@ -72,7 +70,6 @@ class ObjectCharacterizator {
           state(defStopped),
           background(),
           object(),
-          objectStartTime(false, Timestamp(0, 0)),
           discardTime(0),
           discardStartTime(false, Timestamp(0, 0)) {}
     /**

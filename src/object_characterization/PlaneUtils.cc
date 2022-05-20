@@ -117,7 +117,7 @@ std::vector<Vector> PlaneUtils::computeNormals(std::vector<Point> &points, doubl
     std::vector<Vector> normals(points.size(), Vector(0, 0, 0));
     Octree map(points);
 
-#pragma omp parallel for num_threads(NORMAL_CALCULATION_THREADS) shared(map, normals) schedule(guided)
+#pragma omp parallel for num_threads(NORMAL_CALCULATION_THREADS) schedule(guided)
     for (size_t i = 0; i < points.size(); ++i) {
         std::vector<Point *> neighbours = map.searchNeighbors(points[i], distance, Kernel_t::sphere);
 

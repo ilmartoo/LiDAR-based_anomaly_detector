@@ -46,7 +46,7 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
     // Clusterización de puntos //
     //////////////////////////////
 
-    std::vector<std::vector<size_t>> clusters = DBScan::clusters(proximityThreshold, 10, points);
+    std::vector<std::vector<size_t>> clusters = DBScan::clusters(clusterPointProximity, minClusterPoints, points);
 
     // Salida si no se han detectado clústeres de puntos
     if (clusters.size() == 0) {
@@ -90,7 +90,7 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
         opoints.push_back(points[i]);
     }
 
-    clusters = DBScan::normals(proximityThreshold * 2, 4, opoints, normalThreshold);
+    clusters = DBScan::normals(facePointProximity, minFacePoints, opoints, normalVariance);
 
     // Salida si no se han detectado caras del objeto
     if (clusters.size() == 0) {
@@ -133,7 +133,7 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
         double cl_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end_agrupation - start).count()) / 1.e9;
         double fd_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - end_agrupation).count()) / 1.e9;
 
-        CLI_STDOUT("Object characterization lasted " << std::setprecision(6) << (cl_duration + fd_duration) << "s (clustering: " << cl_duration << " s, face detection:  " <<  fd_duration << std::setprecision(2) << " s)");
+        CLI_STDOUT("Object characterization lasted " << std::setprecision(6) << (cl_duration + fd_duration) << "s (clustering: " << cl_duration << "s, face detection:  " <<  fd_duration << std::setprecision(2) << "s)");
     }
 
     DEBUG_CODE({
