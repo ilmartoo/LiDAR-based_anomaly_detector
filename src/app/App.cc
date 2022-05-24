@@ -88,10 +88,10 @@ void printHelp(CLICommandType ct) {
         // SET
         case kSet: {
             CLI_STDOUT(bold("set <...>") "                      Modification of current execution parameters:");
-            CLI_STDOUT("  - backframe <ms>                Miliseconds (integer) to scan for background points");
-            CLI_STDOUT("  - objframe <ms>                 Miliseconds (integer) to scan for object points");
-            CLI_STDOUT("  - backthreshold <m>             Meters (decimal) away an object point must be from the background to not be discarded");
-            CLI_STDOUT("  - reflthreshold <rf>            Minimun reflectivity (decimal) a point must have to not be discarded");
+            CLI_STDOUT("  - backframe <millisecs>         Milliseconds (integer) to scan for background points");
+            CLI_STDOUT("  - objframe <millisecs>          Milliseconds (integer) to scan for object points");
+            CLI_STDOUT("  - backthreshold <meters>        Meters (decimal) away an object point must be from the background to not be discarded");
+            CLI_STDOUT("  - reflthreshold <points>        Minimun reflectivity (decimal) a point must have to not be discarded");
             if (doBreak) {
                 break;
             }
@@ -99,7 +99,19 @@ void printHelp(CLICommandType ct) {
 
         // DISCARD
         case kDiscard: {
-            CLI_STDOUT(bold("discard <ms>") "                   Discards points for the amount of miliseconds specified");
+            CLI_STDOUT(bold("discard <millisecs>") "           Discards points for the amount of miliseconds specified");
+            if (doBreak) {
+                break;
+            }
+        }
+
+        // OBJECT
+        case kObject: {
+            CLI_STDOUT(bold("object <...>") "                    Management of objects:");
+            CLI_STDOUT("  - describe <name>               Describes the object with the given name");
+            CLI_STDOUT("  - load <name> <file>            Loads the contents of a file as a new object with the given name");
+            CLI_STDOUT("  - save <name> <file>            Saves the object with the given name into a file");
+            CLI_STDOUT("  - csv <name> <file>             Saves the object with the given name into a file in csv format");
             if (doBreak) {
                 break;
             }
@@ -108,9 +120,11 @@ void printHelp(CLICommandType ct) {
         // MODEL
         case kModel: {
             CLI_STDOUT(bold("model <...>") "                    Management of models:");
-            CLI_STDOUT("  - save <obj> <new_model>        Saves an object as a new model with the given name");
-            CLI_STDOUT("  - load <new_model> <file>       Loads the contents of a file as a new model with the given name");
-            CLI_STDOUT("  - write <model> <file>          Writes the given model into a file");
+            CLI_STDOUT("  - new <object> <new_model>      Creates a new model from an object with the given name");
+            CLI_STDOUT("  - describe <name>               Describes the model with the given name");
+            CLI_STDOUT("  - load <name> <file>            Loads the contents of a file as a new model with the given name");
+            CLI_STDOUT("  - save <name> <file>            Saves the model with the given name into a file");
+            CLI_STDOUT("  - csv <name> <file>             Saves the model with the given name into a file in csv format");
             if (doBreak) {
                 break;
             }
@@ -276,20 +290,68 @@ void App::cli() {
                 }
             } break;
 
+            // OBJECT
+            case kObject: {
+                if (command.numParams() >= 3) {
+                    if (command[0] == "save") {
+                        if (om->writeObject(command[2], command[1])) {
+                            CLI_STDOUT("Object " << command[1] << " written into file " << command[2]);
+                        } else {
+                            CLI_STDERR("Could not save object " << command[1] << " into file " << command[2]);
+                        }
+                    } else if (command[0] == "load") {
+                        if (om->loadObject(command[2], command[1])) {
+                            CLI_STDOUT("Object " << command[1] << " loaded from file " << command[2]);
+                        } else {
+                            CLI_STDERR("Could not load object " << command[1] << " from file " << command[2]);
+                        }
+
+                    } else if (command[0] == "csv") {
+                        if (om->writeObjectCSV(command[2], command[1])) {
+                            CLI_STDOUT("Object " << command[1] << " written into csv file " << command[2]);
+                        } else {
+                            CLI_STDERR("Could not save object " << command[1] << " into csv file " << command[2]);
+                        }
+                    } else {
+                        unknownCommand("object");
+                    }
+                } else if (command.numParams() == 2 && command[0] == "describe") {
+                    if (om->existsObject(command[1])) {
+                        const CharacterizedObject &co = om->getObjects().at(command[1]);
+
+                        size_t npoints = 0;
+                        for (auto &f : co.getFaces()) {
+                            npoints += f.size();
+                        }
+
+                        CLI_STDOUT("Object " << command[1] << " characteristics:");
+                        CLI_STDOUT("  Total faces:      " << co.getFaces().size());
+                        CLI_STDOUT("  Total points:     " << npoints);
+                        CLI_STDOUT("  Width  / z_delta: " << co.getBBox().getDeltaZ());
+                        CLI_STDOUT("  Height / y_delta: " << co.getBBox().getDeltaY());
+                        CLI_STDOUT("  Depth  / x_delta: " << co.getBBox().getDeltaX());
+                    } else {
+                        CLI_STDERR("Could not locate object " << command[1]);
+                    }
+                } else {
+                    unknownCommand("object");
+                }
+            } break;
+
             // MODEL
             case kModel: {
                 if (command.numParams() == 3) {
-                    if (command[0] == "save") {
+                    if (command[0] == "new") {
                         if (om->newModel(command[1], command[2])) {
                             CLI_STDOUT("Saved " << command[1] << " as model " << command[2]);
                         } else {
                             CLI_STDERR("Could not save " << command[1] << " as model " << command[2]);
                         }
-                    } else if (command[0] == "write") {
+                    } else if (command[0] == "save") {
                         if (om->writeModel(command[2], command[1])) {
                             CLI_STDOUT("Model " << command[1] << " written into file " << command[2]);
                         } else {
-                            CLI_STDERR("Could not write model " << command[1] << " into file " << command[2]);
+                            CLI_STDERR("Could not save model " << command[1] << " into file " << command[2]);
                         }
                     } else if (command[0] == "load") {
                         if (om->loadModel(command[2], command[1])) {
@@ -299,6 +361,24 @@ void App::cli() {
                         }
                     } else {
                         unknownCommand("model");
+                    }
+                } else if (command.numParams() == 2 && command[0] == "describe") {
+                    if (om->existsModel(command[1])) {
+                        const Model &m = om->getModels().at(command[1]);
+
+                        size_t npoints = 0;
+                        for (auto &f : m.getFaces()) {
+                            npoints += f.size();
+                        }
+
+                        CLI_STDOUT("Model " << command[1] << " characteristics:");
+                        CLI_STDOUT("  Total faces:      " << m.getFaces().size());
+                        CLI_STDOUT("  Total points:     " << npoints);
+                        CLI_STDOUT("  Width  / z_delta: " << m.getBBox().getDeltaZ());
+                        CLI_STDOUT("  Height / y_delta: " << m.getBBox().getDeltaY());
+                        CLI_STDOUT("  Depth  / x_delta: " << m.getBBox().getDeltaX());
+                    } else {
+                        CLI_STDERR("Could not locate model " << command[1]);
                     }
                 } else {
                     unknownCommand("model");

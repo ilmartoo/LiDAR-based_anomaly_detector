@@ -30,9 +30,8 @@ class CharacterizedObject {
     static const uint32_t minFacePoints = 10;           ///< Número mínimo de puntos que debe tener una cara inicial para ser considerada
     static constexpr double normalVariance = 0.087266;  ///< Radianes máximos de separación angular entre normales para pertenecer a la misma cara
 
-    BBox bbox;                              ///< Bounding box total
+    BBox bbox;                              ///< Bounding box que mejor se adapta al objeto
     std::vector<std::vector<Point>> faces;  ///< Caras del objeto
-    std::vector<Vector> normals;            ///< Normales de las caras del objeto
 
    public:
     /**
@@ -83,20 +82,15 @@ class CharacterizedObject {
 
     ////// Getters
     /**
-     * Obtiene la bounding box
-     * @return Bounding box del objeto
-     */
-    const BBox& getBBox() const { return bbox; }
-    /**
      * Devuelve los puntos de las caras
      * @return Vector de puntos de las caras
      */
     const std::vector<std::vector<Point>>& getFaces() const { return faces; }
     /**
-     * Devuelve las normales de las caras
-     * @return Vector de normales
+     * Devuelve la bounding box del objeto
+     * @return Bounding box del objeto
      */
-    const std::vector<Vector>& getNormals() const { return normals; }
+    const BBox& getBBox() const { return bbox; }
 
    private:
     /**
@@ -104,11 +98,7 @@ class CharacterizedObject {
      * @param bbox Bounding box
      * @param faces Vector de caras
      */
-    CharacterizedObject(const Box& bbox, const std::vector<std::vector<Point>>& faces) : bbox(bbox), faces(faces) {
-        for (auto& f : faces) {
-            normals.push_back(PlaneUtils::computeNormal(f));
-        }
-    }
+    CharacterizedObject(const BBox& bbox, const std::vector<std::vector<Point>>& faces) : bbox(bbox), faces(faces) {}
 };
 
 typedef CharacterizedObject Model;  ///< Definición de los modelos

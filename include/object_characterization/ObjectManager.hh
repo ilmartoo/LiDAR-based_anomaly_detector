@@ -65,6 +65,51 @@ class ObjectManager {
     }
 
     /**
+     * Carga un objeto de un archivo
+     * @param filename Archivo del objeto
+     * @return true se se ha cargado correctamente el objeto
+     */
+    bool loadObject(const std::string &filename, const std::string &object) {
+        if (objects->find(object) == objects->end()) {
+            auto m = CharacterizedObject::load(filename);
+            if (m.first) {
+                return objects->insert({object, m.second}).second;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Escribe el objeto al archivo especificado
+     * @param filename Nombre del archivo a escribir
+     * @param object Nombre del objeto a guardar
+     * @return true si se ha escrito correctamente
+     */
+    bool writeObject(const std::string &filename, const std::string &object) const {
+        auto itr = objects->find(object);
+        if (itr != objects->end()) {
+            return itr->second.write(filename);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Escribe el objeto al archivo csv especificado
+     * @param filename Nombre del archivo a escribir
+     * @param object Nombre del objeto a guardar
+     * @return true si se ha escrito correctamente
+     */
+    bool writeObjectCSV(const std::string &filename, const std::string &object) const {
+        auto itr = objects->find(object);
+        if (itr != objects->end()) {
+            return itr->second.writeLivoxCSV(filename);
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Crea un nuevo modelo a partir de un objeto base
      * @param objname Nombre del objeto existente
      * @param modelname Nombre del nuevo modelo
@@ -103,6 +148,21 @@ class ObjectManager {
         auto itr = models->find(model);
         if (itr != models->end()) {
             return itr->second.write(filename);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Escribe el modelo al archivo csv especificado
+     * @param filename Nombre del archivo a escribir
+     * @param model Nombre del modelo a guardar
+     * @return true si se ha escrito correctamente
+     */
+    bool writeModelCSV(const std::string &filename, const std::string &model) const {
+        auto itr = models->find(model);
+        if (itr != models->end()) {
+            return itr->second.writeLivoxCSV(filename);
         } else {
             return false;
         }

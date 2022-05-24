@@ -13,6 +13,9 @@
 #include <fstream>
 #include <chrono>
 #include <iomanip>
+#include <omp.h>
+
+#include "armadillo"
 
 #include "object_characterization/CharacterizedObject.hh"
 #include "object_characterization/PlaneUtils.hh"
@@ -26,7 +29,7 @@
 #include "logging/debug.hh"
 
 std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
-    std::chrono::system_clock::time_point start, end_agrupation, end;
+    std::chrono::system_clock::time_point start, end_agrupation, end_face_detection, end;
 
     ///
     DEBUG_CODE({
@@ -80,9 +83,9 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
         end_agrupation = std::chrono::high_resolution_clock::now();
     }
 
-    ///////////////////////////////////////////////
-    // Cálculo de normales y separación de caras //
-    ///////////////////////////////////////////////
+    //////////////////////////
+    // Cálculo de las caras //
+    //////////////////////////
 
     std::vector<Point> opoints;
     for (auto i : clusters[bestGroup]) {
@@ -112,40 +115,79 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
     });
     ///
 
-    /// Bounding box
-    Octree opointsOct(opoints);
-    BBox boundingBox = {opointsOct.getCenter(), opointsOct.getMax(), opointsOct.getMin()};
     /// Caras
+    std::vector<Point *> references;
     std::vector<std::vector<Point>> faces;
     for (size_t i = 0; i < clusters.size(); ++i) {
         faces.push_back({});
         for (auto &j : clusters[i]) {
             faces[i].push_back(opoints[j]);
+            references.push_back(&opoints[i]);
         }
     }
-    /// Objecto
-    CharacterizedObject object(boundingBox, faces);
+
+    if (chrono) {
+        end_face_detection = std::chrono::high_resolution_clock::now();
+    }
+
+    //////////////////////////////////////
+    // Cálculo de la mejor bounding box //
+    //////////////////////////////////////
+
+    // Rotaciones en las tres dimensiones
+    arma::mat rotmin(3, 3, arma::fill::eye);  // Matriz identidad
+    BBox bbmin(references, rotmin);           // Bbox sin rotacion
+    std::vector<arma::mat> rotminPart(NORMAL_CALCULATION_THREADS, rotmin);
+    std::vector<BBox> bbminPart(NORMAL_CALCULATION_THREADS, bbmin);
+#pragma omp parallel for collapse(3) num_threads(NORMAL_CALCULATION_THREADS) schedule(guided)
+    for (int a = 0; a < 360; ++a) {
+        for (int b = 0; b < 360; ++b) {
+            for (int c = 0; c < 360; ++c) {
+                if (a == 0 && b == 0 && c == 0) {
+                    continue;
+                }
+                double rad[3] = {a * M_PI / 180, b * M_PI / 180, c * M_PI / 180};  // Ángulo a radianes
+                arma::mat rot = {{cos(rad[1]) * cos(rad[2]),
+                                  sin(rad[0]) * sin(rad[1]) * cos(rad[2]) - cos(rad[0]) * sin(rad[1]),
+                                  cos(rad[0]) * sin(rad[1]) * cos(rad[2]) + sin(rad[0]) * sin(rad[1])},
+                                 {cos(rad[1]) * sin(rad[2]),
+                                  sin(rad[0]) * sin(rad[1]) * sin(rad[2]) + cos(rad[0]) * cos(rad[1]),
+                                  cos(rad[0]) * sin(rad[1]) * sin(rad[2]) - sin(rad[0]) * cos(rad[1])},
+                                 {-sin(rad[1]),
+                                  sin(rad[0]) * cos(rad[1]),
+                                  cos(rad[0]) * cos(rad[1])}};
+                BBox bb(references, rot);
+                if (bb < bbminPart[omp_get_thread_num()]) {
+                    bbminPart[omp_get_thread_num()] = bb;
+                    rotminPart[omp_get_thread_num()] = rot;
+                }
+            }
+        }
+    }
+    // Comparación de mejores rotaciones por hilo
+    bbmin = bbminPart[0];
+    rotmin = rotminPart[0];
+    for (int i = 1; i < NORMAL_CALCULATION_THREADS; ++i) {
+        if (bbminPart[i] < bbmin) {
+            bbmin = bbminPart[i];
+            rotmin = rotminPart[i];
+        }
+    }
 
     // Cronometro
     if (chrono) {
         end = std::chrono::high_resolution_clock::now();
 
         double cl_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end_agrupation - start).count()) / 1.e9;
-        double fd_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - end_agrupation).count()) / 1.e9;
+        double fd_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end_face_detection - end_agrupation).count()) / 1.e9;
+        double bb_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - end_face_detection).count()) / 1.e9;
 
-        CLI_STDOUT("Object characterization lasted " << std::setprecision(6) << (cl_duration + fd_duration) << "s (clustering: " << cl_duration << "s, face detection:  " <<  fd_duration << std::setprecision(2) << "s)");
+        CLI_STDOUT("Object characterization lasted " << std::setprecision(6) << (cl_duration + fd_duration + bb_duration) << "s (clustering: " << cl_duration << "s, face detection:  " << fd_duration << "s, bounding box selection: " << bb_duration << std::setprecision(2) << "s)");
     }
 
-    DEBUG_CODE({
-        std::stringstream outstr;
-        outstr << "Characterized object with " << faces.size() << " faces:";
-        for (size_t i = 0; i < faces.size(); ++i) {
-            outstr << "\n[" << faces[i].size() << " points, normal vector: (" << object.normals[i].string() << ")]";
-        }
-        DEBUG_STDOUT(outstr.str());
-    })
+    DEBUG_STDOUT("Characterized object with " << faces.size() << " faces");
 
-    return {true, std::move(object)};
+    return {true, {bbmin, faces}};
 }
 
 bool CharacterizedObject::write(const std::string &filename) {
@@ -190,9 +232,10 @@ bool CharacterizedObject::writeLivoxCSV(const std::string &filename) {
 std::pair<bool, CharacterizedObject> CharacterizedObject::load(const std::string &filename) {
     std::ifstream infile(filename);
     if (infile.is_open()) {
-        size_t nfaces, npoints;
         BBox bbox;
-        infile.read((char *)&bbox, sizeof(BBox));      // Bounding box
+        infile.read((char *)&bbox, sizeof(BBox));  // Bounding box
+
+        size_t nfaces, npoints;
         infile.read((char *)&nfaces, sizeof(size_t));  // Numero de caras
 
         std::vector<std::vector<Point>> faces;

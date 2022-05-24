@@ -17,8 +17,8 @@
 
 #include "logging/string_format.h"
 
-#define CLI_STDOUT(msg) do { std::cout << msg << std::endl; } while(0)
-#define CLI_STDERR(msg) do { std::cerr << msg << std::endl; } while(0)
+#define CLI_STDOUT(msg) do { std::cout << skyblue("" << msg << "") << std::endl; } while(0)
+#define CLI_STDERR(msg) do { std::cerr << red("" << msg << "") << std::endl; } while(0)
 
 enum CLICommandType {
     kExit,     ///< Finalización del programa
@@ -27,6 +27,7 @@ enum CLICommandType {
     kDefine,   ///< Caracterización de objetos y fondo
     kSet,      ///< Definición de parametros
     kDiscard,  ///< Descarte de puntos
+    kObject,   ///< Opciones de los objetos
     kModel,    ///< Opciones de los modelos
     kInfo,     ///< Impresión de las opciones actuales
     kList,     ///< Listado de objetos y modelos
@@ -81,6 +82,10 @@ class CLICommand {
             // DISCARD
             else if (params[0] == "discard") {
                 return {kDiscard, params};
+            }
+            // OBJECT
+            else if (params[0] == "object") {
+                return {kObject, params};
             }
             // MODEL
             else if (params[0] == "model") {

@@ -16,6 +16,8 @@
 #include <cmath>
 #include <limits>
 
+#include "armadillo"
+
 /**
  * Enum de tipos de cluster
  */
@@ -67,6 +69,16 @@ class Point {
         double dy = y - p.y;
         double dz = z - p.z;
         return std::sqrt((dx * dx) + (dy * dy) + (dz * dz));
+    }
+    /**
+     * Rota el punto respecto el (0,0,0) segun la matriz de rotacion
+     * @param rot Matriz de rotación
+     * @return Punto resultado de la rotación
+     */
+    Point rotate(arma::mat rot) const {
+        return Point(rot(0, 0) * x + rot(0, 1) * y + rot(0, 2) * z,
+                     rot(1, 0) * x + rot(1, 1) * y + rot(1, 2) * z,
+                     rot(2, 0) * x + rot(2, 1) * y + rot(2, 2) * z);
     }
 
     ////// Operaciones vectoriales
