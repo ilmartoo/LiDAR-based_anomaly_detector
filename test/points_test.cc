@@ -7,7 +7,8 @@
  *
  */
 
-#include "catch_ext.hh"
+#include "catch.hpp"
+#include "catch_utils.hh"
 
 #include "models/Timestamp.hh"
 #include "models/Point.hh"
@@ -24,7 +25,6 @@ class PointFixture {
     LidarPoint lpa;
     LidarPoint lpb;
     LidarPoint lpc;
-    ;
 
    public:
     PointFixture() : ta("100000000100"),
@@ -98,7 +98,7 @@ TEST_CASE_METHOD(PointFixture, "timestamp sum", "[timestamp]") {
     CHECK_MESSAGE(t2 == Timestamp(1, 0), "Sum is not acurate");
 }
 
-TEST_CASE_METHOD(PointFixture, "point constructors", "[point]") {
+TEST_CASE_METHOD(PointFixture, "point constructors", "[point][lidarpoint]") {
     Point p;
     LidarPoint lp(Timestamp(0, 0), -100);
 
