@@ -172,29 +172,41 @@ arma::vec PlaneUtils::computePlane(const std::vector<Point *> &points) {
 }
 
 arma::mat PlaneUtils::rotationMatrix(int xdeg, int ydeg, int zdeg) {
-    double xrad = xdeg * DEG2RAD;
-    double yrad = ydeg * DEG2RAD;
-    double zrad = zdeg * DEG2RAD;
-    return {{cos(yrad) * cos(zrad),
-             sin(xrad) * sin(yrad) * cos(zrad) - cos(xrad) * sin(yrad),
-             cos(xrad) * sin(yrad) * cos(zrad) + sin(xrad) * sin(yrad)},
-            {cos(yrad) * sin(zrad),
-             sin(xrad) * sin(yrad) * sin(zrad) + cos(xrad) * cos(yrad),
-             cos(xrad) * sin(yrad) * sin(zrad) - sin(xrad) * cos(yrad)},
-            {-sin(yrad),
-             sin(xrad) * cos(yrad),
-             cos(xrad) * cos(yrad)}};
+    double gamma = xdeg * DEG2RAD;
+    double beta = ydeg * DEG2RAD;
+    double alpha = zdeg * DEG2RAD;
+    double ca = cos(alpha);
+    double sa = sin(alpha);
+    double cb = cos(beta);
+    double sb = sin(beta);
+    double cg = cos(gamma);
+    double sg = sin(gamma);
+    return {{ca * cb,
+             ca * sb * sg - ca * sg,
+             ca * sb * cg + sa * sg},
+            {sa * cb,
+             sa * sb * sg + ca * cg,
+             sa * sb * cg - ca * sg},
+            {-sb,
+             cb * sg,
+             cb * cg}};
 }
 
 arma::mat PlaneUtils::rotationMatrix(const Vector &deg) {
     Vector rad = deg * DEG2RAD;
-    return {{cos(rad.getY()) * cos(rad.getZ()),
-             sin(rad.getX()) * sin(rad.getY()) * cos(rad.getZ()) - cos(rad.getX()) * sin(rad.getY()),
-             cos(rad.getX()) * sin(rad.getY()) * cos(rad.getZ()) + sin(rad.getX()) * sin(rad.getY())},
-            {cos(rad.getY()) * sin(rad.getZ()),
-             sin(rad.getX()) * sin(rad.getY()) * sin(rad.getZ()) + cos(rad.getX()) * cos(rad.getY()),
-             cos(rad.getX()) * sin(rad.getY()) * sin(rad.getZ()) - sin(rad.getX()) * cos(rad.getY())},
-            {-sin(rad.getY()),
-             sin(rad.getX()) * cos(rad.getY()),
-             cos(rad.getX()) * cos(rad.getY())}};
+    double ca = cos(rad.getZ());
+    double sa = sin(rad.getZ());
+    double cb = cos(rad.getY());
+    double sb = sin(rad.getY());
+    double cg = cos(rad.getX());
+    double sg = sin(rad.getX());
+    return {{ca * cb,
+             ca * sb * sg - ca * sg,
+             ca * sb * cg + sa * sg},
+            {sa * cb,
+             sa * sb * sg + ca * cg,
+             sa * sb * cg - ca * sg},
+            {-sb,
+             cb * sg,
+             cb * cg}};
 }
