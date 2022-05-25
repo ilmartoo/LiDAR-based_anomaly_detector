@@ -62,19 +62,19 @@ class PlaneUtils {
      * @param centroid Centroide sobre el que pasa el plano
      * @return arma::vec
      */
-    static arma::vec computePlane(const Vector &vnormal, const Point &centroid);
+    static arma::vec4 computePlane(const Vector &vnormal, const Point &centroid);
     /**
      * Calcula el plano de un conjunto de puntos
      * @param points Puntos pertenecientes al plano
      * @return Plano
      */
-    static arma::vec computePlane(const std::vector<Point> &points);
+    static arma::vec4 computePlane(const std::vector<Point> &points);
     /**
      * Calcula el plano de un conjunto de puntos
      * @param points Referencias a los puntos pertenecientes al plano
      * @return Plano
      */
-    static arma::vec computePlane(const std::vector<Point *> &points);
+    static arma::vec4 computePlane(const std::vector<Point *> &points);
 
     /**
      * Matriz de rotación según unos ángulos dados en grados
