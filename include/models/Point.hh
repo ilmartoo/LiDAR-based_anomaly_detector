@@ -172,7 +172,7 @@ class Point {
      * @param p Punto a igualar
      * @return true si los puntos tienen las mismas coordenadas
      */
-    bool operator==(const Point &p) const { return ((std::fabs(x - p.x) < std::numeric_limits<double>::epsilon()) && (std::fabs(y - p.y) < std::numeric_limits<double>::epsilon()) && (std::fabs(z - p.z) < std::numeric_limits<double>::epsilon())); }
+    bool operator==(const Point &p) const { return ((std::fabs(x - p.x) <= std::numeric_limits<double>::epsilon()) && (std::fabs(y - p.y) <= std::numeric_limits<double>::epsilon()) && (std::fabs(z - p.z) <= std::numeric_limits<double>::epsilon())); }
     /**
      * Operador de desigualdad
      * @param p Punto a comparar
