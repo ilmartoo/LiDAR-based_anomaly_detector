@@ -71,7 +71,7 @@ class Point {
         return std::sqrt((dx * dx) + (dy * dy) + (dz * dz));
     }
     /**
-     * Rota el punto respecto el (0,0,0) segun la matriz de rotacion
+     * Rota el punto respecto al punto (0,0,0) según la matriz de rotacion
      * @param rot Matriz de rotación
      * @return Punto resultado de la rotación
      */

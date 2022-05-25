@@ -13,8 +13,6 @@
 #include <string>
 #include <functional>
 #include <chrono>
-#include <mutex>
-#include <condition_variable>
 
 #include "livox_sdk.h"
 
@@ -25,10 +23,6 @@
 
 #include "logging/debug.hh"
 
-std::mutex mtx;                          // Mutex de bloqueo
-std::unique_lock<std::mutex> lock(mtx);  // Candado de sincronización
-std::condition_variable cv;              // Gestor de sincronización
-
 // Obtiene los datos del punto enviado por el sensor
 void getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void *client_data) {
     if (ScannerLidar::getInstance()->lidar.device_state == kDeviceStateSampling) {
@@ -38,7 +32,7 @@ void getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void 
 
             DEBUG_POINT_STDOUT("Point packet of type " << std::to_string(data->data_type) << " retrieved");
 
-            for (uint32_t i = 0; !ScannerLidar::getInstance()->scanning && i < data_num; ++i)
+            for (uint32_t i = 0; ScannerLidar::getInstance()->scanning && i < data_num; ++i)
                 if (ScannerLidar::getInstance()->callback) {
                     ScannerLidar::getInstance()->callback({Timestamp(data->timestamp), p_data[i].reflectivity, p_data[i].x, p_data[i].y, p_data[i].z});
                 }
@@ -151,9 +145,6 @@ void onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type) {
 void onSampleCallback(livox_status status, uint8_t handle, uint8_t response, void *data) {
     DEBUG_STDOUT("Point scanning start [status: " << std::to_string(status) << "] [response: " << std::to_string(response) << "]");
 
-    // Bloqueamos el mutex
-    lock.lock();
-
     // Inicio correcto
     if (status == kStatusSuccess) {
         ScannerLidar::getInstance()->lidar.device_state = kDeviceStateSampling;
@@ -164,9 +155,7 @@ void onSampleCallback(livox_status status, uint8_t handle, uint8_t response, voi
         CLI_STDERR("Error while starting point scanning");
         ScannerLidar::getInstance()->lidar.device_state = kDeviceStateDisconnect;
 
-        // Debloqueamos mutex por fallo
-        lock.unlock();
-        cv.notify_all();
+        ScannerLidar::getInstance()->scanning = false;
     }
 }
 
@@ -186,10 +175,6 @@ void onStopSampleCallback(livox_status status, uint8_t handle, uint8_t response,
     }
 
     ScannerLidar::getInstance()->scanning = false;
-
-    // Desbloqueamos el mutex
-    lock.unlock();
-    cv.notify_all();
 }
 
 // Se ejecuta al realizar la peticion de desestimiento de los datos IMU
@@ -262,7 +247,7 @@ ScanCode ScannerLidar::scan() {
 
         /* Comenzamos el muestreo */
         if (kStatusSuccess == LidarStartSampling(ScannerLidar::getInstance()->lidar.handle, onSampleCallback, NULL)) {
-            cv.wait(lock, [this] { return !this->isScanning(); });  // Esperamos a que finalize de escanear
+            while (this->isScanning()) {}  // Esperamos a que finalize de escanear
 
             return ScanCode::kScanOk;
         } else {

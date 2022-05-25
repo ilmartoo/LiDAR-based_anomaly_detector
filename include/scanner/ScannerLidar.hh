@@ -23,6 +23,14 @@
 
 #include "logging/debug.hh"
 
+/* Undefine Livox-SDK loggers*/
+#define LOG_TRACE(msg, ...)
+#define LOG_DEBUG(msg, ...)
+#define LOG_INFO(msg, ...)
+#define LOG_WARN(msg, ...)
+#define LOG_ERROR(msg, ...)
+#define LOG_FATAL(msg, ...)
+
 /**
  * Estados en los que puede estar el escaner LiDAR
  */

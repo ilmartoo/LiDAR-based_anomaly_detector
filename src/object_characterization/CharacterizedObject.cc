@@ -28,10 +28,11 @@
 
 #include "logging/debug.hh"
 
-std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
+std::pair<bool, CharacterizedObject>
+CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
     std::chrono::system_clock::time_point start, end_agrupation, end_face_detection, end;
 
-    ///
+    /// DEBUG PRINT
     DEBUG_CODE({
         std::ofstream of("tmp/raw_object.csv");
         of << LidarPoint::LivoxCSVHeader() << "\n";
@@ -56,7 +57,7 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
         return {false, {}};
     }
 
-    ///
+    /// DEBUG PRINT
     DEBUG_CODE({
         std::ofstream of("tmp/clusters_object.csv");
         of << LidarPoint::LivoxCSVHeader() << "\n";
@@ -100,7 +101,7 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
         return {false, {}};
     }
 
-    ///
+    /// DEBUG PRINT
     DEBUG_CODE({
         std::ofstream of("tmp/caras_object.csv");
         of << LidarPoint::LivoxCSVHeader() << "\n";
@@ -119,10 +120,10 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
     std::vector<Point *> references;
     std::vector<std::vector<Point>> faces;
     for (size_t i = 0; i < clusters.size(); ++i) {
-        faces.push_back({});
-        for (auto &j : clusters[i]) {
-            faces[i].push_back(opoints[j]);
-            references.push_back(&opoints[i]);
+        faces.push_back({clusters[i].size(), Point()});
+        for (size_t j = 0; j < clusters[i].size(); ++j) {
+            faces[i][j] = opoints[clusters[i][j]];
+            references.push_back(&faces[i][j]);
         }
     }
 
@@ -134,36 +135,28 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
     // Cálculo de la mejor bounding box //
     //////////////////////////////////////
 
-    // Rotaciones en las tres dimensiones
-    arma::mat rotmin(3, 3, arma::fill::eye);  // Matriz identidad
-    BBox bbmin(references, rotmin);           // Bbox sin rotacion
-    std::vector<arma::mat> rotminPart(NORMAL_CALCULATION_THREADS, rotmin);
+    // Rotaciones amplias en las tres dimensiones
+    Vector rotmin(0, 0, 0);                                      // Ángulos de rotación iniciales
+    BBox bbmin(references, PlaneUtils::rotationMatrix(rotmin));  // Bbox sin rotacion
+    std::vector<Vector> rotminPart(NORMAL_CALCULATION_THREADS, Point(0, 0, 0));
     std::vector<BBox> bbminPart(NORMAL_CALCULATION_THREADS, bbmin);
 #pragma omp parallel for collapse(3) num_threads(NORMAL_CALCULATION_THREADS) schedule(guided)
-    for (int a = 0; a < 360; ++a) {
-        for (int b = 0; b < 360; ++b) {
-            for (int c = 0; c < 360; ++c) {
-                if (a == 0 && b == 0 && c == 0) {
+    for (int i = 0; i < 90; i += 10) {
+        for (int j = 0; j < 90; j += 10) {
+            for (int k = 0; k < 90; k += 10) {
+                if (i == 0 && j == 0 && k == 0) {
                     continue;
-                }
-                double rad[3] = {a * M_PI / 180, b * M_PI / 180, c * M_PI / 180};  // Ángulo a radianes
-                arma::mat rot = {{cos(rad[1]) * cos(rad[2]),
-                                  sin(rad[0]) * sin(rad[1]) * cos(rad[2]) - cos(rad[0]) * sin(rad[1]),
-                                  cos(rad[0]) * sin(rad[1]) * cos(rad[2]) + sin(rad[0]) * sin(rad[1])},
-                                 {cos(rad[1]) * sin(rad[2]),
-                                  sin(rad[0]) * sin(rad[1]) * sin(rad[2]) + cos(rad[0]) * cos(rad[1]),
-                                  cos(rad[0]) * sin(rad[1]) * sin(rad[2]) - sin(rad[0]) * cos(rad[1])},
-                                 {-sin(rad[1]),
-                                  sin(rad[0]) * cos(rad[1]),
-                                  cos(rad[0]) * cos(rad[1])}};
-                BBox bb(references, rot);
-                if (bb < bbminPart[omp_get_thread_num()]) {
-                    bbminPart[omp_get_thread_num()] = bb;
-                    rotminPart[omp_get_thread_num()] = rot;
+                } else {
+                    BBox bb(references, PlaneUtils::rotationMatrix(i, j, k));
+                    if (bb < bbminPart[omp_get_thread_num()]) {
+                        bbminPart[omp_get_thread_num()] = bb;
+                        rotminPart[omp_get_thread_num()] = Vector(i, j, k);
+                    }
                 }
             }
         }
     }
+
     // Comparación de mejores rotaciones por hilo
     bbmin = bbminPart[0];
     rotmin = rotminPart[0];
@@ -172,6 +165,33 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
             bbmin = bbminPart[i];
             rotmin = rotminPart[i];
         }
+    }
+
+    DEBUG_STDOUT("Best large rotation bounding box rotation angles: " << rotmin);
+
+    // Rotaciones pequeñas dentro del radio de la mejor rotación grande
+    for (int i = (int)rotmin.getX() - 10; i < (int)rotmin.getX() + 10; ++i) {
+        for (int j = (int)rotmin.getY(); j < (int)rotmin.getY() + 10; ++j) {
+            for (int k = (int)rotmin.getZ(); k < (int)rotmin.getZ() + 10; ++k) {
+                if (i == (int)rotmin.getX() && j == (int)rotmin.getY() && k == (int)rotmin.getZ()) {
+                    continue;
+                } else {
+                    BBox bb(references, PlaneUtils::rotationMatrix(i, j, k));
+                    if (bb < bbmin) {
+                        bbmin = bb;
+                        rotmin = Vector(i, j, k);
+                    }
+                }
+            }
+        }
+    }
+
+    DEBUG_STDOUT("Best bounding box rotation angles: " << rotmin);
+    
+    // Rotamos puntos originales hacia la posición de menor volumen
+    arma::mat mrot = PlaneUtils::rotationMatrix(rotmin);
+    for (auto &p : references) {
+        *p = p->rotate(mrot);
     }
 
     // Cronometro

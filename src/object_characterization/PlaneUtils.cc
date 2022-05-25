@@ -170,3 +170,31 @@ arma::vec PlaneUtils::computePlane(const std::vector<Point *> &points) {
 
     return plane;
 }
+
+arma::mat PlaneUtils::rotationMatrix(int xdeg, int ydeg, int zdeg) {
+    double xrad = xdeg * DEG2RAD;
+    double yrad = ydeg * DEG2RAD;
+    double zrad = zdeg * DEG2RAD;
+    return {{cos(yrad) * cos(zrad),
+             sin(xrad) * sin(yrad) * cos(zrad) - cos(xrad) * sin(yrad),
+             cos(xrad) * sin(yrad) * cos(zrad) + sin(xrad) * sin(yrad)},
+            {cos(yrad) * sin(zrad),
+             sin(xrad) * sin(yrad) * sin(zrad) + cos(xrad) * cos(yrad),
+             cos(xrad) * sin(yrad) * sin(zrad) - sin(xrad) * cos(yrad)},
+            {-sin(yrad),
+             sin(xrad) * cos(yrad),
+             cos(xrad) * cos(yrad)}};
+}
+
+arma::mat PlaneUtils::rotationMatrix(const Vector &deg) {
+    Vector rad = deg * DEG2RAD;
+    return {{cos(rad.getY()) * cos(rad.getZ()),
+             sin(rad.getX()) * sin(rad.getY()) * cos(rad.getZ()) - cos(rad.getX()) * sin(rad.getY()),
+             cos(rad.getX()) * sin(rad.getY()) * cos(rad.getZ()) + sin(rad.getX()) * sin(rad.getY())},
+            {cos(rad.getY()) * sin(rad.getZ()),
+             sin(rad.getX()) * sin(rad.getY()) * sin(rad.getZ()) + cos(rad.getX()) * cos(rad.getY()),
+             cos(rad.getX()) * sin(rad.getY()) * sin(rad.getZ()) - sin(rad.getX()) * cos(rad.getY())},
+            {-sin(rad.getY()),
+             sin(rad.getX()) * cos(rad.getY()),
+             cos(rad.getX()) * cos(rad.getY())}};
+}
