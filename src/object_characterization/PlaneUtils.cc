@@ -148,7 +148,7 @@ arma::vec4 PlaneUtils::computePlane(const Vector &vnormal, const Point &centroid
 arma::vec4 PlaneUtils::computePlane(const std::vector<Point> &points) {
     arma::vec4 plane;
     Vector vnormal = computeNormal(points);
-    Point centroid = computeNormal(points);
+    Point centroid = computeCentroid(points);
 
     plane[0] = vnormal.getX();
     plane[1] = vnormal.getY();
@@ -161,12 +161,12 @@ arma::vec4 PlaneUtils::computePlane(const std::vector<Point> &points) {
 arma::vec4 PlaneUtils::computePlane(const std::vector<Point *> &points) {
     arma::vec4 plane;
     Vector vnormal = computeNormal(points);
-    Point centroid = computeNormal(points);
+    Point centroid = computeCentroid(points);
 
     plane[0] = vnormal.getX();
     plane[1] = vnormal.getY();
     plane[2] = vnormal.getZ();
-    plane[3] = (-plane[0] * centroid.getX() + plane[1] * centroid.getY() + plane[2] * centroid.getZ());
+    plane[3] = -(plane[0] * centroid.getX() + plane[1] * centroid.getY() + plane[2] * centroid.getZ());
 
     return plane;
 }
