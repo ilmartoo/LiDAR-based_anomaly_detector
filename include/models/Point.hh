@@ -75,7 +75,7 @@ class Point {
      * @param rot Matriz de rotación
      * @return Punto resultado de la rotación
      */
-    Point rotate(arma::mat rot) const {
+    Point rotate(const arma::mat33 &rot) const {
         return Point(rot(0, 0) * x + rot(0, 1) * y + rot(0, 2) * z,
                      rot(1, 0) * x + rot(1, 1) * y + rot(1, 2) * z,
                      rot(2, 0) * x + rot(2, 1) * y + rot(2, 2) * z);

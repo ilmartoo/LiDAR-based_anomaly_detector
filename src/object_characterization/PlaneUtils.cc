@@ -171,7 +171,7 @@ arma::vec4 PlaneUtils::computePlane(const std::vector<Point *> &points) {
     return plane;
 }
 
-arma::mat PlaneUtils::rotationMatrix(int xdeg, int ydeg, int zdeg) {
+arma::mat33 PlaneUtils::rotationMatrix(int xdeg, int ydeg, int zdeg) {
     double gamma = xdeg * DEG2RAD;
     double beta = ydeg * DEG2RAD;
     double alpha = zdeg * DEG2RAD;
@@ -192,7 +192,7 @@ arma::mat PlaneUtils::rotationMatrix(int xdeg, int ydeg, int zdeg) {
              cb * cg}};
 }
 
-arma::mat PlaneUtils::rotationMatrix(const Vector &deg) {
+arma::mat33 PlaneUtils::rotationMatrix(const Vector &deg) {
     Vector rad = deg * DEG2RAD;
     double ca = cos(rad.getZ());
     double sa = sin(rad.getZ());

@@ -83,13 +83,13 @@ class PlaneUtils {
      * @param zdeg Rotación en Z en grados
      * @return Matriz de rotación
      */
-    static arma::mat rotationMatrix(int xdeg, int ydeg, int zdeg);
+    static arma::mat33 rotationMatrix(int xdeg, int ydeg, int zdeg);
     /**
      * Matriz de rotación según unos ángulos dados
      * @param deg Vector con los angulos de rotación en grados en cada coordenada
      * @return Matriz de rotación
      */
-    static arma::mat rotationMatrix(const Vector &deg);
+    static arma::mat33 rotationMatrix(const Vector &deg);
 
    private:
     static void computeSVD(const std::vector<Point> &points, arma::mat &U, arma::vec &s, arma::mat &V);
