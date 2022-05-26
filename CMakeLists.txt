@@ -140,7 +140,7 @@ add_executable(${ANOMALY_PROJECT_NAME}
 #
 # Enables testing
 #
-if(BUILD_TESTS AND build_type STREQUAL "release")
+if(BUILD_TESTS)
 	include(CTest)
 	enable_testing()
 	#
@@ -157,6 +157,7 @@ if(BUILD_TESTS AND build_type STREQUAL "release")
 	#
 	file(GLOB_RECURSE unit_test_sources CONFIGURE_DEPENDS
 		test/*.cc
+		src/*/*.cc
 	)
 	#
 	# Unit tests executable
@@ -168,6 +169,7 @@ if(BUILD_TESTS AND build_type STREQUAL "release")
 	target_include_directories(${UNIT_TESTS_NAME}
 		PUBLIC
 			test/
+			include/
 	)
 	target_link_libraries(${UNIT_TESTS_NAME}
 		${CATCH2_LIB}
