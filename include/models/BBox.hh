@@ -30,7 +30,7 @@ class BBox {
      * @param points Vector de puntos sobre los que construir la bounding box
      * @param rot Matriz de rotación a aplicar a los puntos
      */
-    BBox(const std::vector<Point> &points, const arma::mat &rot) {
+    BBox(const std::vector<Point> &points, const arma::mat33 &rot) {
         if (points.size() > 0) {
             Point min = points[0].rotate(rot);
             Point max = min;
@@ -60,7 +60,7 @@ class BBox {
      * @param points Vector de referencias a los puntos sobre los que construirá la bounding box
      * @param rot Matriz de rotación a aplicar a los puntos
      */
-    BBox(const std::vector<Point *> &points, const arma::mat &rot) {
+    BBox(const std::vector<Point *> &points, const arma::mat33 &rot) {
         if (points.size() > 0) {
             Point min = points[0]->rotate(rot);
             Point max = min;
