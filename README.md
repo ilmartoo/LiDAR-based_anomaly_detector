@@ -2,15 +2,13 @@
 
 Using LiDAR data to detect any anomalies an object of a kind may have in comparison to a predefined model.
 
-*...in-depth explanation to come...*
-
 ---
 
 ## Prerequisites
 
 To compile the project you will need:
 
-- `g++` version `9.4.0` or higher
+- `gcc` version `9.4.0` or higher
 - `cmake` version `14.0` or higher
 
 We also need the following libraries for the project to work:
@@ -137,4 +135,4 @@ Further documentation can be found inside `documentation.zip`. Decompress it to 
 unzip documentation.zip
 ```
 
-Nos, open the `index.html` file located in the `doxygen/` folder with your preferred browser to access the docs.
+Now, open the `index.html` file located in the `doxygen/` folder with your preferred browser to access the docs.
