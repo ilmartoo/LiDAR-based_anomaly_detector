@@ -39,14 +39,14 @@ class DBScan {
 
    private:
 	// Expande un cluster a partir de un centroide y el ID especificado junto con las variables limitantes especificadas
-    static std::pair<bool, std::vector<size_t>> expandCluster(Point &centroid, int clusterID, double maxDistance, unsigned int minPoints, std::vector<Point> &points);
+    static std::pair<bool, std::vector<size_t>> expandCluster(Point &centroid, int clusterID, double maxDistance, unsigned int minPoints, std::vector<Point> &points, const Octree &map);
     // Calcula el indice de los puntos pertenecientes al cluster según un centroide dado
-    static std::vector<size_t> calculateCluster(const Point &centroid, double maxDistance, const std::vector<Point> &points);
-	
+    static std::pair<size_t, std::vector<size_t>> centroidNeighbours(const Point &centroid, double maxDistance, const std::vector<Point> &points, const Octree &map);
+
     // Expande una cara a partir de un centroide y el ID especificado junto con las variables limitantes especificadas
-    static std::pair<bool, std::vector<size_t>> expandNormal(size_t centroid, int clusterID, double maxDistance, unsigned int minPoints, std::vector<Point> &points, const std::vector<Vector> &normals, double normalDispersion);
+    static std::pair<bool, std::vector<size_t>> expandNormalCluster(size_t centroid, int clusterID, double maxDistance, unsigned int minPoints, std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion);
     // Calcula el indice de los puntos pertenecientes a la cara según una normal dada
-    static std::vector<size_t> calculateNormal(size_t centroid, double maxDistance, const std::vector<Point> &points, const std::vector<Vector> &normals, double normalDispersion);
+    static std::pair<size_t, std::vector<size_t>> centroidNormalNeighbours(size_t centroid, double maxDistance, const std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion);
 };
 
 #endif  // DBSCAN_CLASS_H

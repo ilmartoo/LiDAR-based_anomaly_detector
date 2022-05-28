@@ -18,7 +18,7 @@
 
 class BBox {
    private:
-    Vector diags;  ///< Diagonales de la bounding box
+    Vector delta;  ///< Delta de las dimensiones de la bounding box
 
    public:
     /**
@@ -52,7 +52,7 @@ class BBox {
                     max.setZ(p.getZ());
                 }
             }
-            diags = max - min;
+            delta = max - min;
         }
     }
     /**
@@ -82,61 +82,57 @@ class BBox {
                     max.setZ(p.getZ());
                 }
             }
-            diags = max - min;
+            delta = max - min;
         }
     }
     /**
      * Constructor
-     * @param center Centro de la bounding box
-     * @param radii Radio de las dimensiones
+     * @param delta Deltas de las dimensiones
      */
-    BBox(const Vector &diags) : diags(diags) {}
+    BBox(const Vector &delta) : delta(delta) {}
     /**
      * Constructor
-     * @param center Centro de la bounding box
      * @param max Punto con las coordenadas máximas
      * @param min Punto con las coordenadas minimas
      */
-    BBox(const Point &max, const Point &min) : diags(max - min) {}
+    BBox(const Point &max, const Point &min) : delta(max - min) {}
     /**
      * Constructor
-     * @param center Centro de la bounding box
      * @param xradius Radio en x
      * @param yradius Radio en y
      * @param zradius Radio en z
      */
-    BBox(double xradius, double yradius, double zradius) : diags(Vector(xradius, yradius, zradius)) {}
+    BBox(double xradius, double yradius, double zradius) : delta(Vector(xradius, yradius, zradius)) {}
 
     ////// Getters
     /**
-     * Obtiene las diagonales de la bounding box
-     * @return Diagonales de la bounding box
+     * Obtiene los deltas de la bounding box
+     * @return Deltas de la bounding box
      */
-    const Vector &getDiags() const { return diags; }
+    const Vector &getDelta() const { return delta; }
     /**
      * Obtiene el delta en X
      * @return Delta en X
      */
-    double getDeltaX() const { return diags.getX(); }
+    double getDeltaX() const { return delta.getX(); }
     /**
      * Obtiene el delta en Y
      * @return Delta en Y
      */
-    double getDeltaY() const { return diags.getY(); }
+    double getDeltaY() const { return delta.getY(); }
     /**
      * Obtiene el delta en Z
      * @return Delta en Z
      */
-    double getDeltaZ() const { return diags.getZ(); }
+    double getDeltaZ() const { return delta.getZ(); }
 
     ////// Operators
-    
     /**
      * Comprueba si se es menor que una bounding box
      * @param bb Bounding box a comparar
-     * @return true si el volumen del cuadrado es menor
+     * @return true si el volumen de la bounding box es menor
      */
-    bool operator<(const BBox &bb) const { return (diags.getX() * diags.getY() * diags.getZ()) < (bb.diags.getX() * bb.diags.getY() * bb.diags.getZ()); }
+    bool operator<(const BBox &bb) const { return (delta.getX() * delta.getY() * delta.getZ()) < (bb.delta.getX() * bb.delta.getY() * bb.delta.getZ()); }
 };
 
 #endif  // BBOX_CLASS_H

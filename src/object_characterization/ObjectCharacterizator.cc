@@ -200,18 +200,13 @@ std::pair<bool, CharacterizedObject> ObjectCharacterizator::defineObject() {
 
     // Object points filtering
     std::vector<Point> filtered;
-    std::vector<bool> valid(object.getPoints().size(), false);
-
 #pragma omp parallel for num_threads(NORMAL_CALCULATION_THREADS) schedule(guided)
     for (size_t i = 0; i < object.getPoints().size(); ++i) {
         if (!isBackground(object.getPoints()[i])) {
-            valid[i] = true;
-        }
-    }
-
-    for (size_t i = 0; i < valid.size(); ++i) {
-        if (valid[i]) {
-            filtered.push_back(object.getPoints()[i]);
+#pragma omp critical
+            {
+                filtered.push_back(object.getPoints()[i]);
+            }
         }
     }
 
@@ -225,11 +220,7 @@ std::pair<bool, CharacterizedObject> ObjectCharacterizator::defineObject() {
 
     CLI_STDOUT("Scanned object contains " << filtered.size() << " unique points (a total of " << object.getPoints().size() << " points were scanned)");
 
-    if (filtered.size() == 0) {
-        return {false, {}};
-    } else {
-        return CharacterizedObject::parse(filtered, chrono);
-    }
+    return CharacterizedObject::parse(filtered, chrono);
 }
 
 void ObjectCharacterizator::wait(uint32_t miliseconds) {

@@ -11,14 +11,15 @@
 #define PLANEUTILS_CLASS_H
 
 #include <vector>
+#include <cmath>
 
 #include "armadillo"
 
 #include "models/Point.hh"
 #include "models/Octree.hh"
 
-#define NORMAL_CALCULATION_THREADS 4
-#define DEG2RAD                    0.0174532925199
+#define NORMAL_CALCULATION_THREADS 6
+#define RAD_PER_DEG                (M_PI / 180.)
 
 class PlaneUtils {
    public:
@@ -51,10 +52,11 @@ class PlaneUtils {
     /**
      * Calculo de normales de un grupo de puntos
      * @param points Puntos de los que se calcularán las normales
+     * @param map Octree con los puntos del vector de puntos
      * @param distance Máxima distancia a la que pueden estar los puntos para considerarse vecinos
      * @return vector de normales, siendo 0 aquellas de los puntos que no se les pudo calcular la normal
      */
-    static std::vector<Vector> computeNormals(std::vector<Point> &points, double distance);
+    static std::vector<Vector> computeNormals(std::vector<Point> &points, const Octree &map, double distance);
 
     /**
      * Obtiene el plano con el vector normal especificado y que pasa sobre el centroide

@@ -24,13 +24,11 @@
  */
 class CharacterizedObject {
    private:
-    static const uint32_t clusterPointProximity = 20;       ///< Proximidad máxima (mm) de un punto hacia uno origen para pertenecer al mismo cluster
-    static const uint32_t minClusterPoints = 15;            ///< Número mínimo de puntos que debe tener un cluster inicial para ser considerado
-    static const uint32_t facePointProximity = 30;          ///< Proximidad máxima (mm) de un punto hacia uno origen para pertenecer a la misma cara
-    static const uint32_t minFacePoints = 10;               ///< Número mínimo de puntos que debe tener una cara inicial para ser considerada
-    static constexpr double normalVariance = 0.0872664626;  ///< Radianes máximos de separación angular entre normales para pertenecer a la misma cara
-    // 0.0872664626 <- 5º en radianes
-    // 0.12217304764 <- 7º en radianes
+    static const uint32_t clusterPointProximity = 20;          ///< Proximidad máxima (mm) de un punto hacia uno origen para pertenecer al mismo cluster
+    static const uint32_t minClusterPoints = 20;               ///< Número mínimo de puntos que debe tener un cluster inicial para ser considerado
+    static const uint32_t facePointProximity = 30;             ///< Proximidad máxima (mm) de un punto hacia uno origen para pertenecer a la misma cara
+    static const uint32_t minFacePoints = 15;                  ///< Número mínimo de puntos que debe tener una cara inicial para ser considerada
+    static constexpr double normalVariance = 3 * RAD_PER_DEG;  ///< Radianes máximos de separación angular entre normales para pertenecer a la misma cara
 
     BBox bbox;                              ///< Bounding box que mejor se adapta al objeto
     std::vector<std::vector<Point>> faces;  ///< Caras del objeto

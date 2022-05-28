@@ -113,9 +113,8 @@ Vector PlaneUtils::computeNormal(const std::vector<Point *> &points) {
     return Vector(vnormal[0], vnormal[1], vnormal[2]);
 }
 
-std::vector<Vector> PlaneUtils::computeNormals(std::vector<Point> &points, double distance) {
+std::vector<Vector> PlaneUtils::computeNormals(std::vector<Point> &points, const Octree &map, double distance) {
     std::vector<Vector> normals(points.size(), Vector(0, 0, 0));
-    Octree map(points);
 
 #pragma omp parallel for num_threads(NORMAL_CALCULATION_THREADS) schedule(guided)
     for (size_t i = 0; i < points.size(); ++i) {
@@ -172,9 +171,9 @@ arma::vec4 PlaneUtils::computePlane(const std::vector<Point *> &points) {
 }
 
 arma::mat33 PlaneUtils::rotationMatrix(int xdeg, int ydeg, int zdeg) {
-    double gamma = xdeg * DEG2RAD;
-    double beta = ydeg * DEG2RAD;
-    double alpha = zdeg * DEG2RAD;
+    double gamma = xdeg * RAD_PER_DEG;
+    double beta = ydeg * RAD_PER_DEG;
+    double alpha = zdeg * RAD_PER_DEG;
     double ca = cos(alpha);
     double sa = sin(alpha);
     double cb = cos(beta);
@@ -182,7 +181,7 @@ arma::mat33 PlaneUtils::rotationMatrix(int xdeg, int ydeg, int zdeg) {
     double cg = cos(gamma);
     double sg = sin(gamma);
     return {{ca * cb,
-             ca * sb * sg - ca * sg,
+             ca * sb * sg - sa * cg,
              ca * sb * cg + sa * sg},
             {sa * cb,
              sa * sb * sg + ca * cg,
@@ -193,7 +192,7 @@ arma::mat33 PlaneUtils::rotationMatrix(int xdeg, int ydeg, int zdeg) {
 }
 
 arma::mat33 PlaneUtils::rotationMatrix(const Vector &deg) {
-    Vector rad = deg * DEG2RAD;
+    Vector rad = deg * RAD_PER_DEG;
     double ca = cos(rad.getZ());
     double sa = sin(rad.getZ());
     double cb = cos(rad.getY());
@@ -201,7 +200,7 @@ arma::mat33 PlaneUtils::rotationMatrix(const Vector &deg) {
     double cg = cos(rad.getX());
     double sg = sin(rad.getX());
     return {{ca * cb,
-             ca * sb * sg - ca * sg,
+             ca * sb * sg - sa * cg,
              ca * sb * cg + sa * sg},
             {sa * cb,
              sa * sb * sg + ca * cg,

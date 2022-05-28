@@ -30,9 +30,14 @@
 
 std::pair<bool, CharacterizedObject>
 CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
+    // Salida si no existen puntos en el objeto
+    if (points.size() == 0) {
+        return {false, {}};
+    }
+
     std::chrono::system_clock::time_point start, end_agrupation, end_face_detection, end;
 
-    /// DEBUG PRINT
+    /// DEBUG PRINT OBJECT
     DEBUG_CODE({
         std::ofstream of("tmp/raw_object.csv");
         of << LidarPoint::LivoxCSVHeader() << "\n";
@@ -57,7 +62,7 @@ CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
         return {false, {}};
     }
 
-    /// DEBUG PRINT
+    /// DEBUG PRINT CLUSTERS
     DEBUG_CODE({
         std::ofstream of("tmp/clusters_object.csv");
         of << LidarPoint::LivoxCSVHeader() << "\n";
@@ -88,10 +93,10 @@ CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
     // Cálculo de las caras //
     //////////////////////////
 
-    std::vector<Point> opoints;
-    for (auto i : clusters[bestGroup]) {
-        points[i].setClusterID(cUnclassified);
-        opoints.push_back(points[i]);
+    std::vector<Point> opoints = {clusters[bestGroup].size(), Point()};
+    for (size_t i = 0; i < clusters[bestGroup].size(); ++i) {
+        opoints[i] = points[clusters[bestGroup][i]];
+        opoints[i].setClusterID(cUnclassified);
     }
 
     clusters = DBScan::normals(facePointProximity, minFacePoints, opoints, normalVariance);
@@ -101,7 +106,7 @@ CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
         return {false, {}};
     }
 
-    /// DEBUG PRINT
+    /// DEBUG PRINT CARAS
     DEBUG_CODE({
         std::ofstream of("tmp/caras_object.csv");
         of << LidarPoint::LivoxCSVHeader() << "\n";
@@ -119,11 +124,12 @@ CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
     /// Caras
     std::vector<Point *> references;
     std::vector<std::vector<Point>> faces;
-    for (size_t i = 0; i < clusters.size(); ++i) {
-        faces.push_back({clusters[i].size(), Point()});
-        for (size_t j = 0; j < clusters[i].size(); ++j) {
+    for (size_t i = 0, t = 0; i < clusters.size(); ++i) {
+        faces.push_back({clusters[i].size(), Point()});             // Añadimos nuevo array de los puntos de una cara
+        references.resize(references.size() + clusters[i].size());  // Ampliamos tamaño para añadir el nuevo array
+        for (size_t j = 0; j < clusters[i].size(); ++j, ++t) {
             faces[i][j] = opoints[clusters[i][j]];
-            references.push_back(&faces[i][j]);
+            references[t] = &faces[i][j];
         }
     }
 
@@ -138,61 +144,63 @@ CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
     // Rotaciones amplias en las tres dimensiones
     Vector rotmin(0, 0, 0);                                      // Ángulos de rotación iniciales
     BBox bbmin(references, PlaneUtils::rotationMatrix(rotmin));  // Bbox sin rotacion
-    std::vector<Vector> rotminPart(NORMAL_CALCULATION_THREADS, Point(0, 0, 0));
-    std::vector<BBox> bbminPart(NORMAL_CALCULATION_THREADS, bbmin);
-#pragma omp parallel for collapse(3) num_threads(NORMAL_CALCULATION_THREADS) schedule(guided)
-    for (int i = 0; i < 90; i += 10) {
-        for (int j = 0; j < 90; j += 10) {
-            for (int k = 0; k < 90; k += 10) {
-                if (i == 0 && j == 0 && k == 0) {
-                    continue;
-                } else {
-                    BBox bb(references, PlaneUtils::rotationMatrix(i, j, k));
-                    if (bb < bbminPart[omp_get_thread_num()]) {
-                        bbminPart[omp_get_thread_num()] = bb;
-                        rotminPart[omp_get_thread_num()] = Vector(i, j, k);
+    arma::mat33 rotmatrix;
+#pragma omp parallel num_threads(NORMAL_CALCULATION_THREADS)
+    {
+#pragma omp for collapse(3) schedule(guided)
+        for (int i = 0; i < 90; i += 10) {
+            for (int j = 0; j < 90; j += 10) {
+                for (int k = 0; k < 90; k += 10) {
+                    if (i == 0 && j == 0 && k == 0) {
+                        continue;
+                    } else {
+                        BBox bb(references, PlaneUtils::rotationMatrix(i, j, k));
+#pragma omp critical
+                        {
+                            if (bb < bbmin) {
+                                bbmin = bb;
+                                rotmin = Vector(i, j, k);
+                            }
+                        }
                     }
                 }
             }
         }
-    }
 
-    // Comparación de mejores rotaciones por hilo
-    bbmin = bbminPart[0];
-    rotmin = rotminPart[0];
-    for (int i = 1; i < NORMAL_CALCULATION_THREADS; ++i) {
-        if (bbminPart[i] < bbmin) {
-            bbmin = bbminPart[i];
-            rotmin = rotminPart[i];
-        }
-    }
-
-    DEBUG_STDOUT("Best large rotation bounding box rotation angles: " << rotmin);
-
-    // Rotaciones pequeñas dentro del radio de la mejor rotación grande
-    for (int i = (int)rotmin.getX() - 10; i < (int)rotmin.getX() + 10; ++i) {
-        for (int j = (int)rotmin.getY(); j < (int)rotmin.getY() + 10; ++j) {
-            for (int k = (int)rotmin.getZ(); k < (int)rotmin.getZ() + 10; ++k) {
-                if (i == (int)rotmin.getX() && j == (int)rotmin.getY() && k == (int)rotmin.getZ()) {
-                    continue;
-                } else {
-                    BBox bb(references, PlaneUtils::rotationMatrix(i, j, k));
-                    if (bb < bbmin) {
-                        bbmin = bb;
-                        rotmin = Vector(i, j, k);
+        // Rotaciones pequeñas dentro del radio de la mejor rotación grande
+#pragma omp for collapse(3) schedule(guided)
+        for (int i = (int)rotmin.getX() - 10; i < (int)rotmin.getX() + 10; ++i) {
+            for (int j = (int)rotmin.getY(); j < (int)rotmin.getY() + 10; ++j) {
+                for (int k = (int)rotmin.getZ(); k < (int)rotmin.getZ() + 10; ++k) {
+                    if (i == (int)rotmin.getX() && j == (int)rotmin.getY() && k == (int)rotmin.getZ()) {
+                        continue;
+                    } else {
+                        BBox bb(references, PlaneUtils::rotationMatrix(i, j, k));
+#pragma omp critical
+                        {
+                            if (bb < bbmin) {
+                                bbmin = bb;
+                                rotmin = Vector(i, j, k);
+                            }
+                        }
                     }
                 }
             }
+        }
+
+        // Rotamos puntos originales hacia la posición de menor volumen
+#pragma omp single
+        {
+            rotmatrix = PlaneUtils::rotationMatrix(rotmin);
+        }
+        // Implicit barrier
+#pragma omp for schedule(guided)
+        for (size_t i = 0; i < references.size(); ++i) {
+            *references[i] = references[i]->rotate(rotmatrix);
         }
     }
 
     DEBUG_STDOUT("Best bounding box rotation angles: " << rotmin);
-    
-    // Rotamos puntos originales hacia la posición de menor volumen
-    arma::mat mrot = PlaneUtils::rotationMatrix(rotmin);
-    for (auto &p : references) {
-        *p = p->rotate(mrot);
-    }
 
     // Cronometro
     if (chrono) {
