@@ -28,6 +28,64 @@ class BBox {
     /**
      * Constructor
      * @param points Vector de puntos sobre los que construir la bounding box
+     */
+    BBox(const std::vector<Point> &points) {
+        if (points.size() > 0) {
+            Point min = points[0];
+            Point max = min;
+            for (size_t i = 1; i < points.size(); ++i) {
+                const Point &p = points[i];
+                if (min.getX() > p.getX()) {
+                    min.setX(p.getX());
+                } else if (max.getX() < p.getX()) {
+                    max.setX(p.getX());
+                }
+                if (min.getY() > p.getY()) {
+                    min.setY(p.getY());
+                } else if (max.getY() < p.getY()) {
+                    max.setY(p.getY());
+                }
+                if (min.getZ() > p.getZ()) {
+                    min.setZ(p.getZ());
+                } else if (max.getZ() < p.getZ()) {
+                    max.setZ(p.getZ());
+                }
+            }
+            delta = max - min;
+        }
+    }
+    /**
+     * Constructor
+     * @param points Vector de referencias a los puntos sobre los que construir la bounding box
+     */
+    BBox(const std::vector<Point *> &points) {
+        if (points.size() > 0) {
+            Point min = *points[0];
+            Point max = min;
+            for (size_t i = 1; i < points.size(); ++i) {
+                const Point &p = *points[i];
+                if (min.getX() > p.getX()) {
+                    min.setX(p.getX());
+                } else if (max.getX() < p.getX()) {
+                    max.setX(p.getX());
+                }
+                if (min.getY() > p.getY()) {
+                    min.setY(p.getY());
+                } else if (max.getY() < p.getY()) {
+                    max.setY(p.getY());
+                }
+                if (min.getZ() > p.getZ()) {
+                    min.setZ(p.getZ());
+                } else if (max.getZ() < p.getZ()) {
+                    max.setZ(p.getZ());
+                }
+            }
+            delta = max - min;
+        }
+    }
+    /**
+     * Constructor
+     * @param points Vector de puntos sobre los que construir la bounding box
      * @param rot Matriz de rotación a aplicar a los puntos
      */
     BBox(const std::vector<Point> &points, const arma::mat33 &rot) {
@@ -103,6 +161,16 @@ class BBox {
      * @param zradius Radio en z
      */
     BBox(double xradius, double yradius, double zradius) : delta(Vector(xradius, yradius, zradius)) {}
+    /**
+     * Destructor
+     */
+    ~BBox() {}
+
+    /**
+     * Calcula el volumen de la bounding box
+     * @return Volumen de la bounding box
+     */
+    double volume() const { return delta.getX() * delta.getY() * delta.getZ(); }
 
     ////// Getters
     /**
@@ -132,7 +200,7 @@ class BBox {
      * @param bb Bounding box a comparar
      * @return true si el volumen de la bounding box es menor
      */
-    bool operator<(const BBox &bb) const { return (delta.getX() * delta.getY() * delta.getZ()) < (bb.delta.getX() * bb.delta.getY() * bb.delta.getZ()); }
+    bool operator<(const BBox &bb) const { return this->volume() < bb.volume(); }
 };
 
 #endif  // BBOX_CLASS_H

@@ -1,27 +1,28 @@
 /**
- * @file PlaneUtils.hh
+ * @file Geometry.hh
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 12/05/2022
  *
- * Definición de la clase PlaneUtils
+ * Definición de la clase Geometry
  *
  */
 
-#ifndef PLANEUTILS_CLASS_H
-#define PLANEUTILS_CLASS_H
+#ifndef GEOMETRY_CLASS_H
+#define GEOMETRY_CLASS_H
 
 #include <vector>
-#include <cmath>
+#include <utility>
 
 #include "armadillo"
 
 #include "models/Point.hh"
 #include "models/Octree.hh"
+#include "models/BBox.hh"
 
-#define NORMAL_CALCULATION_THREADS 6
-#define RAD_PER_DEG                (M_PI / 180.)
-
-class PlaneUtils {
+/**
+ * Clase utilizada como almacén de métodos geométricos y espaciales
+ */
+class Geometry {
    public:
     /**
      * Calcula el centroide de los puntos
@@ -93,9 +94,30 @@ class PlaneUtils {
      */
     static arma::mat33 rotationMatrix(const Vector &deg);
 
+    /**
+     * Rota los puntos para buscar la bounding box de mínimo volumen que los englobe:
+     * todos los puntos se rotarán según los angulos que den como resultado la bounding box de mínimo volumen
+     * @param points Vector de referencias a los puntos
+     * @return Bounding box de mínimo volumen y vector de los ángulos de rotación utilizados en grados
+     */
+    static std::pair<BBox, Vector> minimumBBoxWithRotation(std::vector<Point *> &points);
+
+    /**
+     * Obtiene la bounding box de mínimo volumen que engloba los puntos
+     * @param points Vector de puntos
+     * @return Bounding box de mínimo volumen y vector de los ángulos de rotación utilizados en grados
+     */
+    static std::pair<BBox, Vector> minimumBBox(const std::vector<Point> &points);
+    /**
+     * Obtiene las bounding box de mínimo volumen que engloban a cada vector de puntos
+     * @param points Vector de vectores de puntos
+     * @return Vector de bounding boxes de mínimo volumen y vectores de los ángulos de rotación utilizados en grados
+     */
+    static std::vector<std::pair<BBox, Vector>> minimumBBox(const std::vector<std::vector<Point>> &points);
+
    private:
     static void computeSVD(const std::vector<Point> &points, arma::mat &U, arma::vec &s, arma::mat &V);
     static void computeSVD(const std::vector<Point *> &points, arma::mat &U, arma::vec &s, arma::mat &V);
 };
 
-#endif  // PLANEUTILS_CLASS_H
+#endif  // GEOMETRY_CLASS_H

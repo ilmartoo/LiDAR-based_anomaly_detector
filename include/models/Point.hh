@@ -94,11 +94,11 @@ class Point {
      */
     double scalarProduct(const Point &v) const { return (x * v.x) + (y * v.y) + (z * v.z); }
     /**
-     * Calcula la distancia angular entre dos vectores
+     * Calcula el ángulo de separación entre dos vectores
      * @param v Vector contra el que medir la distancia angular
-     * @return Distancia angular en radianes
+     * @return Ángulo de separación en radianes
      */
-    double angularDistance(const Point &v) const { return std::acos(this->scalarProduct(v) / (this->module() * v.module())); }
+    double vectorialAngle(const Point &v) const { return std::acos(this->scalarProduct(v) / (this->module() * v.module())); }
 
     ////// Getters
     /**

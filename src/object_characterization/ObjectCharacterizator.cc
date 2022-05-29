@@ -19,7 +19,7 @@
 
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "object_characterization/CharacterizedObject.hh"
-#include "object_characterization/PlaneUtils.hh"
+#include "models/Geometry.hh"
 #include "models/LidarPoint.hh"
 #include "models/Point.hh"
 #include "models/Kernel.hh"
@@ -200,7 +200,7 @@ std::pair<bool, CharacterizedObject> ObjectCharacterizator::defineObject() {
 
     // Object points filtering
     std::vector<Point> filtered;
-#pragma omp parallel for num_threads(NORMAL_CALCULATION_THREADS) schedule(guided)
+#pragma omp parallel for num_threads(PARALELIZATION_NUM_THREADS) schedule(guided)
     for (size_t i = 0; i < object.getPoints().size(); ++i) {
         if (!isBackground(object.getPoints()[i])) {
 #pragma omp critical

@@ -14,7 +14,7 @@
 #include "models/Octree.hh"
 #include "models/Kernel.hh"
 #include "object_characterization/DBScan.hh"
-#include "object_characterization/PlaneUtils.hh"
+#include "models/Geometry.hh"
 
 std::vector<std::vector<size_t>> DBScan::clusters(double maxDistance, unsigned int minPoints, std::vector<Point> &points) {
     int clusterID = 1;
@@ -102,7 +102,7 @@ std::vector<std::vector<size_t>> DBScan::normals(double maxDistance, unsigned in
     std::vector<std::vector<size_t>> faces;
 
     Octree clustermap(points);
-    std::vector<Vector> normals = PlaneUtils::computeNormals(points, clustermap, maxDistance);  // Cálculo de las normales
+    std::vector<Vector> normals = Geometry::computeNormals(points, clustermap, maxDistance);  // Cálculo de las normales
 
     for (size_t i = 0; i < points.size(); ++i) {
         if (points[i].getClusterID() == cUnclassified && normals[i] != Vector(0, 0, 0)) {
@@ -174,7 +174,7 @@ std::pair<size_t, std::vector<size_t>> DBScan::centroidNormalNeighbours(size_t c
         // a una búsqueda lineal
         size_t i = (size_t)(np - &*points.begin());
 
-        if (normals[i] != Vector(0, 0, 0) && normals[centroid].angularDistance(normals[i]) <= normalDispersion) {
+        if (normals[i] != Vector(0, 0, 0) && normals[centroid].vectorialAngle(normals[i]) <= normalDispersion) {
             ++neighbours;
             if (np->getClusterID() < 0) {
                 clusterIndex.push_back(i);
