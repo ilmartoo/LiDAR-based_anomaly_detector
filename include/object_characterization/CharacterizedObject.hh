@@ -15,23 +15,18 @@
 #include <map>
 #include <utility>
 
+#include "object_characterization/Face.hh"
 #include "models/Point.hh"
 #include "models/BBox.hh"
-#include "object_characterization/PlaneUtils.hh"
+#include "models/Geometry.hh"
 
 /**
  * Caracteristicas de un objecto caracterizado
  */
 class CharacterizedObject {
    private:
-    static const uint32_t clusterPointProximity = 20;          ///< Proximidad máxima (mm) de un punto hacia uno origen para pertenecer al mismo cluster
-    static const uint32_t minClusterPoints = 20;               ///< Número mínimo de puntos que debe tener un cluster inicial para ser considerado
-    static const uint32_t facePointProximity = 30;             ///< Proximidad máxima (mm) de un punto hacia uno origen para pertenecer a la misma cara
-    static const uint32_t minFacePoints = 15;                  ///< Número mínimo de puntos que debe tener una cara inicial para ser considerada
-    static constexpr double normalVariance = 3 * RAD_PER_DEG;  ///< Radianes máximos de separación angular entre normales para pertenecer a la misma cara
-
-    BBox bbox;                              ///< Bounding box que mejor se adapta al objeto
-    std::vector<std::vector<Point>> faces;  ///< Caras del objeto
+    BBox bbox;                ///< Bounding box que mejor se adapta al objeto
+    std::vector<Face> faces;  ///< Caras del objeto
 
    public:
     /**
@@ -85,7 +80,7 @@ class CharacterizedObject {
      * Devuelve los puntos de las caras
      * @return Vector de puntos de las caras
      */
-    const std::vector<std::vector<Point>>& getFaces() const { return faces; }
+    const std::vector<Face>& getFaces() const { return faces; }
     /**
      * Devuelve la bounding box del objeto
      * @return Bounding box del objeto
@@ -98,7 +93,7 @@ class CharacterizedObject {
      * @param bbox Bounding box
      * @param faces Vector de caras
      */
-    CharacterizedObject(const BBox& bbox, const std::vector<std::vector<Point>>& faces) : bbox(bbox), faces(faces) {}
+    CharacterizedObject(const BBox& bbox, const std::vector<Face>& faces) : bbox(bbox), faces(faces) {}
 };
 
 typedef CharacterizedObject Model;  ///< Definición de los modelos

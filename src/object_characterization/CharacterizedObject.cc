@@ -18,13 +18,14 @@
 #include "armadillo"
 
 #include "object_characterization/CharacterizedObject.hh"
-#include "object_characterization/PlaneUtils.hh"
+#include "models/Geometry.hh"
 #include "object_characterization/DBScan.hh"
 #include "models/Octree.hh"
 #include "models/Point.hh"
 #include "models/LidarPoint.hh"
 #include "models/Timestamp.hh"
 #include "app/CLICommand.hh"
+#include "app/config.h"
 
 #include "logging/debug.hh"
 
@@ -55,7 +56,7 @@ CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
     // Clusterización de puntos //
     //////////////////////////////
 
-    std::vector<std::vector<size_t>> clusters = DBScan::clusters(clusterPointProximity, minClusterPoints, points);
+    std::vector<std::vector<size_t>> clusters = DBScan::clusters(CLUSTER_POINT_PROXIMITY, MIN_CLUSTER_POINTS, points);  // Clusterización
 
     // Salida si no se han detectado clústeres de puntos
     if (clusters.size() == 0) {
@@ -99,7 +100,7 @@ CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
         opoints[i].setClusterID(cUnclassified);
     }
 
-    clusters = DBScan::normals(facePointProximity, minFacePoints, opoints, normalVariance);
+    clusters = DBScan::normals(FACE_POINT_PROXIMITY, MIN_FACE_POINTS, opoints, MAX_NORMAL_VECT_ANGLE_OC);  // Detección de las caras
 
     // Salida si no se han detectado caras del objeto
     if (clusters.size() == 0) {
@@ -122,16 +123,17 @@ CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
     ///
 
     /// Caras
-    std::vector<Point *> references;
-    std::vector<std::vector<Point>> faces;
+    std::vector<Point *> references;             // Vector de referencias a todos los puntos del objeto
+    std::vector<std::vector<Point>> facepoints;  // Vector de vectores de puntos de cada cara
     for (size_t i = 0, t = 0; i < clusters.size(); ++i) {
-        faces.push_back({clusters[i].size(), Point()});             // Añadimos nuevo array de los puntos de una cara
+        facepoints.push_back({clusters[i].size(), Point()});        // Añadimos nuevo array de los puntos de una cara
         references.resize(references.size() + clusters[i].size());  // Ampliamos tamaño para añadir el nuevo array
         for (size_t j = 0; j < clusters[i].size(); ++j, ++t) {
-            faces[i][j] = opoints[clusters[i][j]];
-            references[t] = &faces[i][j];
+            facepoints[i][j] = opoints[clusters[i][j]];
+            references[t] = &facepoints[i][j];
         }
     }
+    std::vector<Face> faces(facepoints.size(), Face());  // Vector de caras
 
     if (chrono) {
         end_face_detection = std::chrono::high_resolution_clock::now();
@@ -141,66 +143,17 @@ CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
     // Cálculo de la mejor bounding box //
     //////////////////////////////////////
 
-    // Rotaciones amplias en las tres dimensiones
-    Vector rotmin(0, 0, 0);                                      // Ángulos de rotación iniciales
-    BBox bbmin(references, PlaneUtils::rotationMatrix(rotmin));  // Bbox sin rotacion
-    arma::mat33 rotmatrix;
-#pragma omp parallel num_threads(NORMAL_CALCULATION_THREADS)
-    {
-#pragma omp for collapse(3) schedule(guided)
-        for (int i = 0; i < 90; i += 10) {
-            for (int j = 0; j < 90; j += 10) {
-                for (int k = 0; k < 90; k += 10) {
-                    if (i == 0 && j == 0 && k == 0) {
-                        continue;
-                    } else {
-                        BBox bb(references, PlaneUtils::rotationMatrix(i, j, k));
-#pragma omp critical
-                        {
-                            if (bb < bbmin) {
-                                bbmin = bb;
-                                rotmin = Vector(i, j, k);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    std::pair<BBox, Vector> bbmin = Geometry::minimumBBoxWithRotation(references);  // Bounding box mínima
 
-        // Rotaciones pequeñas dentro del radio de la mejor rotación grande
-#pragma omp for collapse(3) schedule(guided)
-        for (int i = (int)rotmin.getX() - 10; i < (int)rotmin.getX() + 10; ++i) {
-            for (int j = (int)rotmin.getY(); j < (int)rotmin.getY() + 10; ++j) {
-                for (int k = (int)rotmin.getZ(); k < (int)rotmin.getZ() + 10; ++k) {
-                    if (i == (int)rotmin.getX() && j == (int)rotmin.getY() && k == (int)rotmin.getZ()) {
-                        continue;
-                    } else {
-                        BBox bb(references, PlaneUtils::rotationMatrix(i, j, k));
-#pragma omp critical
-                        {
-                            if (bb < bbmin) {
-                                bbmin = bb;
-                                rotmin = Vector(i, j, k);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    DEBUG_STDOUT("Best bounding box rotation angles: " << bbmin.second);
 
-        // Rotamos puntos originales hacia la posición de menor volumen
-#pragma omp single
-        {
-            rotmatrix = PlaneUtils::rotationMatrix(rotmin);
-        }
-        // Implicit barrier
-#pragma omp for schedule(guided)
-        for (size_t i = 0; i < references.size(); ++i) {
-            *references[i] = references[i]->rotate(rotmatrix);
-        }
+    std::vector<std::pair<BBox, Vector>> fbbmin = Geometry::minimumBBox(facepoints);
+
+    for (size_t i = 0; i < fbbmin.size(); ++i) {
+        faces[i] = Face(facepoints[i], fbbmin[i].first, fbbmin[i].second);
+
+        DEBUG_STDOUT("Face " << i << " best bounding box rotation angles: " << faces[i].getMinBBoxRotAngles());
     }
-
-    DEBUG_STDOUT("Best bounding box rotation angles: " << rotmin);
 
     // Cronometro
     if (chrono) {
@@ -213,9 +166,9 @@ CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
         CLI_STDOUT("Object characterization lasted " << std::setprecision(6) << (cl_duration + fd_duration + bb_duration) << "s (clustering: " << cl_duration << "s, face detection:  " << fd_duration << "s, bounding box selection: " << bb_duration << std::setprecision(2) << "s)");
     }
 
-    DEBUG_STDOUT("Characterized object with " << faces.size() << " faces");
+    DEBUG_STDOUT("Characterized object with " << facepoints.size() << " faces");
 
-    return {true, {bbmin, faces}};
+    return {true, {bbmin.first, faces}};
 }
 
 bool CharacterizedObject::write(const std::string &filename) {
@@ -226,9 +179,11 @@ bool CharacterizedObject::write(const std::string &filename) {
         outfile.write((char *)&len, sizeof(size_t));  // Numero de caras
 
         for (auto &f : faces) {
-            len = f.size();
+            outfile.write((char *)&f.getMinBBox(), sizeof(BBox));             // Bounding box de la cara
+            outfile.write((char *)&f.getMinBBoxRotAngles(), sizeof(Vector));  // Ángulo de rotación de la cara
+            len = f.getPoints().size();
             outfile.write((char *)&len, sizeof(size_t));  // Numero de puntos de la cara
-            for (auto &p : f) {
+            for (auto &p : f.getPoints()) {
                 outfile.write((char *)&p, sizeof(Point));  // Punto de la cara
             }
         }
@@ -242,14 +197,30 @@ bool CharacterizedObject::write(const std::string &filename) {
 }
 bool CharacterizedObject::writeLivoxCSV(const std::string &filename) {
     std::ofstream outfile(filename);
-    uint32_t partial;
     Timestamp tmst(0, 0);
 
+    uint32_t colors[faces.size()];
+    size_t color_step = 255 / faces.size();
+
+    size_t half = faces.size() / 2;
+
+    // Colores para cada cara
+    if (faces.size() > 0) {
+        for (size_t i = 0; i < half; ++i) {
+            colors[i] = color_step * i;
+            colors[++i] = color_step * (half + i);
+        }
+        size_t last = faces.size() - 1;
+        if (!(last & 1)) {
+            colors[last] = color_step * last;
+        }
+    }
+
+    // Impresión a archivo
     outfile << LidarPoint::LivoxCSVHeader() << "\n";
     for (size_t i = 0; i < faces.size(); ++i) {
-        partial = 255 / faces.size() * i;
-        for (auto &p : faces[i]) {
-            outfile << LidarPoint(tmst, partial, p).LivoxCSV() << "\n";
+        for (auto &p : faces[i].getPoints()) {
+            outfile << LidarPoint(tmst, colors[i], p).LivoxCSV() << "\n";
         }
     }
     outfile.close();
@@ -266,17 +237,20 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::load(const std::string
         size_t nfaces, npoints;
         infile.read((char *)&nfaces, sizeof(size_t));  // Numero de caras
 
-        std::vector<std::vector<Point>> faces;
-        Vector normal;
-        Point point;
+        std::vector<Face> faces(nfaces, Face());
+        BBox fbbox;
+        Vector frotdeg;
         for (unsigned i = 0; i < nfaces; ++i) {
-            faces.push_back({});
+            infile.read((char *)&fbbox, sizeof(BBox));      // Bounding box de la cara
+            infile.read((char *)&frotdeg, sizeof(Vector));  // Ángulo de rotación de la cara
 
             infile.read((char *)&npoints, sizeof(size_t));  // Numero de puntos de la cara
+            std::vector<Point> points(npoints, Point());
             for (unsigned j = 0; j < npoints; ++j) {
-                infile.read((char *)&point, sizeof(Point));  // Punto de la cara
-                faces[i].push_back(point);
+                infile.read((char *)&points[j], sizeof(Point));  // Punto de la cara
             }
+
+            faces[i] = Face(points, fbbox, frotdeg);
         }
 
         infile.close();

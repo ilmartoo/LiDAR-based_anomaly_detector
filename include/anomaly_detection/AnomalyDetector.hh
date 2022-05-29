@@ -14,13 +14,11 @@
 #include <thread>
 
 #include "object_characterization/CharacterizedObject.hh"
-#include "anomaly_detection/Anomalies.hh"
+#include "anomaly_detection/AnomalyReport.hh"
 
 class AnomalyDetector {
    private:
     bool chrono;  ///< Activador de la medicion de tiempos
-
-    const double radiiMaxDiff = 0.2;  ///< Limite máximo de anomalía en el radio
 
    public:
     /**
@@ -39,7 +37,7 @@ class AnomalyDetector {
      * @param model Modelo sobre el que se comparará el objeto
      * @return Anomalías detectadas
      */
-    Anomalies compare(const CharacterizedObject& obj, const Model& model);
+    AnomalyReport compare(const CharacterizedObject& obj, const Model& model);
 
     ////// Setters
     /**
