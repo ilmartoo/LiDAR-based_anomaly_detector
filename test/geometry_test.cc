@@ -1,9 +1,9 @@
 /**
- * @file trigonometry_test.cc
+ * @file geometry_test.cc
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 25/05/2022
  *
- * Test para las funciones de trigonometricas y vectoriales
+ * Test para las funciones espaciales
  *
  */
 
@@ -14,10 +14,10 @@
 
 #include "armadillo"
 
-#include "object_characterization/PlaneUtils.hh"
+#include "models/Geometry.hh"
 #include "models/Point.hh"
 
-class TrigonometryFixture {
+class GeometryFixture {
    protected:
     std::vector<Point> testpoints;
     std::vector<Point> xplane;
@@ -26,11 +26,11 @@ class TrigonometryFixture {
     Vector nz;
 
    public:
-    TrigonometryFixture() : testpoints(1000, Point()),
-                            xplane(100, Point()),
-                            nx(1, 0, 0),
-                            ny(0, 1, 0),
-                            nz(0, 0, 1) {
+    GeometryFixture() : testpoints(1000, Point()),
+                        xplane(100, Point()),
+                        nx(1, 0, 0),
+                        ny(0, 1, 0),
+                        nz(0, 0, 1) {
         int i;
         for (i = 0; i < 100; ++i) {
             Point p = {0, i / 10, i % 10};
@@ -41,25 +41,25 @@ class TrigonometryFixture {
             testpoints[i] = {i / 100, (i / 10) % 10, i % 10};
         }
     }
-    ~TrigonometryFixture() {}
+    ~GeometryFixture() {}
 };
 
-TEST_CASE_METHOD(TrigonometryFixture, "normal computation", "[trigonometry]") {
-    Vector normal = PlaneUtils::computeNormal(xplane);
+TEST_CASE_METHOD(GeometryFixture, "normal computation", "[geometry]") {
+    Vector normal = Geometry::computeNormal(xplane);
 
     CHECK_MESSAGE(normal == nx, "Normal computation is not acurate enough");
 }
 
-TEST_CASE_METHOD(TrigonometryFixture, "centroid computation", "[trigonometry]") {
-    Point centroidp = PlaneUtils::computeCentroid(testpoints);
-    Point centroidx = PlaneUtils::computeCentroid(xplane);
+TEST_CASE_METHOD(GeometryFixture, "centroid computation", "[geometry]") {
+    Point centroidp = Geometry::computeCentroid(testpoints);
+    Point centroidx = Geometry::computeCentroid(xplane);
 
     CHECK_MESSAGE(centroidp == Point(4.5, 4.5, 4.5), "Centroid computation is not acurate enough");
     CHECK_MESSAGE(centroidx == Point(0., 4.5, 4.5), "Centroid computation is not acurate enough");
 }
 
-TEST_CASE_METHOD(TrigonometryFixture, "plane calculation", "[trigonometry]") {
-    arma::vec4 plane = PlaneUtils::computePlane(xplane);
+TEST_CASE_METHOD(GeometryFixture, "plane calculation", "[geometry]") {
+    arma::vec4 plane = Geometry::computePlane(xplane);
     arma::vec4 xaxis = {1, 0, 0, 0};
 
     // La computación de planos usa una función que es rápida a costa de algo de precisión, por eso le damos un margen de e-14 en vez de e-16
@@ -70,8 +70,8 @@ TEST_CASE_METHOD(TrigonometryFixture, "plane calculation", "[trigonometry]") {
                   "Normal computation is not acurate enough");
 }
 
-TEST_CASE_METHOD(TrigonometryFixture, "rotation matrix calculation", "[trigonometry]") {
-    arma::mat33 rot = PlaneUtils::rotationMatrix(90, 45, 0);
+TEST_CASE_METHOD(GeometryFixture, "rotation matrix calculation", "[geometry]") {
+    arma::mat33 rot = Geometry::rotationMatrix(90, 45, 0);
     double onesof2 = 1. / sqrt(2.);
     arma::mat33 result = {{onesof2, onesof2, 0}, {0, 0, -1}, {-onesof2, onesof2, 0}};
 
@@ -88,8 +88,8 @@ TEST_CASE_METHOD(TrigonometryFixture, "rotation matrix calculation", "[trigonome
                   "Rotation matrix calculation is not acurate enough");
 }
 
-TEST_CASE_METHOD(TrigonometryFixture, "point rotation", "[trigonometry][point]") {
-    Point rotated = Point(5, 10, 7).rotate(PlaneUtils::rotationMatrix(90, 90, 90));
+TEST_CASE_METHOD(GeometryFixture, "point rotation", "[geometry][point]") {
+    Point rotated = Point(5, 10, 7).rotate(Geometry::rotationMatrix(90, 90, 90));
     Point result(7, 10, -5);
 
     // La computación de planos usa una función que es rápida a costa de algo de precisión, por eso le damos un margen de e-15 en vez de e-16
