@@ -341,6 +341,10 @@ void App::cli() {
                         CLI_STDOUT("  Width  / z_delta: " << co.getBBox().getDeltaZ());
                         CLI_STDOUT("  Height / y_delta: " << co.getBBox().getDeltaY());
                         CLI_STDOUT("  Depth  / x_delta: " << co.getBBox().getDeltaX());
+                        CLI_STDOUT("  Normal vectors:");
+                        for (auto &f : co.getFaces()) {
+                            CLI_STDOUT("    [" << f.getNormal() << "]");
+                        }
                     } else {
                         CLI_STDERR("Could not locate object " << command[1]);
                     }
@@ -446,7 +450,26 @@ void App::cli() {
                             const CharacterizedObject &object = om->getObjects().at(command[0]);
                             const Model &model = om->getModels().at(command[1]);
 
-                            /* DO THINGS WITH RETURN */ ad->compare(object, model);
+                            AnomalyReport ar = ad->compare(object, model);
+
+                            CLI_STDOUT("Model and obeject are " << (ar.similar ? bold("similar") : bold("different")));
+                            
+                            if (ar.deltaFaces < 0) {
+                                CLI_STDOUT("  Model has " << ar.deltaFaces << " more faces");
+                            } else if (ar.deltaFaces > 0) {
+                                CLI_STDOUT("  Object has " << ar.deltaFaces * -1 << " more faces");
+                            } else {
+                                CLI_STDOUT("  Model and object have the same number of faces");
+                            }
+                            
+                            CLI_STDOUT_NO_NL("  As a whole, model and object are " << (ar.generalComparison.similar ? bold("similar") : bold("different")));
+                            CLI_STDOUT(". Deltas from model to object in mm (Depth, Height, Width): " << ar.generalComparison.deltas);
+
+                            CLI_STDOUT("  Individual face comparisons [model_face, object_face]:");
+                            for (auto &fc : ar.faceComparisons) {
+                                CLI_STDOUT_NO_NL("    [" << fc.modelFace << ", " << fc.objectFace << "] Faces are " << (ar.generalComparison.similar ? bold("similar") : bold("different")));
+                                CLI_STDOUT(". Deltas in mm (Depth, Height, Width): " << fc.deltas);
+                            }
 
                         } else {
                             CLI_STDERR("Could not locate model " << command[1]);

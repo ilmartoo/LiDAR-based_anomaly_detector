@@ -52,12 +52,11 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
     std::vector<bool> modFaceUsage(mod.getFaces().size(), false);          // Caras del modelo ya usadas
 
     size_t tcomp = deltaFaces < 0 ? mod.getFaces().size() : obj.getFaces().size();  // Máximo de iteraciones posibles en la comparación de caras
-    size_t objFaceIndex,
-        modFaceIndex;
+    size_t objFaceIndex, modFaceIndex;
     double minDeltaVolume;
-#pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
+    // #pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
     {
-#pragma omp for collapse(2) schedule(guided)
+        // #pragma omp for collapse(2) schedule(guided)
         for (size_t i = 0; i < obj.getFaces().size(); ++i) {
             for (size_t j = 0; j < mod.getFaces().size(); ++j) {
                 deltaVolumes(i, j) = std::fabs(obj.getFaces()[i].getMinBBox().volume() - mod.getFaces()[i].getMinBBox().volume());
@@ -65,7 +64,7 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
         }
         // Buscamos en cada iteración el delta mínimo de las caras restantes
         for (size_t comp = 0; comp < tcomp; ++comp) {
-#pragma omp single
+            // #pragma omp single
             {
                 for (objFaceIndex = 0; objFaceUsage[objFaceIndex] && objFaceIndex < objFaceUsage.size(); ++objFaceIndex) {}
                 for (modFaceIndex = 0; modFaceUsage[modFaceIndex] && modFaceIndex < modFaceUsage.size(); ++modFaceIndex) {}
@@ -73,15 +72,15 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
             }
             // Implicit barrier
             // Recorremos los elementos restantes de la matriz en busca del mínimo
-#pragma omp for collapse(2) schedule(guided)
-            for (size_t oi = 0; oi < objFaceUsage.size(); ++oi) {
-                for (size_t mi = 0; mi < modFaceUsage.size(); ++mi) {
+            // #pragma omp for collapse(2) schedule(guided)
+            for (size_t oi = 0; oi < obj.getFaces().size(); ++oi) {
+                for (size_t mi = 0; mi < mod.getFaces().size(); ++mi) {
                     // El primer elemento es el mínimo por defecto
                     // Pasamos las caras ya comparadas
                     if (objFaceUsage[oi] || modFaceUsage[mi] || (oi == objFaceIndex && mi == modFaceIndex)) {
                         continue;
                     } else {
-#pragma omp critical
+                        // #pragma omp critical
                         if (deltaVolumes(oi, mi) < minDeltaVolume) {
                             objFaceIndex = oi;
                             modFaceIndex = mi;
@@ -91,7 +90,7 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
                 }
             }
         }
-#pragma omp single
+        // #pragma omp single
         {
             // Eliminamos caras
             modFaceUsage[modFaceIndex] = true;
