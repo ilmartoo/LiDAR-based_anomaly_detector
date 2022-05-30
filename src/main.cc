@@ -300,8 +300,7 @@ void InputParams::parse(int argc, const char **argv) {
 void InputParams::usage() const {
     std::cout << std::endl
               << "Usage:" << std::endl
-              << exec_name << " <-b lidar_code> [-t obj_frame_t] [-c chrono_mode] [-g back_frame_t] [-r reflectivity_threshold] [-d distance_threshold]" << std::endl
-              << exec_name << " <-f filename> [-t obj_frame_t] [-c chrono_mode] [-g back_frame_t] [-r reflectivity_threshold] [-d distance_threshold]" << std::endl
+              << exec_name << " <-b lidar_code | -f filename> [-t obj_frame_t] [-c chrono_mode] [-g back_frame_t] [-r reflectivity_threshold] [-d distance_threshold]" << std::endl
               << exec_name << " <-h | --help>" << std::endl
               << std::endl;
 }

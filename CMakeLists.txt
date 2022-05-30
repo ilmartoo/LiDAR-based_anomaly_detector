@@ -162,22 +162,22 @@ if(BUILD_TESTS)
 	#
 	# Unit tests executable
 	#
-	set(UNIT_TESTS_NAME unit_tests)
-	add_executable(${UNIT_TESTS_NAME}
+	set(ANOMALY_TESTS_NAME anomaly_tests)
+	add_executable(${ANOMALY_TESTS_NAME}
 		${unit_test_sources}
 	)
-	target_include_directories(${UNIT_TESTS_NAME}
+	target_include_directories(${ANOMALY_TESTS_NAME}
 		PUBLIC
 			test/
 			include/
 	)
-	target_link_libraries(${UNIT_TESTS_NAME}
+	target_link_libraries(${ANOMALY_TESTS_NAME}
 		${CATCH2_LIB}
 	)
 	add_test(
 		NAME
-			${UNIT_TESTS_NAME}
+			${ANOMALY_TESTS_NAME}
         COMMAND
-			${UNIT_TESTS_NAME}
+			${ANOMALY_TESTS_NAME}
 	)
 endif()

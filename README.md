@@ -90,7 +90,7 @@ cmake . -B build/ -D CMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
 
-To build the project with debug output build it with `CMAKE_BUILD_TYPE` option set to `Debug`:
+To build the project with debug output set the `CMAKE_BUILD_TYPE` option to `Debug`:
 
 ```bash
 cmake . -B build/ -D CMAKE_BUILD_TYPE=Debug
@@ -104,7 +104,7 @@ cmake . -B build/ -D CMAKE_BUILD_TYPE=Debug -D DEBUG_SCANNED_POINTS=ON
 cmake --build build
 ```
 
-Any of this scripts will create the executable and install it into `build/<build_type>/`.
+Any of this scripts will create the executable and install it into `build/`.
 
 ---
 
@@ -117,13 +117,89 @@ cmake . -B build/ -D CMAKE_BUILD_TYPE=Release -D BUILD_TESTS=ON
 cmake --build build
 ```
 
-This will build and install the `unit_tests` executable into the `build/Testing/` folder.
+This will build and install the `anomaly_tests` executable into the `build/` folder.
 
 ---
 
 ## Execution and parameters
 
-*...comming soon...*
+### Parameters
+
+The program provides some parametes if you wish to lauch the application with the options specified by you:
+
+```
+anomaly_detector <-b lidar_code | -f filename> [-t obj_frame_t] [-c chrono_mode] [-g back_frame_t] [-r reflectivity_threshold] [-d distance_threshold]
+anomaly_detector <-h | --help>
+```
+
+Parameter explanation:
+
+- `-b`: Broadcast code of the lidar sensor composed of 15 symbols maximum. **With 'default' as value it defaults to 3WEDH7600101621**
+
+- `-f`: File with the 3D points to get the data from.
+
+- `-t`: Miliseconds to use as frame duration time. **Defaults to `1500ms`.**
+
+- `-c`                Type of chronometer to set up and measure time from. **Defaults to `notime`.**
+  - `notime`: No chrono set
+  - `char`: Characterizator chrono set
+  - `anom`: Anomaly detector chrono set
+  - `all`: All chronos set
+
+- `-g`: Miliseconds during which scanned points will be part of the background. **Defaults to `5000ms`.**
+
+- `-r`: Minimum reflectivity value points may have not to be discarded. **Defaults to `0 points`.**
+
+- `-d`: Minimum distance from the background in meters a point must have not to be discarded. **Defaults to `0.01m`.**
+
+- `-h,--help`: Print the program help text.
+
+
+**Any undefined options passed will be ignored.**
+
+### Command Line Interface
+
+The CLI has a variety of commands you can run:
+- `help [command]`: Prints the help text of a command or all of them if not specified.
+
+- `exit`: Exits the program.
+
+- `chrono <set|unset> <...>`: Activation/Deactivation of specific chronometers.
+  - `define`: Object and background definition routine.
+  - `analyze`: Anomaly detection routine.
+  - `all`: All of the above.
+
+- `define <...>`: Definition and characterization of objects and background.
+  - `background`: Defines the background.
+  - `object [name]`: Defines an object with a specified name or an automatic generated one.
+
+- `set <...>`: Modification of current execution parameters.
+  - `backframe <millisecs>`: Milliseconds (integer) to scan for background points.
+  - `objframe <millisecs>`: Milliseconds (integer) to scan for object points.
+  - `backthreshold <meters>`: Meters (decimal) away an object point must be from the background to not be discarded.
+  - `reflthreshold <points>`: Minimun reflectivity (decimal) a point must have to not be discarded.
+
+- `discard <millisecs>`: Discards points for the amount of miliseconds specified.
+
+- `object <...>`: Management of objects.
+  - `describe <name>`: Describes the object with the given name.
+  - `load <name> <file>`: Loads the contents of a file as a new object with the given name.
+  - `save <name> <file>`: Saves the object with the given name into a file.
+  - `csv <name> <file>`: Saves the object with the given name into a file in csv format.
+
+- `model <...>`: Management of models.
+  - `new <object> <new_model>`: Creates a new model from an object with the given name.
+  - `describe <name>`: Describes the model with the given name.
+  - `load <name> <file>`: Loads the contents of a file as a new model with the given name.
+  - `save <name> <file>`: Saves the model with the given name into a file.
+  - `csv <name> <file>`: Saves the model with the given name into a file in csv format.
+- `info`: Prints the execution parameters currently in use.
+
+- `list <...>`: List loaded/stored items.
+  - `objects`: Created objects.
+  - `models`: Loaded models.
+
+- `analyze <object> <model>`: Analizes the diferences between the specified object and model.
 
 ---
 
