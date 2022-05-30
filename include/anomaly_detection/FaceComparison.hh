@@ -29,10 +29,10 @@ class FaceComparison : public Comparison {
      * @param desviation Ángulo entre normales de las caras en radianes
      * @param result Resultado final de la comparación
      */
-    FaceComparison(bool similar, size_t objectFace, size_t modelFace, const Vector &deltas)
+    FaceComparison(bool similar, size_t modelFace, size_t objectFace, const Vector &deltas)
         : Comparison(similar, deltas),
-          objectFace(objectFace),
-          modelFace(modelFace) {}
+          modelFace(modelFace),
+          objectFace(objectFace) {}
     /**
      * Destructor
      */

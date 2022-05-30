@@ -50,7 +50,8 @@ void printHelp(CLICommandType ct) {
 
         // HELP
         case kHelp: {
-            CLI_STDOUT(bold("help [command]") "                 Prints the help text of a command or all of them if not specified");
+            CLI_STDOUT_NO_NL(bold("help [command]"));
+            CLI_STDOUT("                 Prints the help text of a command or all of them if not specified");
             if (doBreak) {
                 break;
             }
@@ -58,7 +59,8 @@ void printHelp(CLICommandType ct) {
 
         // EXIT
         case kExit: {
-            CLI_STDOUT(bold("exit") "                           Exits the program");
+            CLI_STDOUT_NO_NL(bold("exit"));
+            CLI_STDOUT("                           Exits the program");
             if (doBreak) {
                 break;
             }
@@ -66,7 +68,8 @@ void printHelp(CLICommandType ct) {
 
         // CHRONO
         case kChrono: {
-            CLI_STDOUT(bold("chrono <set|unset> <...>") "       Activation/Deactivation of specific chronometers:");
+            CLI_STDOUT_NO_NL(bold("chrono <set|unset> <...>"));
+            CLI_STDOUT("       Activation/Deactivation of specific chronometers:");
             CLI_STDOUT("  - define                        Object and background definition routine");
             CLI_STDOUT("  - analyze                       Anomaly detection routine");
             CLI_STDOUT("  - all                           All of the above");
@@ -77,7 +80,8 @@ void printHelp(CLICommandType ct) {
 
         // DEFINE
         case kDefine: {
-            CLI_STDOUT(bold("define <...>") "                   Definition and characterization of objects and background:");
+            CLI_STDOUT_NO_NL(bold("define <...>"));
+            CLI_STDOUT("                   Definition and characterization of objects and background:");
             CLI_STDOUT("  - background                    Defines the background");
             CLI_STDOUT("  - object [name]                 Defines an object with a specified name or an automatic generated one");
             if (doBreak) {
@@ -87,7 +91,8 @@ void printHelp(CLICommandType ct) {
 
         // SET
         case kSet: {
-            CLI_STDOUT(bold("set <...>") "                      Modification of current execution parameters:");
+            CLI_STDOUT_NO_NL(bold("set <...>"));
+            CLI_STDOUT("                      Modification of current execution parameters:");
             CLI_STDOUT("  - backframe <millisecs>         Milliseconds (integer) to scan for background points");
             CLI_STDOUT("  - objframe <millisecs>          Milliseconds (integer) to scan for object points");
             CLI_STDOUT("  - backthreshold <meters>        Meters (decimal) away an object point must be from the background to not be discarded");
@@ -99,7 +104,8 @@ void printHelp(CLICommandType ct) {
 
         // DISCARD
         case kDiscard: {
-            CLI_STDOUT(bold("discard <millisecs>") "           Discards points for the amount of miliseconds specified");
+            CLI_STDOUT_NO_NL(bold("discard <millisecs>"));
+            CLI_STDOUT("           Discards points for the amount of miliseconds specified");
             if (doBreak) {
                 break;
             }
@@ -107,7 +113,8 @@ void printHelp(CLICommandType ct) {
 
         // OBJECT
         case kObject: {
-            CLI_STDOUT(bold("object <...>") "                    Management of objects:");
+            CLI_STDOUT_NO_NL(bold("object <...>"));
+            CLI_STDOUT("                    Management of objects:");
             CLI_STDOUT("  - describe <name>               Describes the object with the given name");
             CLI_STDOUT("  - load <name> <file>            Loads the contents of a file as a new object with the given name");
             CLI_STDOUT("  - save <name> <file>            Saves the object with the given name into a file");
@@ -119,7 +126,8 @@ void printHelp(CLICommandType ct) {
 
         // MODEL
         case kModel: {
-            CLI_STDOUT(bold("model <...>") "                    Management of models:");
+            CLI_STDOUT_NO_NL(bold("model <...>"));
+            CLI_STDOUT("                    Management of models:");
             CLI_STDOUT("  - new <object> <new_model>      Creates a new model from an object with the given name");
             CLI_STDOUT("  - describe <name>               Describes the model with the given name");
             CLI_STDOUT("  - load <name> <file>            Loads the contents of a file as a new model with the given name");
@@ -132,7 +140,8 @@ void printHelp(CLICommandType ct) {
 
         // INFO
         case kInfo: {
-            CLI_STDOUT(bold("info") "                           Prints the execution parameters currently in use");
+            CLI_STDOUT_NO_NL(bold("info"));
+            CLI_STDOUT("                           Prints the execution parameters currently in use");
             if (doBreak) {
                 break;
             }
@@ -140,7 +149,8 @@ void printHelp(CLICommandType ct) {
 
         // LIST
         case kList: {
-            CLI_STDOUT(bold("list <...>") "                     List loaded/stored items:");
+            CLI_STDOUT_NO_NL(bold("list <...>"));
+            CLI_STDOUT("                     List loaded/stored items:");
             CLI_STDOUT("  - objects                       Created objects");
             CLI_STDOUT("  - models                        Loaded models");
             if (doBreak) {
@@ -150,7 +160,8 @@ void printHelp(CLICommandType ct) {
 
         // ANALYZE
         case kAnalyze: {
-            CLI_STDOUT(bold("analyze <object> <model>") "       Analizes the diferences between the specified object and model");
+            CLI_STDOUT_NO_NL(bold("analyze <object> <model>"));
+            CLI_STDOUT("       Analizes the diferences between the specified object and model");
             if (doBreak) {
                 break;
             }
@@ -321,7 +332,7 @@ void App::cli() {
 
                         size_t npoints = 0;
                         for (auto &f : co.getFaces()) {
-                            npoints += f.size();
+                            npoints += f.getPoints().size();
                         }
 
                         CLI_STDOUT("Object " << command[1] << " characteristics:");
@@ -368,7 +379,7 @@ void App::cli() {
 
                         size_t npoints = 0;
                         for (auto &f : m.getFaces()) {
-                            npoints += f.size();
+                            npoints += f.getPoints().size();
                         }
 
                         CLI_STDOUT("Model " << command[1] << " characteristics:");
@@ -377,6 +388,10 @@ void App::cli() {
                         CLI_STDOUT("  Width  / z_delta: " << m.getBBox().getDeltaZ());
                         CLI_STDOUT("  Height / y_delta: " << m.getBBox().getDeltaY());
                         CLI_STDOUT("  Depth  / x_delta: " << m.getBBox().getDeltaX());
+                        CLI_STDOUT("  Normal vectors:");
+                        for (auto &f : m.getFaces()) {
+                            CLI_STDOUT("    [" << f.getNormal() << "]");
+                        }
                     } else {
                         CLI_STDERR("Could not locate model " << command[1]);
                     }

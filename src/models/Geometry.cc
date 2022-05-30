@@ -328,7 +328,7 @@ std::vector<std::pair<BBox, Vector>> Geometry::minimumBBox(const std::vector<std
 
 #pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
     {
-        for (int v = 0; v < points.size(); ++v) {
+        for (size_t v = 0; v < points.size(); ++v) {
 #pragma omp single
             {
                 bboxes[v].first = BBox(points[v]);

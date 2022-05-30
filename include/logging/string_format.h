@@ -22,7 +22,6 @@
 #define RESET             "\e[0m"  ///< Reset all formatting
 
 /* STYLE FORMAT CONSTANTS */
-#define NORMAL            "\e[0m"  ///< NORMAL style format
 #define BOLD              "\e[1m"  ///< BOLD style format
 #define FAINT             "\e[2m"  ///< FAINT style format
 #define UNDERLINE         "\e[3m"  ///< UNDERLINE style format
@@ -67,7 +66,6 @@
 #define B_BROWN           "\e[43m"    ///< BROWN background color format
 
 /* TEXT FORMATTING MACROS */
-#define normal(text)      NORMAL text RESET     ///< NORMAL text format macro
 #define bold(text)        BOLD text RESET       ///< BOLD text format macro
 #define faint(text)       FAINT text RESET      ///< FAINT text format macro
 #define underline(text)   UNDERLINE text RESET  ///< UNDERLINE text format macro
@@ -114,7 +112,6 @@
 #include <string>
 
 /* TEXT FORMATTING MACROS FOR C++ STRINGS */
-#define normal_s(text)      NORMAL + text + RESET     ///< NORMAL text format macro
 #define bold_s(text)        BOLD + text + RESET       ///< BOLD text format macro
 #define faint_s(text)       FAINT + text + RESET      ///< FAINT text format macro
 #define underline_s(text)   UNDERLINE + text + RESET  ///< UNDERLINE text format macro

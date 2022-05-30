@@ -17,8 +17,10 @@
 
 #include "logging/string_format.h"
 
-#define CLI_STDOUT(msg) do { std::cout << skyblue("" << msg << "") << std::endl; } while(0)
+#define CLI_STDOUT(msg) do { std::cout << cyan("" << msg << "") << std::endl; } while(0)
+#define CLI_STDOUT_NO_NL(msg) do { std::cout << cyan("" << msg << ""); } while(0)
 #define CLI_STDERR(msg) do { std::cerr << red("" << msg << "") << std::endl; } while(0)
+#define CLI_STDERR_NO_NL(msg) do { std::cerr << red("" << msg << ""); } while(0)
 
 enum CLICommandType {
     kExit,     ///< Finalización del programa

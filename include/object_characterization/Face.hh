@@ -18,6 +18,7 @@
 class Face {
    private:
     std::vector<Point> points;  ///< Puntos de la cara
+    Vector normal;              ///< Vector normal de la cara
     BBox minBBox;               ///< Bounding box mínima que engloba a los puntos de la cara
     Vector minBBoxRotAngles;    ///< Ángulos de rotación en grados que dan como resultado la bounding box mínima
 
@@ -29,11 +30,13 @@ class Face {
     /**
      * Constructor
      * @param points Puntos de la cara
+     * @param normal Normal de la cara
      * @param minBBox Bounding box mínima que engloba a los puntos de la cara
      * @param minBBoxRotAngles Ángulos de rotación en grados que dan como resultado la bounding box mínima
      */
-    Face(const std::vector<Point> &points, const BBox &minBBox, const Vector &minBBoxRotAngles)
+    Face(const std::vector<Point> &points, const Vector &normal, const BBox &minBBox, const Vector &minBBoxRotAngles)
         : points(points),
+          normal(normal),
           minBBox(minBBox),
           minBBoxRotAngles(minBBoxRotAngles) {}
     /**
@@ -47,6 +50,11 @@ class Face {
      * @return Puntos de la cara
      */
     const std::vector<Point> &getPoints() const { return points; }
+    /**
+     * Devuelve la normal de la cara
+     * @return Normal de la cara
+     */
+    const Vector &getNormal() const { return normal; }
     /**
      * Devuelve la bounding box mínima que engloba a los puntos de la cara
      * @return Bounding box mínima

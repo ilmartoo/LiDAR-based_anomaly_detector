@@ -150,7 +150,7 @@ CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
     std::vector<std::pair<BBox, Vector>> fbbmin = Geometry::minimumBBox(facepoints);
 
     for (size_t i = 0; i < fbbmin.size(); ++i) {
-        faces[i] = Face(facepoints[i], fbbmin[i].first, fbbmin[i].second);
+        faces[i] = Face(facepoints[i], Geometry::computeNormal(facepoints[i]), fbbmin[i].first, fbbmin[i].second);
 
         DEBUG_STDOUT("Face " << i << " best bounding box rotation angles: " << faces[i].getMinBBoxRotAngles());
     }
@@ -179,6 +179,7 @@ bool CharacterizedObject::write(const std::string &filename) {
         outfile.write((char *)&len, sizeof(size_t));  // Numero de caras
 
         for (auto &f : faces) {
+            outfile.write((char *)&f.getNormal(), sizeof(Vector));            // Normal de la cara
             outfile.write((char *)&f.getMinBBox(), sizeof(BBox));             // Bounding box de la cara
             outfile.write((char *)&f.getMinBBoxRotAngles(), sizeof(Vector));  // Ángulo de rotación de la cara
             len = f.getPoints().size();
@@ -208,7 +209,8 @@ bool CharacterizedObject::writeLivoxCSV(const std::string &filename) {
     if (faces.size() > 0) {
         for (size_t i = 0; i < half; ++i) {
             colors[i] = color_step * i;
-            colors[++i] = color_step * (half + i);
+            ++i;
+            colors[i] = color_step * (half + i);
         }
         size_t last = faces.size() - 1;
         if (!(last & 1)) {
@@ -238,9 +240,11 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::load(const std::string
         infile.read((char *)&nfaces, sizeof(size_t));  // Numero de caras
 
         std::vector<Face> faces(nfaces, Face());
+        Vector normal;
         BBox fbbox;
         Vector frotdeg;
         for (unsigned i = 0; i < nfaces; ++i) {
+            infile.read((char *)&normal, sizeof(Vector));   // Normal de la cara
             infile.read((char *)&fbbox, sizeof(BBox));      // Bounding box de la cara
             infile.read((char *)&frotdeg, sizeof(Vector));  // Ángulo de rotación de la cara
 
@@ -250,7 +254,7 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::load(const std::string
                 infile.read((char *)&points[j], sizeof(Point));  // Punto de la cara
             }
 
-            faces[i] = Face(points, fbbox, frotdeg);
+            faces[i] = Face(points, normal, fbbox, frotdeg);
         }
 
         infile.close();

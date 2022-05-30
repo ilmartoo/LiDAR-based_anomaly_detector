@@ -164,7 +164,7 @@ ScanCode ScannerLVX::readData() {
     }
 
     if (frameOffset == 0 && packetOffset == 0 && lvx_file.GetFileState() == livox_ros::kLvxFileAtEnd) {
-        CLI_STDERR("EOF reached");
+        CLI_STDERR("End Of File reached: Scan will end and file will be reset");
 
         scanning = false;
         return ScanCode::kScanEof;

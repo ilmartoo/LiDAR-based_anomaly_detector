@@ -159,7 +159,7 @@ ScanCode ScannerCSV::readData() {
     }
 
     if (infile.eof()) {
-        CLI_STDERR("EOF reached");
+        CLI_STDERR("End Of File reached: Scan will end and file will be reset");
 
         scanning = false;
         return ScanCode::kScanEof;

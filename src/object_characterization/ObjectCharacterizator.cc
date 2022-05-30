@@ -19,11 +19,11 @@
 
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "object_characterization/CharacterizedObject.hh"
-#include "models/Geometry.hh"
 #include "models/LidarPoint.hh"
 #include "models/Point.hh"
 #include "models/Kernel.hh"
 #include "app/CLICommand.hh"
+#include "app/config.h"
 
 #include "logging/debug.hh"
 
