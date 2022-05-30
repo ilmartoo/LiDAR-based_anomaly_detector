@@ -100,7 +100,7 @@ CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
         opoints[i].setClusterID(cUnclassified);
     }
 
-    clusters = DBScan::normals(FACE_POINT_PROXIMITY, MIN_FACE_POINTS, opoints, MAX_NORMAL_VECT_ANGLE_OC);  // Detección de las caras
+    clusters = DBScan::normals(FACE_POINT_PROXIMITY, MIN_FACE_POINTS, opoints, MAX_NORMAL_VECT_ANGLE_OC, MAX_MEAN_VECT_ANGLE);  // Detección de las caras
 
     // Salida si no se han detectado caras del objeto
     if (clusters.size() == 0) {

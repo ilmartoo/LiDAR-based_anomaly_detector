@@ -38,7 +38,7 @@ std::pair<bool, std::vector<size_t>> DBScan::expandCluster(Point &centroid, int 
     auto clusterSeeds = centroidNeighbours(centroid, maxDistance, points, map);
 
     // Centroide no contiene la cantidad mínima de puntos
-    if (clusterSeeds.first < minPoints) {
+    if (clusterSeeds.second.size() < minPoints) {
         centroid.setClusterID(cNoise);
         return {false, {}};
     }
@@ -86,7 +86,7 @@ std::pair<size_t, std::vector<size_t>> DBScan::centroidNeighbours(const Point &c
 
     for (Point *&np : neighbourPoints) {
         if (np->getClusterID() < 0) {
-            // A partir del estandar C++0x los elementos de un vector estan contiguos en memoria (menos los tipo bool ??)
+            // A partir del estandar C++0x los elementos de un vector estan contiguos en memoria (menos los tipo bool)
             // Haciendo uso de aritmetica de punteros le restamos a una dirección de un punto del vector (np) la dirección
             // inicial (&*points.begin()) obteniendo de esta forma el índice del elemento en tiempo constante sin recurrir
             // a una búsqueda lineal
@@ -97,7 +97,7 @@ std::pair<size_t, std::vector<size_t>> DBScan::centroidNeighbours(const Point &c
     return {neighbourPoints.size(), clusterIndex};
 }
 
-std::vector<std::vector<size_t>> DBScan::normals(double maxDistance, unsigned int minPoints, std::vector<Point> &points, double normalDispersion) {
+std::vector<std::vector<size_t>> DBScan::normals(double maxDistance, unsigned int minPoints, std::vector<Point> &points, double normalDispersion, double meanNormalDispersion) {
     int clusterID = 1;
     std::vector<std::vector<size_t>> faces;
 
@@ -106,7 +106,7 @@ std::vector<std::vector<size_t>> DBScan::normals(double maxDistance, unsigned in
 
     for (size_t i = 0; i < points.size(); ++i) {
         if (points[i].getClusterID() == cUnclassified && normals[i] != Vector(0, 0, 0)) {
-            std::pair<bool, std::vector<size_t>> expansion = expandNormalCluster(i, clusterID, maxDistance, minPoints, points, normals, clustermap, normalDispersion);
+            std::pair<bool, std::vector<size_t>> expansion = expandNormalCluster(i, clusterID, maxDistance, minPoints, points, normals, clustermap, normalDispersion, meanNormalDispersion);
             if (expansion.first) {
                 faces.push_back(expansion.second);
                 ++clusterID;
@@ -117,11 +117,11 @@ std::vector<std::vector<size_t>> DBScan::normals(double maxDistance, unsigned in
     return faces;
 }
 
-std::pair<bool, std::vector<size_t>> DBScan::expandNormalCluster(size_t centroid, int clusterID, double maxDistance, unsigned int minPoints, std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion) {
-    auto clusterSeeds = centroidNormalNeighbours(centroid, maxDistance, points, normals, map, normalDispersion);
+std::pair<bool, std::vector<size_t>> DBScan::expandNormalCluster(size_t centroid, int clusterID, double maxDistance, unsigned int minPoints, std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion, double meanNormalDispersion) {
+    auto clusterSeeds = centroidNormalNeighbours(centroid, normals[centroid], maxDistance, points, normals, map, normalDispersion, meanNormalDispersion);
 
     // Centroide no contiene la cantidad mínima de puntos
-    if (clusterSeeds.first < minPoints) {
+    if (clusterSeeds.second.size() < minPoints) {
         points[centroid].setClusterID(cNoise);
         return {false, {}};
     }
@@ -129,10 +129,14 @@ std::pair<bool, std::vector<size_t>> DBScan::expandNormalCluster(size_t centroid
     // Expandimos el cluster
     else {
         std::vector<size_t> clusterPoints = clusterSeeds.second;
+        std::vector<Vector> clusterNormals;  // Referencias a las normales de los puntos
+        clusterNormals.reserve(clusterSeeds.second.size());
 
+        // Guardado de los puntos iniciales del cluster
         size_t index = 0, indexCorePoint = 0;
         for (auto &i : clusterSeeds.second) {
             points[i].setClusterID(clusterID);
+            clusterNormals.push_back(normals[i]);
             if (points[i] == points[centroid]) {
                 indexCorePoint = index;
             }
@@ -142,7 +146,8 @@ std::pair<bool, std::vector<size_t>> DBScan::expandNormalCluster(size_t centroid
 
         // Expandimos a través de los puntos vecinos al centroide
         for (size_t i = 0, seedsSize = clusterSeeds.second.size(); i < seedsSize; ++i) {
-            auto clusterNeighbours = centroidNormalNeighbours(clusterSeeds.second[i], maxDistance, points, normals, map, normalDispersion);
+            Vector meanNormal = Geometry::mean(clusterNormals);
+            auto clusterNeighbours = centroidNormalNeighbours(clusterSeeds.second[i], meanNormal, maxDistance, points, normals, map, normalDispersion, meanNormalDispersion);
 
             // Comprobación de que no es un punto frontera
             if (clusterNeighbours.first >= minPoints) {
@@ -153,7 +158,8 @@ std::pair<bool, std::vector<size_t>> DBScan::expandNormalCluster(size_t centroid
                     }
                     points[i].setClusterID(clusterID);
 
-                    clusterPoints.push_back(i);  // Añadimos punto al vector de indices totales
+                    clusterNormals.push_back(normals[i]);  // Añadimos referencia para el calculo de la normal media
+                    clusterPoints.push_back(i);         // Añadimos punto al vector de indices totales
                 }
             }
         }
@@ -162,19 +168,21 @@ std::pair<bool, std::vector<size_t>> DBScan::expandNormalCluster(size_t centroid
     }
 }
 
-std::pair<size_t, std::vector<size_t>> DBScan::centroidNormalNeighbours(size_t centroid, double maxDistance, const std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion) {
+std::pair<size_t, std::vector<size_t>> DBScan::centroidNormalNeighbours(size_t centroid, const Vector &meanNormal, double maxDistance, const std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion, double meanNormalDispersion) {
     std::vector<size_t> clusterIndex;
     size_t neighbours = 0;
     std::vector<Point *> neighbourPoints = map.searchNeighbors(points[centroid], maxDistance, Kernel_t::sphere);
 
     for (Point *&np : neighbourPoints) {
-        // A partir del estandar C++0x los elementos de un vector estan contiguos en memoria (menos los tipo bool ??)
+        // A partir del estandar C++0x los elementos de un vector estan contiguos en memoria (menos los tipo bool)
         // Haciendo uso de aritmetica de punteros le restamos a una dirección de un punto del vector (np) la dirección
         // inicial (&*points.begin()) obteniendo de esta forma el índice del elemento en tiempo constante sin recurrir
         // a una búsqueda lineal
         size_t i = (size_t)(np - &*points.begin());
 
-        if (normals[i] != Vector(0, 0, 0) && normals[centroid].vectorialAngle(normals[i]) <= normalDispersion) {
+        if (normals[i] != Vector(0, 0, 0) &&
+            normals[centroid].vectorialAngle(normals[i]) <= normalDispersion &&
+            meanNormal.vectorialAngle(normals[i]) <= meanNormalDispersion) {
             ++neighbours;
             if (np->getClusterID() < 0) {
                 clusterIndex.push_back(i);

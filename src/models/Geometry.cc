@@ -375,3 +375,19 @@ std::vector<std::pair<BBox, Vector>> Geometry::minimumBBox(const std::vector<std
 
     return bboxes;
 }
+
+Point Geometry::mean(const std::vector<Point> &points) {
+    Point m(0, 0, 0);
+    for (auto &p : points) {
+        m = m + p;
+    }
+    return m / points.size();
+}
+
+Point Geometry::mean(const std::vector<Point *> &points) {
+    Point m(0, 0, 0);
+    for (auto &p : points) {
+        m = m + *p;
+    }
+    return m / points.size();
+}

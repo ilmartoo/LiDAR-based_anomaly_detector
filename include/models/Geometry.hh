@@ -80,6 +80,19 @@ class Geometry {
     static arma::vec4 computePlane(const std::vector<Point *> &points);
 
     /**
+     * Calcula la media de un vector de puntos
+     * @param points Puntos sobre los que calcular la media
+     * @return Punto medio del vector
+     */
+    static Point mean(const std::vector<Point> &points);
+    /**
+     * Calcula la media de un vector de puntos
+     * @param points Referencias a los puntos sobre los que calcular la media
+     * @return Punto medio del vector
+     */
+    static Point mean(const std::vector<Point *> &points);
+
+    /**
      * Matriz de rotación según unos ángulos dados en grados
      * @param xdeg Rotación en X en grados
      * @param ydeg Rotación en Y en grados

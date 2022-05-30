@@ -35,7 +35,7 @@ class DBScan {
     * @param normalDispersion Dispersión máxima entre normales para considerarse la misma cara
     * @return Vector de caras representadas en forma de vectores de indices de los puntos pertenecientes a la cara
     */
-    static std::vector<std::vector<size_t>> normals(double maxDistance, unsigned int minPoints, std::vector<Point> &points, double normalDispersion);
+    static std::vector<std::vector<size_t>> normals(double maxDistance, unsigned int minPoints, std::vector<Point> &points, double normalDispersion, double meanNormalDispersion);
 
    private:
 	// Expande un cluster a partir de un centroide y el ID especificado junto con las variables limitantes especificadas
@@ -44,9 +44,9 @@ class DBScan {
     static std::pair<size_t, std::vector<size_t>> centroidNeighbours(const Point &centroid, double maxDistance, const std::vector<Point> &points, const Octree &map);
 
     // Expande una cara a partir de un centroide y el ID especificado junto con las variables limitantes especificadas
-    static std::pair<bool, std::vector<size_t>> expandNormalCluster(size_t centroid, int clusterID, double maxDistance, unsigned int minPoints, std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion);
+    static std::pair<bool, std::vector<size_t>> expandNormalCluster(size_t centroid, int clusterID, double maxDistance, unsigned int minPoints, std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion, double meanNormalDispersion);
     // Calcula el indice de los puntos pertenecientes a la cara según una normal dada
-    static std::pair<size_t, std::vector<size_t>> centroidNormalNeighbours(size_t centroid, double maxDistance, const std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion);
+    static std::pair<size_t, std::vector<size_t>> centroidNormalNeighbours(size_t centroid, const Vector &meanNormal, double maxDistance, const std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion, double meanNormalDispersion);
 };
 
 #endif  // DBSCAN_CLASS_H
