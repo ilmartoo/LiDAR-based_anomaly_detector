@@ -41,15 +41,17 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
                                      : false,
                                  generalDelta);
 
+    similar = similar ? generalComparison.similar : similar;
+
     //////////////////////////
     // Comparación de caras //
     //////////////////////////
 
     std::vector<FaceComparison> faceComparisons;
 
-    arma::mat deltaVolumes(obj.getFaces().size(), mod.getFaces().size());  // Matriz de deltas de volumenes
-    std::vector<bool> objFaceUsage(obj.getFaces().size(), false);          // Caras del objeto ya usadas
-    std::vector<bool> modFaceUsage(mod.getFaces().size(), false);          // Caras del modelo ya usadas
+    double deltaVolumes[obj.getFaces().size()][mod.getFaces().size()];  // Matriz de deltas de volumenes
+    std::vector<bool> objFaceUsage(obj.getFaces().size(), false);       // Caras del objeto ya usadas
+    std::vector<bool> modFaceUsage(mod.getFaces().size(), false);       // Caras del modelo ya usadas
 
     size_t tcomp = deltaFaces < 0 ? mod.getFaces().size() : obj.getFaces().size();  // Máximo de iteraciones posibles en la comparación de caras
     size_t objFaceIndex, modFaceIndex;
@@ -57,9 +59,9 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
     // #pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
     {
         // #pragma omp for collapse(2) schedule(guided)
-        for (size_t i = 0; i < obj.getFaces().size(); ++i) {
-            for (size_t j = 0; j < mod.getFaces().size(); ++j) {
-                deltaVolumes(i, j) = std::fabs(obj.getFaces()[i].getMinBBox().volume() - mod.getFaces()[i].getMinBBox().volume());
+        for (size_t i = 0; i < mod.getFaces().size(); ++i) {
+            for (size_t j = 0; j < obj.getFaces().size(); ++j) {
+                deltaVolumes[i][j] = std::fabs(mod.getFaces()[i].getMinBBox().volume() - obj.getFaces()[j].getMinBBox().volume());
             }
         }
         // Buscamos en cada iteración el delta mínimo de las caras restantes
@@ -68,7 +70,7 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
             {
                 for (objFaceIndex = 0; objFaceUsage[objFaceIndex] && objFaceIndex < objFaceUsage.size(); ++objFaceIndex) {}
                 for (modFaceIndex = 0; modFaceUsage[modFaceIndex] && modFaceIndex < modFaceUsage.size(); ++modFaceIndex) {}
-                minDeltaVolume = deltaVolumes(objFaceIndex, modFaceIndex);
+                minDeltaVolume = deltaVolumes[objFaceIndex][modFaceIndex];
             }
             // Implicit barrier
             // Recorremos los elementos restantes de la matriz en busca del mínimo
@@ -81,33 +83,36 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
                         continue;
                     } else {
                         // #pragma omp critical
-                        if (deltaVolumes(oi, mi) < minDeltaVolume) {
+                        if (deltaVolumes[oi][mi] < minDeltaVolume) {
                             objFaceIndex = oi;
                             modFaceIndex = mi;
-                            minDeltaVolume = deltaVolumes(objFaceIndex, modFaceIndex);
+                            minDeltaVolume = deltaVolumes[objFaceIndex][modFaceIndex];
                         }
                     }
                 }
             }
-        }
-        // #pragma omp single
-        {
-            // Eliminamos caras
-            modFaceUsage[modFaceIndex] = true;
-            objFaceUsage[objFaceIndex] = true;
 
-            // Comparación
-            Vector faceDelta = mod.getFaces()[objFaceIndex].getMinBBox().getDelta() - obj.getFaces()[objFaceIndex].getMinBBox().getDelta();
-            faceComparisons.push_back(FaceComparison((std::fabs(faceDelta.getX()) <= MAX_DIMENSION_DELTA &&
-                                                      std::fabs(faceDelta.getY()) <= MAX_DIMENSION_DELTA &&
-                                                      std::fabs(faceDelta.getZ()) <= MAX_DIMENSION_DELTA)
-                                                         ? true
-                                                         : false,
-                                                     objFaceIndex,
-                                                     modFaceIndex,
-                                                     faceDelta));
+            // #pragma omp single
+            {
+                // Eliminamos caras
+                modFaceUsage[modFaceIndex] = true;
+                objFaceUsage[objFaceIndex] = true;
+
+                // Comparación
+                Vector faceDelta = mod.getFaces()[objFaceIndex].getMinBBox().getDelta() - obj.getFaces()[objFaceIndex].getMinBBox().getDelta();
+                faceComparisons.push_back(FaceComparison((std::fabs(faceDelta.getX()) <= MAX_DIMENSION_DELTA &&
+                                                          std::fabs(faceDelta.getY()) <= MAX_DIMENSION_DELTA &&
+                                                          std::fabs(faceDelta.getZ()) <= MAX_DIMENSION_DELTA)
+                                                             ? true
+                                                             : false,
+                                                         objFaceIndex,
+                                                         modFaceIndex,
+                                                         faceDelta));
+
+                similar = similar ? faceComparisons.back().similar : similar;
+            }
+            // Implicit barrier
         }
-        // Implicit barrier
     }
 
     if (chrono) {

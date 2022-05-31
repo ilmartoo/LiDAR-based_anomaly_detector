@@ -452,24 +452,65 @@ void App::cli() {
 
                             AnomalyReport ar = ad->compare(object, model);
 
-                            CLI_STDOUT("Model and obeject are " << (ar.similar ? bold("similar") : bold("different")));
-                            
-                            if (ar.deltaFaces < 0) {
-                                CLI_STDOUT("  Model has " << ar.deltaFaces << " more faces");
-                            } else if (ar.deltaFaces > 0) {
-                                CLI_STDOUT("  Object has " << ar.deltaFaces * -1 << " more faces");
-                            } else {
-                                CLI_STDOUT("  Model and object have the same number of faces");
-                            }
-                            
-                            CLI_STDOUT_NO_NL("  As a whole, model and object are " << (ar.generalComparison.similar ? bold("similar") : bold("different")));
-                            CLI_STDOUT(". Deltas from model to object in mm (Depth, Height, Width): " << ar.generalComparison.deltas);
+                            Vector deltas;  // Aux variable
 
-                            CLI_STDOUT("  Individual face comparisons [model_face, object_face]:");
-                            for (auto &fc : ar.faceComparisons) {
-                                CLI_STDOUT_NO_NL("    [" << fc.modelFace << ", " << fc.objectFace << "] Faces are " << (ar.generalComparison.similar ? bold("similar") : bold("different")));
-                                CLI_STDOUT(". Deltas in mm (Depth, Height, Width): " << fc.deltas);
+                            // Notes
+                            CLI_STDOUT("------------------------ ANOMALY REPORT ------------------------\n"
+                                       " // NOTES //\n"
+                                       " Bounding box substractions represent the difference between\n"
+                                       " a model bounding box and an object bouding box in millimeters\n"
+                                       " with the dimensions in the following format:\n" bold("   [depth, height, width]"));
+                            CLI_STDOUT(" Face comparisons are made between the two faces specified in\n"
+                                       " the following format:\n" bold("   [model_face, object_face]"));
+                            // General BBox comparison
+                            CLI_STDOUT("\n // GENERAL COMPARISON //");
+                            deltas = ar.generalComparison.deltas;
+                            CLI_STDOUT(" NumFaces(model)  = " << model.getFaces().size());
+                            CLI_STDOUT(" NumFaces(object) = " << object.getFaces().size());
+                            deltas = model.getBBox().getDelta();
+                            CLI_STDOUT(" BoundBox(model)  = [" << (int)deltas.getX() << "mm, "
+                                                               << (int)deltas.getY() << "mm, "
+                                                               << (int)deltas.getZ() << "mm]");
+                            deltas = object.getBBox().getDelta();
+                            CLI_STDOUT(" BoundBox(object) = [" << (int)deltas.getX() << "mm, "
+                                                               << (int)deltas.getY() << "mm, "
+                                                               << (int)deltas.getZ() << "mm]");
+                            CLI_STDOUT(" NumFaces(model) - NumFaces(object) = " << ar.deltaFaces);
+                            CLI_STDOUT(" BoundBox(model) - BoundBox(object) = [" << (int)deltas.getX() << "mm, "
+                                                                                 << (int)deltas.getY() << "mm, "
+                                                                                 << (int)deltas.getZ() << "mm]");
+                            CLI_STDOUT("");  // Newline
+                            if (ar.deltaFaces < 0) {
+                                CLI_STDOUT(bold(" Model has " << ar.deltaFaces * -1 << " more faces"));
+                            } else if (ar.deltaFaces > 0) {
+                                CLI_STDOUT(bold(" Object has " << ar.deltaFaces << " more faces"));
+                            } else {
+                                CLI_STDOUT(bold(" Model and object have the same number of faces"));
                             }
+                            // Face comparison
+                            CLI_STDOUT(bold(" As a whole, model and object are " << (ar.generalComparison.similar ? "similar" : "different") << ""));
+
+                            CLI_STDOUT("\n // FACE COMPARISONS //");
+                            for (auto &fc : ar.faceComparisons) {
+                                CLI_STDOUT(" [" << fc.modelFace << ", " << fc.objectFace << "]");
+                                deltas = model.getFaces()[fc.modelFace].getMinBBox().getDelta();
+                                CLI_STDOUT(" BoundBox(fmodel)  = [" << (int)deltas.getX() << "mm, "
+                                                                    << (int)deltas.getY() << "mm, "
+                                                                    << (int)deltas.getZ() << "mm]");
+                                deltas = object.getFaces()[fc.objectFace].getMinBBox().getDelta();
+                                CLI_STDOUT(" BoundBox(fobject) = [" << (int)deltas.getX() << "mm, "
+                                                                    << (int)deltas.getY() << "mm, "
+                                                                    << (int)deltas.getZ() << "mm]");
+                                deltas = fc.deltas;
+                                CLI_STDOUT(" BBox(fmodel) - BBox(fobject) = [" << (int)deltas.getX() << "mm, "
+                                                                               << (int)deltas.getY() << "mm, "
+                                                                               << (int)deltas.getZ() << "mm]");
+                                CLI_STDOUT(bold(" Both faces are " << (fc.similar ? "similar" : "different") << "\n"));
+                            }
+                            // Conclusion
+                            CLI_STDOUT("\n // CONCLUSION //");
+                            CLI_STDOUT(bold(" The given model and object are " << (ar.similar ? "similar" : "different") << ""));
+                            CLI_STDOUT("----------------------------------------------------------------");
 
                         } else {
                             CLI_STDERR("Could not locate model " << command[1]);

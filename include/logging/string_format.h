@@ -24,7 +24,7 @@
 /* STYLE FORMAT CONSTANTS */
 #define BOLD              "\e[1m"  ///< BOLD style format
 #define FAINT             "\e[2m"  ///< FAINT style format
-#define UNDERLINE         "\e[3m"  ///< UNDERLINE style format
+#define ITALIC            "\e[3m"  ///< ITALIC style format
 #define BLINK             "\e[5m"  ///< BLINK style format
 #define REVERSED          "\e[7m"  ///< REVERSED style format
 #define CONCEALED         "\e[8m"  ///< CONCEALED style format
@@ -68,7 +68,7 @@
 /* TEXT FORMATTING MACROS */
 #define bold(text)        BOLD text RESET       ///< BOLD text format macro
 #define faint(text)       FAINT text RESET      ///< FAINT text format macro
-#define underline(text)   UNDERLINE text RESET  ///< UNDERLINE text format macro
+#define italic(text)      ITALIC text RESET     ///< ITALIC text format macro
 #define blink(text)       BLINK text RESET      ///< BLINK text format macro
 #define reversed(text)    REVERSED text RESET   ///< REVERSED text format macro
 #define concealed(text)   CONCEALED text RESET  ///< CONCEALED text format macro
@@ -114,7 +114,7 @@
 /* TEXT FORMATTING MACROS FOR C++ STRINGS */
 #define bold_s(text)        BOLD + text + RESET       ///< BOLD text format macro
 #define faint_s(text)       FAINT + text + RESET      ///< FAINT text format macro
-#define underline_s(text)   UNDERLINE + text + RESET  ///< UNDERLINE text format macro
+#define italic_s(text)      ITALIC + text + RESET     ///< ITALIC text format macro
 #define blink_s(text)       BLINK + text + RESET      ///< BLINK text format macro
 #define reversed_s(text)    REVERSED + text + RESET   ///< REVERSED text format macro
 #define concealed_s(text)   CONCEALED + text + RESET  ///< CONCEALED text format macro

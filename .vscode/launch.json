@@ -11,13 +11,17 @@
 			"program": "${workspaceFolder}/build/anomaly_detector",
 			// "args": [
 			// 	"-b",
-			// 	"default"
+			// 	"default",
+			// 	"-c",
+			// 	"all"
 			// ],
 			"args": [
 				"-f",
-				"data/caja_cerca.lvx",
+				"data/caja_grande.lvx",
 				"-c",
-				"all"
+				"all",
+				"<",
+				"tmp/input_compare.txt"
 			],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",
