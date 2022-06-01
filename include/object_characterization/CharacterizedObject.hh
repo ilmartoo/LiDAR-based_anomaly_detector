@@ -17,7 +17,7 @@
 
 #include "object_characterization/Face.hh"
 #include "models/Point.hh"
-#include "models/BBox.hh"
+#include "object_characterization/BBox.hh"
 #include "models/Geometry.hh"
 
 /**

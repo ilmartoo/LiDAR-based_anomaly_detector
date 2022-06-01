@@ -16,7 +16,7 @@
 #include "object_characterization/Face.hh"
 #include "models/Geometry.hh"
 #include "models/Point.hh"
-#include "models/BBox.hh"
+#include "object_characterization/BBox.hh"
 #include "app/config.h"
 
 Point Geometry::computeCentroid(const std::vector<Point> &points) {

@@ -17,7 +17,7 @@
 
 #include "models/Point.hh"
 #include "models/Octree.hh"
-#include "models/BBox.hh"
+#include "object_characterization/BBox.hh"
 
 /**
  * Clase utilizada como almacén de métodos geométricos y espaciales

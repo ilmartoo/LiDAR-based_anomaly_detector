@@ -12,7 +12,7 @@
 
 #include <vector>
 
-#include "models/BBox.hh"
+#include "object_characterization/BBox.hh"
 #include "models/Point.hh"
 
 class Face {
