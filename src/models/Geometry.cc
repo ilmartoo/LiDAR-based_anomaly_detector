@@ -233,7 +233,7 @@ std::pair<BBox, Vector> Geometry::minimumBBoxRotTrans(std::vector<Point *> &poin
                     } else {
                         BBox bb(points, rotationMatrix(i, j, k));
 #pragma omp critical
-                        if (bb.isBetterThan(bbmin)) {
+                        if (bb < bbmin) {
                             bbmin = bb;
                             rotmin = Vector(i, j, k);
                         }
@@ -252,7 +252,7 @@ std::pair<BBox, Vector> Geometry::minimumBBoxRotTrans(std::vector<Point *> &poin
                     } else {
                         BBox bb(points, rotationMatrix(i, j, k));
 #pragma omp critical
-                        if (bb.isBetterThan(bbmin)) {
+                        if (bb < bbmin) {
                             bbmin = bb;
                             rotmin = Vector(i, j, k);
                         }
@@ -276,55 +276,6 @@ std::pair<BBox, Vector> Geometry::minimumBBoxRotTrans(std::vector<Point *> &poin
     return {BBox(bbmin.getDelta()), rotmin};
 }
 
-std::pair<BBox, Vector> Geometry::minimumBBox(const std::vector<Point> &points) {
-    Vector rotmin(0, 0, 0);  // Ángulos de rotación iniciales
-    BBox bbmin(points);      // BBox sin rotacion
-
-#pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
-    {
-        // Rotaciones amplias en las tres dimensiones
-#pragma omp for collapse(3) schedule(guided)
-        for (int i = 0; i < 90; i += 10) {
-            for (int j = 0; j < 90; j += 10) {
-                for (int k = 0; k < 90; k += 10) {
-                    // El primer elemento es el mínimo por defecto
-                    if (i == 0 && j == 0 && k == 0) {
-                        continue;
-                    } else {
-                        BBox bb(points, rotationMatrix(i, j, k));
-#pragma omp critical
-                        if (bb.isBetterThan(bbmin)) {
-                            bbmin = bb;
-                            rotmin = Vector(i, j, k);
-                        }
-                    }
-                }
-            }
-        }
-        // Rotaciones pequeñas dentro del radio de la mejor rotación grande
-#pragma omp for collapse(3) schedule(guided)
-        for (int i = (int)rotmin.getX() - 10; i < (int)rotmin.getX() + 10; ++i) {
-            for (int j = (int)rotmin.getY(); j < (int)rotmin.getY() + 10; ++j) {
-                for (int k = (int)rotmin.getZ(); k < (int)rotmin.getZ() + 10; ++k) {
-                    // El primer elemento es el mínimo por defecto
-                    if (i == (int)rotmin.getX() && j == (int)rotmin.getY() && k == (int)rotmin.getZ()) {
-                        continue;
-                    } else {
-                        BBox bb(points, rotationMatrix(i, j, k));
-#pragma omp critical
-                        if (bb.isBetterThan(bbmin)) {
-                            bbmin = bb;
-                            rotmin = Vector(i, j, k);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return {bbmin, rotmin};
-}
-
 std::vector<std::pair<BBox, Vector>> Geometry::minimumBBox(const std::vector<std::vector<Point>> &points) {
     std::vector<std::pair<BBox, Vector>> bboxes = {points.size(), {{}, Vector(0, 0, 0)}};
 
@@ -346,7 +297,7 @@ std::vector<std::pair<BBox, Vector>> Geometry::minimumBBox(const std::vector<std
                         } else {
                             BBox bb(points[v], rotationMatrix(i, j, k));
 #pragma omp critical
-                            if (bb.isBetterThan(bboxes[v].first)) {
+                            if (isBetter(bb, bboxes[v].first)) {
                                 bboxes[v].first = bb;
                                 bboxes[v].second = Vector(i, j, k);
                             }
@@ -364,7 +315,7 @@ std::vector<std::pair<BBox, Vector>> Geometry::minimumBBox(const std::vector<std
                         } else {
                             BBox bb(points[v], rotationMatrix(i, j, k));
 #pragma omp critical
-                            if (bb.isBetterThan(bboxes[v].first)) {
+                            if (isBetter(bb, bboxes[v].first)) {
                                 bboxes[v].first = bb;
                                 bboxes[v].second = Vector(i, j, k);
                             }
@@ -393,3 +344,9 @@ Point Geometry::mean(const std::vector<Point *> &points) {
     }
     return m / points.size();
 }
+
+bool Geometry::isBetter(const BBox &bb1, const BBox &bb2) {
+    return bb1.getDelta().getX() < bb2.getDelta().getX() ||
+           (bb1.getDelta().getX() == bb2.getDelta().getX() && bb1.getDelta().getY() < bb2.getDelta().getY()) ||
+           (bb1.getDelta().getX() == bb2.getDelta().getX() && bb1.getDelta().getY() == bb2.getDelta().getY() && bb1.getDelta().getZ() < bb2.getDelta().getZ());
+};

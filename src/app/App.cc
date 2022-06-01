@@ -464,9 +464,17 @@ void App::cli() {
                                        " the following format:\n" bold("   [model_face, object_face]"));
                             // General BBox comparison
                             CLI_STDOUT("\n // GENERAL COMPARISON //");
-                            deltas = ar.generalComparison.deltas;
                             CLI_STDOUT(" NumFaces(model)  = " << model.getFaces().size());
                             CLI_STDOUT(" NumFaces(object) = " << object.getFaces().size());
+                            CLI_STDOUT(" NumFaces(model) - NumFaces(object) = " << ar.deltaFaces);
+                            if (ar.deltaFaces < 0) {
+                                CLI_STDOUT(bold(" Model has " << ar.deltaFaces * -1 << " more faces"));
+                            } else if (ar.deltaFaces > 0) {
+                                CLI_STDOUT(bold(" Object has " << ar.deltaFaces << " more faces"));
+                            } else {
+                                CLI_STDOUT(bold(" Model and object have the same number of faces"));
+                            }
+                            CLI_STDOUT("");  // Newline
                             deltas = model.getBBox().getDelta();
                             CLI_STDOUT(" BoundBox(model)  = [" << (int)deltas.getX() << "mm, "
                                                                << (int)deltas.getY() << "mm, "
@@ -475,18 +483,10 @@ void App::cli() {
                             CLI_STDOUT(" BoundBox(object) = [" << (int)deltas.getX() << "mm, "
                                                                << (int)deltas.getY() << "mm, "
                                                                << (int)deltas.getZ() << "mm]");
-                            CLI_STDOUT(" NumFaces(model) - NumFaces(object) = " << ar.deltaFaces);
+                            deltas = ar.generalComparison.deltas;
                             CLI_STDOUT(" BoundBox(model) - BoundBox(object) = [" << (int)deltas.getX() << "mm, "
                                                                                  << (int)deltas.getY() << "mm, "
                                                                                  << (int)deltas.getZ() << "mm]");
-                            CLI_STDOUT("");  // Newline
-                            if (ar.deltaFaces < 0) {
-                                CLI_STDOUT(bold(" Model has " << ar.deltaFaces * -1 << " more faces"));
-                            } else if (ar.deltaFaces > 0) {
-                                CLI_STDOUT(bold(" Object has " << ar.deltaFaces << " more faces"));
-                            } else {
-                                CLI_STDOUT(bold(" Model and object have the same number of faces"));
-                            }
                             // Face comparison
                             CLI_STDOUT(bold(" As a whole, model and object are " << (ar.generalComparison.similar ? "similar" : "different") << ""));
 

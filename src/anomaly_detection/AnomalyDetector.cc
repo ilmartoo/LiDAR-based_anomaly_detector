@@ -25,7 +25,7 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
         start = std::chrono::high_resolution_clock::now();
     }
 
-    bool similar = obj.getFaces().size() > 0;
+    bool similar = obj.getFaces().size() > 0 && obj.getFaces().size() == mod.getFaces().size();
     long deltaFaces = mod.getFaces().size() - obj.getFaces().size();
 
     /////////////////////////

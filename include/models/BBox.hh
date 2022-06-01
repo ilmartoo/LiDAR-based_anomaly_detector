@@ -174,16 +174,6 @@ class BBox {
      */
     double volume() const { return delta.getX() * delta.getY() * delta.getZ(); }
 
-    /**
-     * Comprueba si la bounding box es de menor tamaño en X, Y y Z en ese orden con respecto a la bounding box pasada como parametro.
-     * Metodo utilizado en la búsqueda de la mejor bouding box.
-     * @param bbox BBox contra la que se comparará
-     * @return true si la bounding box es mejor
-     */
-    bool isBetterThan(const BBox &bbox) const { return delta.getX() < bbox.delta.getX() ||
-                                                       (delta.getX() == bbox.delta.getX() && delta.getY() < bbox.delta.getY()) ||
-                                                       (delta.getX() == bbox.delta.getX() && delta.getY() == bbox.delta.getY() && delta.getZ() < bbox.delta.getZ()); };
-
     ////// Getters
     /**
      * Obtiene los deltas de la bounding box

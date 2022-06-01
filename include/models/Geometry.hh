@@ -123,7 +123,7 @@ class Geometry {
      */
     static std::pair<BBox, Vector> minimumBBox(const std::vector<Point> &points);
     /**
-     * Obtiene las bounding box de mínimo volumen que engloban a cada vector de puntos
+     * Obtiene las bounding box de mínimo volumen que engloban a cada vector de puntos (caras de un objeto)
      * @param points Vector de vectores de puntos
      * @return Vector de bounding boxes de mínimo volumen y vectores de los ángulos de rotación utilizados en grados
      */
@@ -132,6 +132,8 @@ class Geometry {
    private:
     static void computeSVD(const std::vector<Point> &points, arma::mat &U, arma::vec &s, arma::mat &V);
     static void computeSVD(const std::vector<Point *> &points, arma::mat &U, arma::vec &s, arma::mat &V);
+    // Comparación de bounding boxes para adaptar mejor a una cara
+    static bool isBetter(const BBox &bb1, const BBox &bb2);
 };
 
 #endif  // GEOMETRY_CLASS_H

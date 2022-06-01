@@ -196,6 +196,7 @@ bool CharacterizedObject::write(const std::string &filename) {
         return false;
     }
 }
+
 bool CharacterizedObject::writeLivoxCSV(const std::string &filename) {
     std::ofstream outfile(filename);
     Timestamp tmst(0, 0);
