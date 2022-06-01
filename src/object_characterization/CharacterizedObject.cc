@@ -143,7 +143,7 @@ CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
     // Cálculo de la mejor bounding box //
     //////////////////////////////////////
 
-    std::pair<BBox, Vector> bbmin = Geometry::minimumBBoxWithRotation(references);  // Bounding box mínima
+    std::pair<BBox, Vector> bbmin = Geometry::minimumBBoxRotTrans(references);  // Bounding box mínima
 
     DEBUG_STDOUT("Best bounding box rotation angles: " << bbmin.second);
 

@@ -214,10 +214,11 @@ arma::mat33 Geometry::rotationMatrix(const Vector &deg) {
              cb * cg}};
 }
 
-std::pair<BBox, Vector> Geometry::minimumBBoxWithRotation(std::vector<Point *> &points) {
+std::pair<BBox, Vector> Geometry::minimumBBoxRotTrans(std::vector<Point *> &points) {
     Vector rotmin(0, 0, 0);  // Ángulos de rotación iniciales
     BBox bbmin(points);      // BBox sin rotacion
     arma::mat33 rotmatrix;
+    Point trans;
 
 #pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
     {
@@ -232,7 +233,7 @@ std::pair<BBox, Vector> Geometry::minimumBBoxWithRotation(std::vector<Point *> &
                     } else {
                         BBox bb(points, rotationMatrix(i, j, k));
 #pragma omp critical
-                        if (bb < bbmin) {
+                        if (bb.isBetterThan(bbmin)) {
                             bbmin = bb;
                             rotmin = Vector(i, j, k);
                         }
@@ -251,7 +252,7 @@ std::pair<BBox, Vector> Geometry::minimumBBoxWithRotation(std::vector<Point *> &
                     } else {
                         BBox bb(points, rotationMatrix(i, j, k));
 #pragma omp critical
-                        if (bb < bbmin) {
+                        if (bb.isBetterThan(bbmin)) {
                             bbmin = bb;
                             rotmin = Vector(i, j, k);
                         }
@@ -263,15 +264,16 @@ std::pair<BBox, Vector> Geometry::minimumBBoxWithRotation(std::vector<Point *> &
 #pragma omp single
         {
             rotmatrix = Geometry::rotationMatrix(rotmin);
+            trans = Point(0, 0, 0) - bbmin.getMin();
         }
         // Implicit barrier
 #pragma omp for schedule(guided)
         for (size_t i = 0; i < points.size(); ++i) {
-            *points[i] = points[i]->rotate(rotmatrix);
+            *points[i] = points[i]->rotate(rotmatrix) + trans;
         }
     }
 
-    return {bbmin, rotmin};
+    return {BBox(bbmin.getDelta()), rotmin};
 }
 
 std::pair<BBox, Vector> Geometry::minimumBBox(const std::vector<Point> &points) {
@@ -291,7 +293,7 @@ std::pair<BBox, Vector> Geometry::minimumBBox(const std::vector<Point> &points) 
                     } else {
                         BBox bb(points, rotationMatrix(i, j, k));
 #pragma omp critical
-                        if (bb < bbmin) {
+                        if (bb.isBetterThan(bbmin)) {
                             bbmin = bb;
                             rotmin = Vector(i, j, k);
                         }
@@ -310,7 +312,7 @@ std::pair<BBox, Vector> Geometry::minimumBBox(const std::vector<Point> &points) 
                     } else {
                         BBox bb(points, rotationMatrix(i, j, k));
 #pragma omp critical
-                        if (bb < bbmin) {
+                        if (bb.isBetterThan(bbmin)) {
                             bbmin = bb;
                             rotmin = Vector(i, j, k);
                         }
@@ -344,7 +346,7 @@ std::vector<std::pair<BBox, Vector>> Geometry::minimumBBox(const std::vector<std
                         } else {
                             BBox bb(points[v], rotationMatrix(i, j, k));
 #pragma omp critical
-                            if (bb < bboxes[v].first) {
+                            if (bb.isBetterThan(bboxes[v].first)) {
                                 bboxes[v].first = bb;
                                 bboxes[v].second = Vector(i, j, k);
                             }
@@ -362,7 +364,7 @@ std::vector<std::pair<BBox, Vector>> Geometry::minimumBBox(const std::vector<std
                         } else {
                             BBox bb(points[v], rotationMatrix(i, j, k));
 #pragma omp critical
-                            if (bb < bboxes[v].first) {
+                            if (bb.isBetterThan(bboxes[v].first)) {
                                 bboxes[v].first = bb;
                                 bboxes[v].second = Vector(i, j, k);
                             }

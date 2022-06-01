@@ -110,10 +110,11 @@ class Geometry {
     /**
      * Rota los puntos para buscar la bounding box de mínimo volumen que los englobe:
      * todos los puntos se rotarán según los angulos que den como resultado la bounding box de mínimo volumen
+     * y posteriormente serán transladados a (0,0,0)
      * @param points Vector de referencias a los puntos
      * @return Bounding box de mínimo volumen y vector de los ángulos de rotación utilizados en grados
      */
-    static std::pair<BBox, Vector> minimumBBoxWithRotation(std::vector<Point *> &points);
+    static std::pair<BBox, Vector> minimumBBoxRotTrans(std::vector<Point *> &points);
 
     /**
      * Obtiene la bounding box de mínimo volumen que engloba los puntos

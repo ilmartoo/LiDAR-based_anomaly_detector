@@ -70,7 +70,7 @@ TEST_CASE_METHOD(GeometryFixture, "plane calculation", "[geometry]") {
                   "Normal computation is not acurate enough");
 }
 
-TEST_CASE_METHOD(GeometryFixture, "rotation matrix calculation", "[geometry]") {
+TEST_CASE("rotation matrix calculation", "[geometry]") {
     arma::mat33 rot = Geometry::rotationMatrix(90, 45, 0);
     double onesof2 = 1. / sqrt(2.);
     arma::mat33 result = {{onesof2, onesof2, 0}, {0, 0, -1}, {-onesof2, onesof2, 0}};
@@ -88,7 +88,7 @@ TEST_CASE_METHOD(GeometryFixture, "rotation matrix calculation", "[geometry]") {
                   "Rotation matrix calculation is not acurate enough");
 }
 
-TEST_CASE_METHOD(GeometryFixture, "point rotation", "[geometry][point]") {
+TEST_CASE("point rotation", "[geometry][point]") {
     Point rotated = Point(5, 10, 7).rotate(Geometry::rotationMatrix(90, 90, 90));
     Point result(7, 10, -5);
 

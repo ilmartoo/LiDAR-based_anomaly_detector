@@ -19,6 +19,8 @@
 class BBox {
    private:
     Vector delta;  ///< Delta de las dimensiones de la bounding box
+    Point min;     ///< Punto mínimo de la bounding box
+    Point max;     ///< Punto máximo de la bounding box
 
    public:
     /**
@@ -31,8 +33,8 @@ class BBox {
      */
     BBox(const std::vector<Point> &points) {
         if (points.size() > 0) {
-            Point min = points[0];
-            Point max = min;
+            min = points[0];
+            max = min;
             for (size_t i = 1; i < points.size(); ++i) {
                 const Point &p = points[i];
                 if (min.getX() > p.getX()) {
@@ -60,8 +62,8 @@ class BBox {
      */
     BBox(const std::vector<Point *> &points) {
         if (points.size() > 0) {
-            Point min = *points[0];
-            Point max = min;
+            min = *points[0];
+            max = min;
             for (size_t i = 1; i < points.size(); ++i) {
                 const Point &p = *points[i];
                 if (min.getX() > p.getX()) {
@@ -90,8 +92,8 @@ class BBox {
      */
     BBox(const std::vector<Point> &points, const arma::mat33 &rot) {
         if (points.size() > 0) {
-            Point min = points[0].rotate(rot);
-            Point max = min;
+            min = points[0].rotate(rot);
+            max = min;
             for (size_t i = 1; i < points.size(); ++i) {
                 Point p = points[i].rotate(rot);
                 if (min.getX() > p.getX()) {
@@ -120,8 +122,8 @@ class BBox {
      */
     BBox(const std::vector<Point *> &points, const arma::mat33 &rot) {
         if (points.size() > 0) {
-            Point min = points[0]->rotate(rot);
-            Point max = min;
+            min = points[0]->rotate(rot);
+            max = min;
             for (size_t i = 1; i < points.size(); ++i) {
                 Point p = points[i]->rotate(rot);
                 if (min.getX() > p.getX()) {
@@ -147,20 +149,20 @@ class BBox {
      * Constructor
      * @param delta Deltas de las dimensiones
      */
-    BBox(const Vector &delta) : delta(delta) {}
+    BBox(const Vector &delta) : delta(delta), min(0, 0, 0), max(delta) {}
     /**
      * Constructor
      * @param max Punto con las coordenadas máximas
      * @param min Punto con las coordenadas minimas
      */
-    BBox(const Point &max, const Point &min) : delta(max - min) {}
+    BBox(const Point &max, const Point &min) : delta(max - min), min(min), max(max) {}
     /**
      * Constructor
      * @param xradius Radio en x
      * @param yradius Radio en y
      * @param zradius Radio en z
      */
-    BBox(double xradius, double yradius, double zradius) : delta(Vector(xradius, yradius, zradius)) {}
+    BBox(double xradius, double yradius, double zradius) : delta(xradius, yradius, zradius), min(0, 0, 0), max(xradius, yradius, zradius) {}
     /**
      * Destructor
      */
@@ -172,12 +174,32 @@ class BBox {
      */
     double volume() const { return delta.getX() * delta.getY() * delta.getZ(); }
 
+    /**
+     * Comprueba si la bounding box es de menor tamaño en X, Y y Z en ese orden con respecto a la bounding box pasada como parametro.
+     * Metodo utilizado en la búsqueda de la mejor bouding box.
+     * @param bbox BBox contra la que se comparará
+     * @return true si la bounding box es mejor
+     */
+    bool isBetterThan(const BBox &bbox) const { return delta.getX() < bbox.delta.getX() ||
+                                                       (delta.getX() == bbox.delta.getX() && delta.getY() < bbox.delta.getY()) ||
+                                                       (delta.getX() == bbox.delta.getX() && delta.getY() == bbox.delta.getY() && delta.getZ() < bbox.delta.getZ()); };
+
     ////// Getters
     /**
      * Obtiene los deltas de la bounding box
      * @return Deltas de la bounding box
      */
     const Vector &getDelta() const { return delta; }
+    /**
+     * Devuelve el punto mínimo de la bounding box
+     * @return Punto mínimo de la bounding box
+     */
+    const Point &getMin() const { return min; }
+    /**
+     * Devuelve el punto máximo de la bounding box
+     * @return Punto máximo de la bounding box
+     */
+    const Point &getMax() const { return max; }
     /**
      * Obtiene el delta en X
      * @return Delta en X

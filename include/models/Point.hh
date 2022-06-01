@@ -90,9 +90,15 @@ class Point {
     /**
      * Producto escalar de dos vectores
      * @param v Vector contra el que realizar el producto escalar
-     * @return Resultado de la operación
+     * @return Valor resultado del producto escalar
      */
     double scalarProduct(const Point &v) const { return (x * v.x) + (y * v.y) + (z * v.z); }
+    /**
+     * Producto vectorial de dos vectores
+     * @param v Vector contra el que realizar el producto vectorial
+     * @return Vector resultado del producto vectorial
+     */
+    Point crossProduct(const Point &v) const { return Point(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x); }
     /**
      * Calcula el ángulo de separación entre dos vectores
      * @param v Vector contra el que medir la distancia angular
