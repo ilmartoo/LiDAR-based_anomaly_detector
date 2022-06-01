@@ -452,7 +452,7 @@ void App::cli() {
 
                             AnomalyReport ar = ad->compare(object, model);
 
-                            Vector deltas;  // Aux variable
+                            Vector delta;  // Aux variable
 
                             // Notes
                             CLI_STDOUT("------------------------ ANOMALY REPORT ------------------------\n"
@@ -467,45 +467,59 @@ void App::cli() {
                             CLI_STDOUT(" NumFaces(model)  = " << model.getFaces().size());
                             CLI_STDOUT(" NumFaces(object) = " << object.getFaces().size());
                             CLI_STDOUT(" NumFaces(model) - NumFaces(object) = " << ar.deltaFaces);
-                            if (ar.deltaFaces < 0) {
-                                CLI_STDOUT(bold(" Model has " << ar.deltaFaces * -1 << " more faces"));
-                            } else if (ar.deltaFaces > 0) {
-                                CLI_STDOUT(bold(" Object has " << ar.deltaFaces << " more faces"));
+                            if (ar.deltaFaces > 0) {
+                                CLI_STDOUT(bold(" Model has " << ar.deltaFaces << " more faces"));
+                            } else if (ar.deltaFaces < 0) {
+                                CLI_STDOUT(bold(" Object has " << -ar.deltaFaces << " more faces"));
                             } else {
                                 CLI_STDOUT(bold(" Model and object have the same number of faces"));
                             }
                             CLI_STDOUT("");  // Newline
-                            deltas = model.getBBox().getDelta();
-                            CLI_STDOUT(" BoundBox(model)  = [" << (int)deltas.getX() << "mm, "
-                                                               << (int)deltas.getY() << "mm, "
-                                                               << (int)deltas.getZ() << "mm]");
-                            deltas = object.getBBox().getDelta();
-                            CLI_STDOUT(" BoundBox(object) = [" << (int)deltas.getX() << "mm, "
-                                                               << (int)deltas.getY() << "mm, "
-                                                               << (int)deltas.getZ() << "mm]");
-                            deltas = ar.generalComparison.deltas;
-                            CLI_STDOUT(" BoundBox(model) - BoundBox(object) = [" << (int)deltas.getX() << "mm, "
-                                                                                 << (int)deltas.getY() << "mm, "
-                                                                                 << (int)deltas.getZ() << "mm]");
+                            delta = model.getBBox().getDelta();
+                            CLI_STDOUT(" BoundBox(model)  = [" << (int)delta.getX() << "mm, "
+                                                               << (int)delta.getY() << "mm, "
+                                                               << (int)delta.getZ() << "mm]");
+                            delta = object.getBBox().getDelta();
+                            CLI_STDOUT(" BoundBox(object) = [" << (int)delta.getX() << "mm, "
+                                                               << (int)delta.getY() << "mm, "
+                                                               << (int)delta.getZ() << "mm]");
+                            delta = ar.generalComparison.deltas;
+                            CLI_STDOUT(" BoundBox(model) - BoundBox(object) = [" << (int)delta.getX() << "mm, "
+                                                                                 << (int)delta.getY() << "mm, "
+                                                                                 << (int)delta.getZ() << "mm]");
                             // Face comparison
                             CLI_STDOUT(bold(" As a whole, model and object are " << (ar.generalComparison.similar ? "similar" : "different") << ""));
 
                             CLI_STDOUT("\n // FACE COMPARISONS //");
                             for (auto &fc : ar.faceComparisons) {
                                 CLI_STDOUT(" [" << fc.modelFace << ", " << fc.objectFace << "]");
-                                deltas = model.getFaces()[fc.modelFace].getMinBBox().getDelta();
-                                CLI_STDOUT(" BoundBox(fmodel)  = [" << (int)deltas.getX() << "mm, "
-                                                                    << (int)deltas.getY() << "mm, "
-                                                                    << (int)deltas.getZ() << "mm]");
-                                deltas = object.getFaces()[fc.objectFace].getMinBBox().getDelta();
-                                CLI_STDOUT(" BoundBox(fobject) = [" << (int)deltas.getX() << "mm, "
-                                                                    << (int)deltas.getY() << "mm, "
-                                                                    << (int)deltas.getZ() << "mm]");
-                                deltas = fc.deltas;
-                                CLI_STDOUT(" BBox(fmodel) - BBox(fobject) = [" << (int)deltas.getX() << "mm, "
-                                                                               << (int)deltas.getY() << "mm, "
-                                                                               << (int)deltas.getZ() << "mm]");
+                                delta = model.getFaces()[fc.modelFace].getMinBBox().getDelta();
+                                CLI_STDOUT(" BoundBox(fmodel)  = [" << (int)delta.getX() << "mm, "
+                                                                    << (int)delta.getY() << "mm, "
+                                                                    << (int)delta.getZ() << "mm]");
+                                delta = object.getFaces()[fc.objectFace].getMinBBox().getDelta();
+                                CLI_STDOUT(" BoundBox(fobject) = [" << (int)delta.getX() << "mm, "
+                                                                    << (int)delta.getY() << "mm, "
+                                                                    << (int)delta.getZ() << "mm]");
+                                delta = fc.deltas;
+                                CLI_STDOUT(" BBox(fmodel) - BBox(fobject) = [" << (int)delta.getX() << "mm, "
+                                                                               << (int)delta.getY() << "mm, "
+                                                                               << (int)delta.getZ() << "mm]");
                                 CLI_STDOUT(bold(" Both faces are " << (fc.similar ? "similar" : "different") << "\n"));
+                            }
+                            // Unmatched faces
+                            CLI_STDOUT("\n // UNMATCHED FACES //");
+                            if (ar.unmatched.size() > 0) {
+                                std::string type = ar.deltaFaces < 0 ? "fobject" : "fmodel";
+                                const std::vector<Face> &faces = ar.deltaFaces < 0 ? object.getFaces() : model.getFaces();
+                                for (auto &ui : ar.unmatched) {
+                                    delta = faces[ui].getMinBBox().getDelta();
+                                    CLI_STDOUT(" BoundBox(" << type << "[" << ui << "]) = ["
+                                                            << (int)delta.getX() << "mm, "
+                                                            << (int)delta.getY() << "mm, "
+                                                            << (int)delta.getZ() << "mm]");
+                                }
+                                CLI_STDOUT(bold(" There is a total of " << (ar.deltaFaces < 0 ? -ar.deltaFaces : ar.deltaFaces) << " unmatched faces"));
                             }
                             // Conclusion
                             CLI_STDOUT("\n // CONCLUSION //");

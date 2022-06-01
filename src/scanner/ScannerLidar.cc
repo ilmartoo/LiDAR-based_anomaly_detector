@@ -23,6 +23,9 @@
 
 #include "logging/debug.hh"
 
+#pragma GCC push_options
+#pragma GCC optimize("O0")
+
 // Obtiene los datos del punto enviado por el sensor
 void getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void *client_data) {
     if (ScannerLidar::getInstance()->lidar.device_state == kDeviceStateSampling) {
@@ -253,6 +256,8 @@ ScanCode ScannerLidar::scan() {
         } else {
             CLI_STDERR("Scanner failed to start scanning");
             return ScanCode::kScanError;
+            
+            scanning = false;
         }
 
     } else {
@@ -282,3 +287,5 @@ void ScannerLidar::stop() {
 
     DEBUG_STDOUT("LIVOX SDK closed");
 }
+
+#pragma GCC pop_options

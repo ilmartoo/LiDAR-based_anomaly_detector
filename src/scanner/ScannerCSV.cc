@@ -77,15 +77,6 @@ bool ScannerCSV::setCallback(const std::function<void(const LidarPoint &p)> func
     return ((bool)callback);
 }
 
-void ScannerCSV::wait() {
-    DEBUG_STDOUT("Waiting for the scanner to end");
-
-    scanning = true;
-    readData();
-
-    DEBUG_STDOUT("Ended point scanning");
-}
-
 void ScannerCSV::stop() {
     DEBUG_STDOUT("Closing scanner");
 
@@ -153,14 +144,12 @@ ScanCode ScannerCSV::readData() {
                 this->callback({Timestamp(data[0]),  static_cast<uint32_t>(std::stol(data[1])), std::stod(data[2]), std::stod(data[3]), std::stod(data[4])});
 
             } catch (std::exception &e) {
-                CLI_STDERR("Data conversion error");
+                return ScanCode::kScanError;
             }
         }
     }
 
     if (infile.eof()) {
-        CLI_STDERR("End Of File reached: Scan will end and file will be reset");
-
         scanning = false;
         return ScanCode::kScanEof;
     }

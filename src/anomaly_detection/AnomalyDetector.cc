@@ -115,6 +115,15 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
         }
     }
 
+    // Guardado de caras sin emparejar
+    std::vector<size_t> unmatched;
+    std::vector<bool>& faceUsage = deltaFaces < 0 ? objFaceUsage : modFaceUsage;
+    for (size_t i = 0; i < faceUsage.size(); ++i) {
+        if (!faceUsage[i]) {
+            unmatched.push_back(i);
+        }
+    }
+
     if (chrono) {
         end = std::chrono::high_resolution_clock::now();
 
@@ -123,5 +132,5 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
         CLI_STDOUT("Anomaly detection lasted " << std::setprecision(6) << duration << std::setprecision(2) << " s");
     }
 
-    return AnomalyReport(similar, generalComparison, deltaFaces, faceComparisons);
+    return AnomalyReport(similar, generalComparison, deltaFaces, faceComparisons, unmatched);
 }

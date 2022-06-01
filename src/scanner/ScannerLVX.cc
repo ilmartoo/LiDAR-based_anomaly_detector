@@ -84,17 +84,6 @@ bool ScannerLVX::setCallback(const std::function<void(const LidarPoint &p)> func
     return ((bool)callback);
 }
 
-void ScannerLVX::wait() {
-    DEBUG_STDOUT("Waiting for the scanner to end");
-
-    scanning = true;
-    readData();
-
-    delete packets_of_frame.packet;
-
-    DEBUG_STDOUT("Ended point scanning");
-}
-
 void ScannerLVX::stop() {
     DEBUG_STDOUT("Closing scanner");
 
@@ -164,8 +153,6 @@ ScanCode ScannerLVX::readData() {
     }
 
     if (frameOffset == 0 && packetOffset == 0 && lvx_file.GetFileState() == livox_ros::kLvxFileAtEnd) {
-        CLI_STDERR("End Of File reached: Scan will end and file will be reset");
-
         scanning = false;
         return ScanCode::kScanEof;
     }

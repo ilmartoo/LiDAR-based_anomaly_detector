@@ -183,7 +183,16 @@ void ObjectCharacterizator::defineBackground() {
 
     state = defBackground;
 
-    scanner->scan();
+    switch (scanner->scan()) {
+        case kScanOk:
+            break;
+        case kScanError:
+            CLI_STDERR("An error ocurred while scanning: Scan will end");
+            break;
+        case kScanEof:
+            CLI_STDERR("End Of File reached: Scan will end and file will be reset");
+            break;
+    }
 }
 
 std::pair<bool, CharacterizedObject> ObjectCharacterizator::defineObject() {
@@ -191,7 +200,16 @@ std::pair<bool, CharacterizedObject> ObjectCharacterizator::defineObject() {
 
     state = defObject;
 
-    scanner->scan();
+    switch (scanner->scan()) {
+        case kScanOk:
+            break;
+        case kScanError:
+            CLI_STDERR("An error ocurred while scanning: Scan will end");
+            break;
+        case kScanEof:
+            CLI_STDERR("End Of File reached: Scan will end and file will be reset");
+            break;
+    }
 
     std::chrono::system_clock::time_point start, end;
     if (chrono) {
@@ -229,7 +247,16 @@ void ObjectCharacterizator::wait(uint32_t miliseconds) {
 
     state = defDiscard;
 
-    scanner->scan();
+    switch (scanner->scan()) {
+        case kScanOk:
+            break;
+        case kScanError:
+            CLI_STDERR("An error ocurred while scanning: Scan will end");
+            break;
+        case kScanEof:
+            CLI_STDERR("End Of File reached: Scan will end and file will be reset");
+            break;
+    }
 }
 
 bool ObjectCharacterizator::isBackground(const Point &p) const { return background.getMap().searchNeighbors(p, backDistance, Kernel_t::sphere).size() > 0; }

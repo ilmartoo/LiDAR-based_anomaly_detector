@@ -22,6 +22,7 @@ class AnomalyReport {
     const Comparison generalComparison;                 ///< Comparación general entre objeto y modelo
     const long deltaFaces;                              ///< Delta de caras entre modelo y objeto (caras_modelo - caras_objeto)
     const std::vector<FaceComparison> faceComparisons;  ///< Vector de resultados de las comparaciones de caras individuales
+    const std::vector<size_t> unmatched;                ///< Índices de las caras no emparejadas del modelo u objeto
 
     /**
      * Constructor
@@ -30,8 +31,8 @@ class AnomalyReport {
      * @param yrd Anomalía del radio en y
      * @param zrd Anomalía del radio en z
      */
-    AnomalyReport(bool similar, const Comparison &generalComparison, long deltaFaces, const std::vector<FaceComparison> &faceComparisons)
-        : similar(similar), generalComparison(generalComparison), deltaFaces(deltaFaces), faceComparisons(faceComparisons) {}
+    AnomalyReport(bool similar, const Comparison &generalComparison, long deltaFaces, const std::vector<FaceComparison> &faceComparisons, const std::vector<size_t> &unmatched)
+        : similar(similar), generalComparison(generalComparison), deltaFaces(deltaFaces), faceComparisons(faceComparisons), unmatched(unmatched) {}
     /**
      * Destructor
      */

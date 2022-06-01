@@ -14,6 +14,7 @@ project(${ANOMALY_PROJECT_NAME})
 #
 option(DEBUG_POINTS "Debuggin option to print scanned points" OFF) # Default: Do not print scanned points
 option(BUILD_TESTS "Enables unit tests" OFF)                       # Default: Do not create unit tests
+set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG") 						   # Release compiler flags
 #
 # C++ standard
 #
@@ -92,8 +93,8 @@ string(TOLOWER ${CMAKE_BUILD_TYPE} build_type)
 if(NOT build_type STREQUAL "debug" AND NOT build_type STREQUAL "release")
 	message(FATAL_ERROR "Unknown build type")
 endif()
-set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG") # Release compiler flags
-set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG") 		# Debug compiler flags
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2") # Release compiler flags
+set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG") 						  # Debug compiler flags
 if(DEBUG_SCANNED_POINTS)
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_POINTS") # Debug extra compiler flags
 endif()

@@ -20,7 +20,7 @@
 
 /* Caracterización de objetos */
 #define MIN_CLUSTER_POINTS         20                  ///< Número mínimo de puntos que debe tener un cluster inicial para ser considerado
-#define MIN_FACE_POINTS            15                  ///< Número mínimo de puntos que debe tener una cara inicial para ser considerada
+#define MIN_FACE_POINTS            10                  ///< Número mínimo de puntos que debe tener una cara inicial para ser considerada
 #define CLUSTER_POINT_PROXIMITY    20                  ///< Proximidad máxima (mm) de un punto hacia uno origen para pertenecer al mismo cluster
 #define FACE_POINT_PROXIMITY       30                  ///< Proximidad máxima (mm) de un punto hacia uno origen para pertenecer a la misma cara
 #define MAX_NORMAL_VECT_ANGLE_OC   5 * RAD_PER_DEG     ///< Radianes máximos de separación angular entre normales para pertenecer a la misma cara

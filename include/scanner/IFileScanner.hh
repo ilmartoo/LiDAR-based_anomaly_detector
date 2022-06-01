@@ -42,11 +42,6 @@ class IFileScanner : public IScanner {
         return (IFileScanner *)instance;
     }
 
-    /**
-     * Espera pasiva a la finalización del escaneo del archivo de puntos
-     */
-    virtual void wait() = 0;
-
    protected:
     /**
      * Constructor
