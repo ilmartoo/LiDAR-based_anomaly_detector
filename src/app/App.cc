@@ -195,6 +195,7 @@ void App::cli() {
 
             // EXIT
             case kExit: {
+                CLI_STDOUT("Goodbye!");
                 exit = true;
             } break;
 
@@ -227,9 +228,11 @@ void App::cli() {
             // DEFINE
             case kDefine: {
                 if (command[0] == "background") {
+                    CLI_STDOUT("Starting background definition");
                     oc->defineBackground();
 
                 } else if (command[0] == "object") {
+                    CLI_STDOUT("Starting object definition");
                     std::pair<bool, CharacterizedObject> obj = oc->defineObject();
 
                     if (obj.first) {
@@ -290,6 +293,7 @@ void App::cli() {
                 if (command.numParams() == 1) {
                     try {
                         uint32_t ms = static_cast<uint32_t>(std::stoi(command[0]));
+                        CLI_STDOUT("Starting point discarding");
                         oc->wait(ms);
 
                     } catch (std::exception &e) {
