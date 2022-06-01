@@ -18,9 +18,9 @@
 #include "scanner/ScannerLVX.hh"
 #include "scanner/ScannerLidar.hh"
 #include "object_characterization/ObjectCharacterizator.hh"
-#include "object_characterization/ObjectManager.hh"
 #include "object_characterization/CharacterizedObject.hh"
 #include "anomaly_detection/AnomalyDetector.hh"
+#include "app/ObjectManager.hh"
 #include "app/CLICommand.hh"
 
 #include "logging/debug.hh"
@@ -97,9 +97,15 @@ class App {
      * Destructor de la app
      */
     ~App() {
-        delete ad;
-        delete om;
-        delete oc;
+        if (ad != nullptr) {
+            delete ad;
+        }
+        if (om != nullptr) {
+            delete om;
+        }
+        if (ad != nullptr) {
+            delete oc;
+        }
     }
 
    private:
