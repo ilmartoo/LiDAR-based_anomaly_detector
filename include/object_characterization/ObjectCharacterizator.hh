@@ -132,10 +132,10 @@ class ObjectCharacterizator {
      */
     void setMinReflectivity(float minReflectivity) { this->minReflectivity = minReflectivity; }
     /**
-     * Setter de la distancia al fondo
+     * Setter de la distancia al fondo en metros
      * @param backDistance Nueva distancia al fondo
      */
-    void setBackDistance(float backDistance) { this->backDistance = backDistance; }
+    void setBackDistance(float backDistance) { this->backDistance = backDistance * 1000; }
 
     ////// Getters
     /**
