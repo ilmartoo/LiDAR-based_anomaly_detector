@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 19/04/2022
  *
- * Definicion e implementación del objeto CLICommand
+ * @brief Definicion e implementación del objeto CLICommand
  *
  */
 
@@ -37,6 +37,9 @@ enum CLICommandType {
     kUnknown   ///< Comando desconocido
 };
 
+/**
+ * @brief Comando de la CLI
+ */
 class CLICommand {
    private:
     enum CLICommandType type;         ///< Tipo de comando

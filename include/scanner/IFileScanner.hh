@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 01/05/2022
  *
- * Interfaz IFileScanner
+ * @brief Interfaz IFileScanner
  *
  */
 
@@ -19,7 +19,7 @@
 #include "logging/debug.hh"
 
 /**
- * Interfaz de un escaner de puntos
+ * @brief Interfaz de un escaner de puntos a partir de un archivo
  */
 class IFileScanner : public IScanner {
    protected:

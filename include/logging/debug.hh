@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 23/03/2022
  *
- * Header que define macros de debugging
+ * @brief Header que define macros de debugging
  *
  */
 

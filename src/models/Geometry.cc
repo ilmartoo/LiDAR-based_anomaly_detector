@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 12/05/2022
  *
- * Implementación del objeto Geometry
+ * @brief Implementación del objeto Geometry
  *
  */
 

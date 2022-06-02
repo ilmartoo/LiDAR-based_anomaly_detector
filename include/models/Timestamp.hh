@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 29/03/2022
  *
- * Definición e implementación del objeto de Timestamp
+ * @brief Definición e implementación del objeto de Timestamp
  *
  */
 
@@ -17,7 +17,7 @@
 #define NANO_DIGITS 1000000000U
 
 /**
- * Representación de un timestamp de un punto
+ * @brief Marca temporal con una precisión de nanosegundos
  */
 class Timestamp {
    public:

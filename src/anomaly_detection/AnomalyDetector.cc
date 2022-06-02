@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 09/05/2022
  *
- * Implementación de la clase AnomalyDetector
+ * @brief Implementación de la clase AnomalyDetector
  *
  */
 

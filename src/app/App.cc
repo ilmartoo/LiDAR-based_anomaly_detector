@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 20/03/2022
  *
- * Implementación de la clase de gestión de la aplicación
+ * @brief Implementación de la clase de gestión de la aplicación
  *
  */
 

@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 03/05/2022
  *
- * Definición e implementación del objeto OctreeMap
+ * @brief Definición e implementación del objeto OctreeMap
  *
  */
 
@@ -20,6 +20,9 @@
 #include "models/LidarPoint.hh"
 #include "models/Timestamp.hh"
 
+/**
+ * @brief Mapa de puntos únicos utilizando un octree como estructura de almacenaje
+ */
 class OctreeMap {
    private:
     std::pair<bool, Timestamp> startTime;  ///< Timestamp del primer punto

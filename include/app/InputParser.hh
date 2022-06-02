@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 20/03/2022
  *
- * Parser de argumentos de linea de comandos
+ * @brief Parser de argumentos de linea de comandos
  *
  */
 
@@ -15,6 +15,9 @@
 
 #include "logging/debug.hh"
 
+/**
+ * @brief Parser del input del usuario
+ */
 class InputParser {
    private:
     std::vector<std::string> params;

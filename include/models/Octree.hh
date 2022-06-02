@@ -40,6 +40,9 @@ class Box {
 // Keep dividing the octree while octants have more points than these.
 static constexpr unsigned int MAX_POINTS = 100;
 
+/**
+ * @brief Implementación de un octree utilizado para el almacenaje y búsqueda de puntos de forma eficiente
+ */
 class Octree {
    private:
     std::vector<Octree> octants_{};

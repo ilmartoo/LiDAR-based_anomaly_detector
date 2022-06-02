@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 18/05/2022
  *
- * Definición del algoritmo DBScan
+ * @brief Definición del algoritmo DBScan
  *
  */
 
@@ -16,6 +16,9 @@
 
 #include "models/Point.hh"
 
+/**
+ * @brief Implementación del algoritmo DBSCAN para la búsqueda de clusters y caras de un objeto
+ */
 class DBScan {
    public:
    /**

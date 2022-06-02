@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 03/04/2022
  *
- * Implementación del objeto ScannerLVX
+ * @brief Implementación del objeto ScannerLVX
  *
  */
 

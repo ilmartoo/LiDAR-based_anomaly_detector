@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 06/05/2022
  *
- * Definición e implementación del objeto ObjectManager
+ * @brief Definición e implementación del objeto ObjectManager
  *
  */
 
@@ -18,7 +18,7 @@
 #include "object_characterization/CharacterizedObject.hh"
 
 /**
- * Manager de modelos de objetos
+ * @brief Gestor de modelos y objetos
  */
 class ObjectManager {
    private:

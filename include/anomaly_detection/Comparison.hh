@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 29/05/2022
  *
- * Definición e implementación de la clase Comparison
+ * @brief Definición e implementación de la clase Comparison
  *
  */
 
@@ -12,6 +12,9 @@
 
 #include "models/Point.hh"
 
+/**
+ * @brief Comparación entre objeto y modelo
+ */
 class Comparison {
    public:
     const bool similar;   ///< Booleano que establece si las bouding boxes son similares

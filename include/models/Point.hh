@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 19/03/2022
  *
- * Definición e implementación del objeto Point
+ * @brief Definición e implementación del objeto Point
  *
  */
 
@@ -29,7 +29,7 @@ enum PointCluster {
 };
 
 /**
- * Representación de un punto tridimensional
+ * @brief Representación de un punto perteneciente a una nube de puntos tridimensional
  */
 class Point {
    private:

@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 25/03/2022
  *
- * Implementación del objeto ObjectCharacterizator
+ * @brief Implementación del objeto ObjectCharacterizator
  *
  */
 

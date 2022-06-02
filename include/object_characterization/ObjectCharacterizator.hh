@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 25/03/2022
  *
- * Definición del objeto ObjectCharacterizator
+ * @brief Definición del objeto ObjectCharacterizator
  *
  */
 
@@ -31,7 +31,7 @@ enum CharacterizatorState {
 };
 
 /**
- * Cararterizador de objetos que implementa la interfaz IObjectCharacterizator
+ * @brief Gestor de la caracterización de objetos
  */
 class ObjectCharacterizator {
    private:

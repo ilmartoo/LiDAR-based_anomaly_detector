@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 20/03/2022
  *
- * Definición del objeto CharacterizedObject
+ * @brief Definición del objeto CharacterizedObject
  *
  */
 
@@ -21,7 +21,7 @@
 #include "models/Geometry.hh"
 
 /**
- * Caracteristicas de un objecto caracterizado
+ * @brief Objeto caracterizado a partir de una nube de puntos
  */
 class CharacterizedObject {
    private:

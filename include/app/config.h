@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 29/05/2022
  *
- * Clase almacén de parámetros utilizados en la ejecución de la aplicación
+ * @brief Clase almacén de parámetros utilizados en la ejecución de la aplicación
  *
  */
 

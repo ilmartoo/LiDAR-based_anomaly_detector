@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 12/05/2022
  *
- * Definición de la clase Geometry
+ * @brief Definición de la clase Geometry
  *
  */
 
@@ -20,7 +20,7 @@
 #include "models/BBox.hh"
 
 /**
- * Clase utilizada como almacén de métodos geométricos y espaciales
+ * @brief Clase utilizada como almacén de métodos geométricos y espaciales
  */
 class Geometry {
    public:

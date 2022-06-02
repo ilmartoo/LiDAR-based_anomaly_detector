@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 29/05/2022
  *
- * Definición e implementación del objeto Face
+ * @brief Definición e implementación del objeto Face
  *
  */
 
@@ -15,6 +15,9 @@
 #include "models/BBox.hh"
 #include "models/Point.hh"
 
+/**
+ * @brief Representación de una cara de un objeto
+ */
 class Face {
    private:
     std::vector<Point> points;  ///< Puntos de la cara

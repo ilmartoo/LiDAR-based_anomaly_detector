@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 10/05/2022
  *
- * Definición e implementación del objeto LidarPoint
+ * @brief Definición e implementación del objeto LidarPoint
  *
  */
 
@@ -19,7 +19,7 @@
 #include "models/Timestamp.hh"
 
 /**
- * Representación de un punto de una nube de datos 3D
+ * @brief Representación de un punto LiDAR
  */
 class LidarPoint : public Point {
    private:

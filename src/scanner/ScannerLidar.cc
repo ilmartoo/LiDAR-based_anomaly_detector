@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 23/03/2022
  *
- * Implementación del objeto ScannerLidar
+ * @brief Implementación del objeto ScannerLidar
  *
  */
 

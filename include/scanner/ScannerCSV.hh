@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 19/03/2022
  *
- * Definicion del objeto ScannerCSV
+ * @brief Definicion del objeto ScannerCSV
  *
  */
 
@@ -22,8 +22,7 @@
 #include "logging/debug.hh"
 
 /**
- * Implementación de la interfaz IScanner para la lectura de puntos de archivos CSV obtenidos del
- * programa propietario Livox Viewer
+ * @brief Escáner de un archivo de puntos en formato csv
  */
 class ScannerCSV : public IFileScanner {
    private:

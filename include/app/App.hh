@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 20/03/2022
  *
- * Clase de gestión de la aplicación
+ * @brief Clase de gestión de la aplicación
  *
  */
 
@@ -32,6 +32,9 @@ enum ChronoMode {
     kChronoAll = 0b11,               ///< Ejecución con medida de tiempo en todo el programa
 };
 
+/**
+ * @brief Director de la ejecución de la aplicación e interfaz de comunicación entre usuario y el resto de módulos
+ */
 class App {
    private:
     ObjectCharacterizator *oc;  ///< Caracterizador de objetos

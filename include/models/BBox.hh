@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 10/05/2022
  *
- * Definición e implementación de la clase BBox
+ * @brief Definición e implementación de la clase BBox
  *
  */
 
@@ -16,6 +16,9 @@
 
 #include "models/Point.hh"
 
+/**
+ * @brief Bounding box de un conjunto de puntos
+ */
 class BBox {
    private:
     Vector delta;  ///< Delta de las dimensiones de la bounding box

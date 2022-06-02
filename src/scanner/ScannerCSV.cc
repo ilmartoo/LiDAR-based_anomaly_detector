@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 19/03/2022
  *
- * Implementación del objeto ScannerCSV
+ * @brief Implementación del objeto ScannerCSV
  *
  */
 

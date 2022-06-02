@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 10/05/2022
  *
- * Definición e implementación de la clase AnomalyReport
+ * @brief Definición e implementación de la clase AnomalyReport
  *
  */
 
@@ -16,6 +16,9 @@
 #include <anomaly_detection/Comparison.hh>
 #include <anomaly_detection/FaceComparison.hh>
 
+/**
+ * @brief Informe de anomalías encontradas en una comparación entre objeto y modelo
+ */
 class AnomalyReport {
    public:
     const bool similar;                                 ///< Representa si las caras comparadas son similares (false si caras_objecto == 0)

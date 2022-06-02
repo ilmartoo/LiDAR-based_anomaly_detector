@@ -3,7 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 23/03/2022
  *
- * Definicion del objeto ScannerLidar
+ * @brief Definicion del objeto ScannerLidar
  *
  */
 
@@ -55,7 +55,7 @@ struct DeviceItem {
 };
 
 /**
- * Implementación de la interfaz IScanner para la lectura de puntos del modelo de LiDAR Livox Horizon
+ * @brief Escaner de puntos provenientes de un sensor LiDAR
  */
 class ScannerLidar : public IScanner {
    private:

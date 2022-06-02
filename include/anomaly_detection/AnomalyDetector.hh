@@ -3,6 +3,7 @@
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 06/05/2022
  *
+ * @brief Definición de la clase AnomalyDetector
  *
  */
 
@@ -16,6 +17,9 @@
 #include "object_characterization/CharacterizedObject.hh"
 #include "anomaly_detection/AnomalyReport.hh"
 
+/**
+ * @brief Detector de anomalías entre objetos y modelos
+ */
 class AnomalyDetector {
    private:
     bool chrono;  ///< Activador de la medicion de tiempos
