@@ -22,7 +22,6 @@
 #include "scanner/ScannerLVX.hh"
 #include "models/LidarPoint.hh"
 #include "models/Timestamp.hh"
-#include "app/CLICommand.hh"
 
 #include "logging/debug.hh"
 
@@ -30,7 +29,7 @@ bool ScannerLVX::init() {
     DEBUG_STDOUT("Initializing lvx file scanner");
 
     if (lvx_file.Open(filename.c_str(), std::ios::in) != livox_ros::kLvxFileOk) {
-        CLI_STDERR("Error while initializing lvx file scanner");
+        DEBUG_STDERR("Error while initializing lvx file scanner");
 
         return false;
     }
@@ -62,13 +61,13 @@ ScanCode ScannerLVX::scan() {
             return readData();
 
         } else {
-            CLI_STDERR("Scanner already in use");
+            DEBUG_STDERR("Scanner already in use");
             return ScanCode::kScanError;
         }
     }
     // Fallo de apertura
     else {
-        CLI_STDERR("Error while opening lvx file");
+        DEBUG_STDERR("Error while opening lvx file");
         return ScanCode::kScanError;
     }
 }

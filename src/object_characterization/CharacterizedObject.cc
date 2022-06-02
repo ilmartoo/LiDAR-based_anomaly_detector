@@ -29,8 +29,7 @@
 
 #include "logging/debug.hh"
 
-std::pair<bool, CharacterizedObject>
-CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
+std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Point> &points, bool chrono) {
     // Salida si no existen puntos en el objeto
     if (points.size() == 0) {
         return {false, {}};

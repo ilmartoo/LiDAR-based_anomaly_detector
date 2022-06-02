@@ -19,7 +19,6 @@
 #include "scanner/ScannerCSV.hh"
 #include "models/LidarPoint.hh"
 #include "models/Timestamp.hh"
-#include "app/CLICommand.hh"
 
 #include "logging/debug.hh"
 
@@ -29,7 +28,7 @@ bool ScannerCSV::init() {
     // Abrimos stream del archivo
     infile.open(filename, std::ifstream::in);
     if (infile.fail()) {
-        CLI_STDERR("Error while initializing csv file scanner");
+        DEBUG_STDERR("Error while initializing csv file scanner");
         return false;
     }
 
@@ -55,13 +54,13 @@ ScanCode ScannerCSV::scan() {
             return readData();
 
         } else {
-            CLI_STDERR("Scanner already in use");
+            DEBUG_STDERR("Scanner already in use");
             return ScanCode::kScanError;
         }
     }
     // Fallo de apertura
     else {
-        CLI_STDERR("Error while opening csv file");
+        DEBUG_STDERR("Error while opening csv file");
         return ScanCode::kScanError;
     }
 }

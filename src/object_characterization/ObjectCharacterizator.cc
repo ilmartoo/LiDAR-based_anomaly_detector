@@ -21,7 +21,6 @@
 #include "object_characterization/CharacterizedObject.hh"
 #include "models/LidarPoint.hh"
 #include "models/Point.hh"
-#include "models/Kernel.hh"
 #include "app/CLICommand.hh"
 #include "app/config.h"
 
@@ -205,6 +204,7 @@ std::pair<bool, CharacterizedObject> ObjectCharacterizator::defineObject() {
             break;
         case kScanError:
             CLI_STDERR("An error ocurred while scanning: Scan will end");
+            return {false, {}}; // Error de escaneo
             break;
         case kScanEof:
             CLI_STDERR("End Of File reached: Scan will end and file will be reset");

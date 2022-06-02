@@ -19,7 +19,6 @@
 #include "scanner/ScannerLidar.hh"
 #include "models/LidarPoint.hh"
 #include "models/Timestamp.hh"
-#include "app/CLICommand.hh"
 
 #include "logging/debug.hh"
 
@@ -51,14 +50,14 @@ void getLidarData(uint8_t handle, LivoxEthPacket *data, uint32_t data_num, void 
 void onDeviceBroadcast(const BroadcastDeviceInfo *info) {
     // Solo aceptamos conexiones de un sensor LiDAR
     if (info == NULL || info->dev_type == kDeviceTypeHub) {
-        CLI_STDERR("LiDAR scanner is not from a valid type");
+        DEBUG_STDERR("LiDAR scanner is not from a valid type");
         return;
     }
 
     DEBUG_STDOUT("Retrieved broadcast code " << std::string(ScannerLidar::getInstance()->lidar.info.broadcast_code));
 
     if (strncmp(info->broadcast_code, ScannerLidar::getInstance()->lidar.info.broadcast_code, kBroadcastCodeSize) != 0) {
-        CLI_STDERR("Retrieved broadcast code do not match stored code");
+        DEBUG_STDERR("Retrieved broadcast code do not match stored code");
         return;
     }
 
@@ -68,27 +67,27 @@ void onDeviceBroadcast(const BroadcastDeviceInfo *info) {
         SetDataCallback(ScannerLidar::getInstance()->lidar.handle, getLidarData, NULL);
 
     } else {
-        CLI_STDERR("Unable to connect with LiDAR scanner");
+        DEBUG_STDERR("Unable to connect with LiDAR scanner");
     }
 }
 
 // Recepción de mensajes de error
 void onLidarErrorStatusCallback(livox_status status, uint8_t handle, ErrorMessage *message) {
     if (message != NULL) {
-        CLI_STDERR("----- START ERROR DATA DUMP -----");
-        CLI_STDERR("handle:            " << handle);
-        CLI_STDERR("temp_status :      " << message->lidar_error_code.temp_status);
-        CLI_STDERR("volt_status :      " << message->lidar_error_code.volt_status);
-        CLI_STDERR("motor_status :     " << message->lidar_error_code.motor_status);
-        CLI_STDERR("dirty_warn :       " << message->lidar_error_code.dirty_warn);
-        CLI_STDERR("firmware_err :     " << message->lidar_error_code.firmware_err);
-        CLI_STDERR("pps_status :       " << message->lidar_error_code.device_status);
-        CLI_STDERR("fan_status :       " << message->lidar_error_code.fan_status);
-        CLI_STDERR("self_heating :     " << message->lidar_error_code.self_heating);
-        CLI_STDERR("ptp_status :       " << message->lidar_error_code.ptp_status);
-        CLI_STDERR("time_sync_status : " << message->lidar_error_code.time_sync_status);
-        CLI_STDERR("system_status :    " << message->lidar_error_code.system_status);
-        CLI_STDERR("------ END ERROR DATA DUMP ------");
+        DEBUG_STDERR("----- START ERROR DATA DUMP -----");
+        DEBUG_STDERR("handle:            " << handle);
+        DEBUG_STDERR("temp_status :      " << message->lidar_error_code.temp_status);
+        DEBUG_STDERR("volt_status :      " << message->lidar_error_code.volt_status);
+        DEBUG_STDERR("motor_status :     " << message->lidar_error_code.motor_status);
+        DEBUG_STDERR("dirty_warn :       " << message->lidar_error_code.dirty_warn);
+        DEBUG_STDERR("firmware_err :     " << message->lidar_error_code.firmware_err);
+        DEBUG_STDERR("pps_status :       " << message->lidar_error_code.device_status);
+        DEBUG_STDERR("fan_status :       " << message->lidar_error_code.fan_status);
+        DEBUG_STDERR("self_heating :     " << message->lidar_error_code.self_heating);
+        DEBUG_STDERR("ptp_status :       " << message->lidar_error_code.ptp_status);
+        DEBUG_STDERR("time_sync_status : " << message->lidar_error_code.time_sync_status);
+        DEBUG_STDERR("system_status :    " << message->lidar_error_code.system_status);
+        DEBUG_STDERR("------ END ERROR DATA DUMP ------");
     }
 }
 
@@ -109,13 +108,13 @@ void lidarStateChange(const DeviceInfo *info) { ScannerLidar::getInstance()->lid
 // Callback para cambiar el estado del sensor
 void onDeviceInfoChange(const DeviceInfo *info, DeviceEvent type) {
     if (info == NULL) {
-        CLI_STDERR("LiDAR scanner info is NULL");
+        DEBUG_STDERR("LiDAR scanner info is NULL");
         return;
     }
 
     // Comprobamos que el handler sea el correcto
     if (ScannerLidar::getInstance()->lidar.handle != info->handle) {
-        CLI_STDERR("Handler mismatch");
+        DEBUG_STDERR("Handler mismatch");
         return;
     }
 
@@ -155,7 +154,7 @@ void onSampleCallback(livox_status status, uint8_t handle, uint8_t response, voi
     }
     // Fallo
     else {
-        CLI_STDERR("Error while starting point scanning");
+        DEBUG_STDERR("Error while starting point scanning");
         ScannerLidar::getInstance()->lidar.device_state = kDeviceStateDisconnect;
 
         ScannerLidar::getInstance()->scanning = false;
@@ -173,7 +172,7 @@ void onStopSampleCallback(livox_status status, uint8_t handle, uint8_t response,
     }
     // Fallo
     else {
-        CLI_STDERR("Error while ending point scanning");
+        DEBUG_STDERR("Error while ending point scanning");
         ScannerLidar::getInstance()->lidar.device_state = kDeviceStateDisconnect;
     }
 
@@ -188,7 +187,7 @@ void onStopIMURecepcionCallback(livox_status status, uint8_t handle, uint8_t res
     }
     // Fallo
     else {
-        CLI_STDERR("Error while stopping IMU point retrieval");
+        DEBUG_STDERR("Error while stopping IMU point retrieval");
     }
 }
 
@@ -200,7 +199,7 @@ void onSetCartesianCoordinateCallback(livox_status status, uint8_t handle, uint8
     }
     // Fallo
     else {
-        CLI_STDERR("Error while setting up cartesian coordinates as default");
+        DEBUG_STDERR("Error while setting up cartesian coordinates as default");
     }
 }
 
@@ -209,7 +208,7 @@ bool ScannerLidar::init() {
 
     // Inicialización de Livox SDK
     if (!Init()) {
-        CLI_STDERR("Error while initializing LIVOX SDK");
+        DEBUG_STDERR("Error while initializing LIVOX SDK");
         return false;
     }
     // Desactivamos logs
@@ -222,7 +221,7 @@ bool ScannerLidar::init() {
     SetDeviceStateUpdateCallback(onDeviceInfoChange);
 
     if (!Start()) {
-        CLI_STDERR("Error while starting LIVOX SDK");
+        DEBUG_STDERR("Error while starting LIVOX SDK");
         return false;
     }
 
@@ -254,14 +253,14 @@ ScanCode ScannerLidar::scan() {
 
             return ScanCode::kScanOk;
         } else {
-            CLI_STDERR("Scanner failed to start scanning");
+            DEBUG_STDERR("Scanner failed to start scanning");
             return ScanCode::kScanError;
             
             scanning = false;
         }
 
     } else {
-        CLI_STDERR("Scanner already in use");
+        DEBUG_STDERR("Scanner already in use");
         return ScanCode::kScanError;
     }
 }

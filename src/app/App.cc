@@ -14,7 +14,6 @@
 #include <utility>
 
 #include "app/App.hh"
-#include "app/InputParser.hh"
 #include "models/Point.hh"
 #include "app/CLICommand.hh"
 

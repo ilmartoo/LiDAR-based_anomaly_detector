@@ -18,7 +18,6 @@
 #include "scanner/ScannerLVX.hh"
 #include "scanner/ScannerLidar.hh"
 #include "object_characterization/ObjectCharacterizator.hh"
-#include "object_characterization/CharacterizedObject.hh"
 #include "anomaly_detection/AnomalyDetector.hh"
 #include "app/ObjectManager.hh"
 #include "app/CLICommand.hh"
