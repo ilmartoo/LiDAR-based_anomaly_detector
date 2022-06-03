@@ -15,7 +15,7 @@
 
 #include "anomaly_detection/AnomalyDetector.hh"
 #include "object_characterization/CharacterizedObject.hh"
-#include "app/CLICommand.hh"
+#include "app/CLI.hh"
 #include "app/config.h"
 
 AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Model& mod) {

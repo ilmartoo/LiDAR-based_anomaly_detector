@@ -24,7 +24,7 @@
 #include "models/Point.hh"
 #include "models/LidarPoint.hh"
 #include "models/Timestamp.hh"
-#include "app/CLICommand.hh"
+#include "app/CLI.hh"
 #include "app/config.h"
 
 #include "logging/debug.hh"

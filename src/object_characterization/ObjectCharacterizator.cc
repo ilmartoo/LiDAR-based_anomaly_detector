@@ -21,7 +21,7 @@
 #include "object_characterization/CharacterizedObject.hh"
 #include "models/LidarPoint.hh"
 #include "models/Point.hh"
-#include "app/CLICommand.hh"
+#include "app/CLI.hh"
 #include "app/config.h"
 
 #include "logging/debug.hh"
