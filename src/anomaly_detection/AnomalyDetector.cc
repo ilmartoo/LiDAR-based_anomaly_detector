@@ -15,7 +15,6 @@
 
 #include "anomaly_detection/AnomalyDetector.hh"
 #include "object_characterization/CharacterizedObject.hh"
-#include "models/Geometry.hh"
 #include "app/CLICommand.hh"
 #include "app/config.h"
 
