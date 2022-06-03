@@ -495,7 +495,7 @@ void CLI::cli() {
 
                             CLI_STDOUT("\n // FACE COMPARISONS //");
                             for (auto &fc : ar.faceComparisons) {
-                                CLI_STDOUT(" [" << fc.modelFace << ", " << fc.objectFace << "]");
+                                CLI_STDOUT("\n [" << fc.modelFace << ", " << fc.objectFace << "]");
                                 delta = model.getFaces()[fc.modelFace].getMinBBox().getDelta();
                                 CLI_STDOUT(" BoundBox(fmodel)  = [" << (int)delta.getX() << "mm, "
                                                                     << (int)delta.getY() << "mm, "
@@ -508,7 +508,7 @@ void CLI::cli() {
                                 CLI_STDOUT(" BBox(fmodel) - BBox(fobject) = [" << (int)delta.getX() << "mm, "
                                                                                << (int)delta.getY() << "mm, "
                                                                                << (int)delta.getZ() << "mm]");
-                                CLI_STDOUT(bold(" Both faces are " << (fc.similar ? "similar" : "different") << "\n"));
+                                CLI_STDOUT(bold(" Both faces are " << (fc.similar ? "similar" : "different") << ""));
                             }
                             // Unmatched faces
                             CLI_STDOUT("\n // UNMATCHED FACES //");
