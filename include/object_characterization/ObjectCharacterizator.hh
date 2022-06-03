@@ -85,8 +85,9 @@ class ObjectCharacterizator {
 
     /**
      * Inicializa el caracterizador
+     * @return true si se ha inicializado correctamente
      */
-    void init();
+    bool init();
 
     /**
      * Define el fondo de la escena

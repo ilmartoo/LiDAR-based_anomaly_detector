@@ -162,11 +162,15 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
     }
 }
 
-void ObjectCharacterizator::init() {
+bool ObjectCharacterizator::init() {
     DEBUG_STDOUT("Initializing characterizator");
 
-    scanner->init();
+    if (!scanner->init()) {
+        return false;
+    }
     scanner->setCallback(([this](const LidarPoint &p) { this->newPoint(p); }));
+
+    return true;
 };
 
 void ObjectCharacterizator::stop() {

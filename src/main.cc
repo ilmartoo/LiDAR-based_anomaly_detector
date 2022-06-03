@@ -13,7 +13,7 @@
 
 #include "livox_def.h"
 
-#include "app/App.hh"
+#include "app/CLI.hh"
 #include "app/InputParser.hh"
 
 #include "logging/debug.hh"
@@ -23,8 +23,8 @@
 #define DEFAULT_TIMER_MODE          kNoChrono          // Default timer mode
 #define DEFAULT_OBJECT_FRAME_T      1500               // Default frame time (ms)
 #define DEFAULT_BACKGROUND_FRAME_T  5000               // Default background time (ms)
-#define DEFAULT_MIN_RELECTIVITY     0.0f               // Default point reflectivity
-#define DEFAULT_BACKGROUND_DISTANCE 0.01f              // Default backgound distance (m)
+#define DEFAULT_MIN_RELECTIVITY     0.0f               // Default point reflectivity threshold
+#define DEFAULT_BACKGROUND_DISTANCE 0.01f              // Default backgound distance (m) threshold
 
 /* InputParams struct */
 struct InputParams {
@@ -76,9 +76,9 @@ int main(int argc, char *argv[]) {
 
     if (pi.is_ok) {
         if (pi.is_lidar) {
-            App app(pi.lidar_code.c_str(), pi.chrono_mode, pi.obj_frame_t, pi.back_frame_t, pi.min_reflectivity, pi.back_distance);
+            CLI(pi.lidar_code.c_str(), pi.chrono_mode, pi.obj_frame_t, pi.back_frame_t, pi.min_reflectivity, pi.back_distance);
         } else {
-            App app(pi.filename, pi.chrono_mode, pi.obj_frame_t, pi.back_frame_t, pi.min_reflectivity, pi.back_distance);
+            CLI(pi.filename, pi.chrono_mode, pi.obj_frame_t, pi.back_frame_t, pi.min_reflectivity, pi.back_distance);
         }
     }
 

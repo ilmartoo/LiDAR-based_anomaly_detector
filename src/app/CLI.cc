@@ -1,9 +1,9 @@
 /**
- * @file App.cc
+ * @file CLI.cc
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 20/03/2022
  *
- * @brief Implementación de la clase de gestión de la aplicación
+ * @brief Implementación de la CLI
  *
  */
 
@@ -13,17 +13,17 @@
 #include <exception>
 #include <utility>
 
-#include "app/App.hh"
+#include "app/CLI.hh"
 #include "models/Point.hh"
 #include "app/CLICommand.hh"
 
 #include "logging/debug.hh"
 
-void App::init() {
-    oc->init();
+bool CLI::init() {
+    return oc->init();
 }
 
-void App::close() {
+void CLI::close() {
     oc->stop();
 }
 
@@ -168,7 +168,7 @@ void printHelp(CLICommandType ct) {
     }
 }
 
-void App::cli() {
+void CLI::cli() {
     std::string input;
     bool exit = false;
 

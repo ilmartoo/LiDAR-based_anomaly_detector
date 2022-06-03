@@ -1,14 +1,14 @@
 /**
- * @file App.hh
+ * @file CLI.hh
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 20/03/2022
  *
- * @brief Clase de gestión de la aplicación
+ * @brief Interfaz de línea de comandos del programa
  *
  */
 
-#ifndef APP_CLASS_H
-#define APP_CLASS_H
+#ifndef CLI_CLASS_H
+#define CLI_CLASS_H
 
 #include <stdint.h>
 #include <string>
@@ -20,9 +20,13 @@
 #include "object_characterization/ObjectCharacterizator.hh"
 #include "anomaly_detection/AnomalyDetector.hh"
 #include "app/ObjectManager.hh"
-#include "app/CLICommand.hh"
 
 #include "logging/debug.hh"
+
+#define CLI_STDOUT(msg) do { std::cout << cyan("" << msg << "") << std::endl; } while(0)
+#define CLI_STDOUT_NO_NL(msg) do { std::cout << cyan("" << msg << ""); } while(0)
+#define CLI_STDERR(msg) do { std::cerr << red("" << msg << "") << std::endl; } while(0)
+#define CLI_STDERR_NO_NL(msg) do { std::cerr << red("" << msg << ""); } while(0)
 
 /** Tipos de mediciones de tiempo a tomar */
 enum ChronoMode {
@@ -35,7 +39,7 @@ enum ChronoMode {
 /**
  * @brief Director de la ejecución de la aplicación e interfaz de comunicación entre usuario y el resto de módulos
  */
-class App {
+class CLI {
    private:
     ObjectCharacterizator *oc;  ///< Caracterizador de objetos
     ObjectManager *om;          ///< Gestor de objetos y modelos
@@ -43,7 +47,7 @@ class App {
 
    public:
     /**
-     * Constructor de la app para input de archivo
+     * Constructor de la CLI para input de archivo
      * @param filename Nombre de la ruta completa o relativa al archivo de datos
      * @param chronoMode Tipo de mediciones de tiempo a tomar
      * @param objFrame Milisegundos que debe durar un frame en el caracterizador de objetos
@@ -51,7 +55,7 @@ class App {
      * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      * @param backDistance Distancia mínima a la que tiene que estar un punto para no pertenecer al background
      */
-    App(const std::string &filename, ChronoMode chronoMode, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance) {
+    CLI(const std::string &filename, ChronoMode chronoMode, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance) {
         IScanner *scanner;
 
         // Obtenemos extensión del archivo
@@ -68,7 +72,7 @@ class App {
         }
         // Archivo no legible
         else {
-            CLI_STDERR("No se dispone de un escaner para leer el tipo de archivo especificado.");
+            CLI_STDERR("File format could not be read with any of the current scanners");
             return;
         }
 
@@ -79,7 +83,7 @@ class App {
         execution();
     }
     /**
-     * Constructor de la app para input de sensor lidar
+     * Constructor de la CLI para input de sensor lidar
      * @param broadcastCode Codigo de broadcast del sensor lidar
      * @param filename Nombre de la ruta completa o relativa al archivo de datos
      * @param chronoMode Tipo de mediciones de tiempo a tomar
@@ -87,7 +91,7 @@ class App {
      * @param minReflectivity Reflectividad mínima que necesitan los puntos para no ser descartados
      * @param backDistance Distancia mínima a la que tiene que estar un punto para no pertenecer al background
      */
-    App(const char *broadcastCode, ChronoMode chronoMode, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance) {
+    CLI(const char *broadcastCode, ChronoMode chronoMode, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance) {
         IScanner *scanner = ScannerLidar::create(broadcastCode);
         oc = new ObjectCharacterizator(scanner, objFrame, backFrame, minReflectivity, backDistance, chronoMode & kChronoCharacterization);
         om = new ObjectManager();
@@ -98,7 +102,7 @@ class App {
     /**
      * Destructor de la app
      */
-    ~App() {
+    ~CLI() {
         if (ad != nullptr) {
             delete ad;
         }
@@ -113,8 +117,9 @@ class App {
    private:
     /**
      * Inicializa la aplicación
+     * @return true si la inicialización fue correcta
      */
-    void init();
+    bool init();
 
     /**
      * Command line interface
@@ -130,10 +135,13 @@ class App {
      * Ejecución de las fases de la aplicación
      */
     void execution() {
-        init();   // Inicializamos componentes
-        cli();    // Iniciamos CLI
-        close();  // Cerramos componentes
+        if (init()) {   // Inicializamos componentes
+            cli();    // Iniciamos CLI
+            close();  // Cerramos componentes
+        } else {
+            CLI_STDERR("Failed to initiate the CLI");
+        }
     }
 };
 
-#endif  // APP_CLASS_H
+#endif  // CLI_CLASS_H
