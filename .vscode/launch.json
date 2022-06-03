@@ -1,0 +1,80 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Debug anomaly_detector DEBUG",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/anomaly_detector",
+			// "args": [
+			// 	"-b",
+			// 	"default",
+			// 	"-c",
+			// 	"all"
+			// ],
+			"args": [
+				"-f",
+				"data/caja_grande.lvx",
+				"-c",
+				"all",
+				"<",
+				"tmp/input_compare.txt"
+			],
+			"stopAtEntry": false,
+			"cwd": "${workspaceFolder}",
+			"environment": [],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Habilitar la impresión con sangría para gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Establecer tipo de desensamblado en Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
+			],
+			"preLaunchTask": "CMake compile DEBUG"
+		},
+		{
+			"name": "Debug anomaly_detector RELEASE",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/anomaly_detector",
+			// "args": [
+			// 	"-b",
+			// 	"default"
+			// ],
+			"args": [
+				"-f",
+				"data/caja_cerca.lvx",
+				"-c",
+				"all"
+			],
+			"stopAtEntry": false,
+			"cwd": "${workspaceFolder}",
+			"environment": [],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Habilitar la impresión con sangría para gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Establecer tipo de desensamblado en Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
+			],
+			"preLaunchTask": "CMake compile RELEASE"
+		}
+	]
+}

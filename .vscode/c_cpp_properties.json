@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/include/",
+                "${workspaceFolder}/test/",
+                "${workspaceFolder}/lib/",
+                "${workspaceFolder}/lib/Livox-SDK-2.3.0/sdk_core/include",
+                "${workspaceFolder}/lib/read_lvx-master",
+                "${workspaceFolder}/lib/armadillo-11.0.0/include"
+
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
