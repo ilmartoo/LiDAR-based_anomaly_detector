@@ -106,30 +106,28 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
         return {false, {}};
     }
 
+    // Guardado de puntos del cluster
+    CharacterizedObject charObject;
+    charObject.setPoints(opoints);
+
     /// DEBUG PRINT CARAS
     DEBUG_CODE({
         std::ofstream of("tmp/caras_object.csv");
         of << LidarPoint::LivoxCSVHeader() << "\n";
-        uint32_t partial;
-        for (size_t j = 0; j < clusters.size(); ++j) {
-            partial = 255 / clusters.size() * j;
-            for (auto &i : clusters[j]) {
-                of << LidarPoint({0, 0}, partial, opoints[i]).LivoxCSV() << "\n";
-            }
+        uint32_t partial = 255 / (clusters.size() + 1);
+        for (size_t i = 0; i < opoints.size(); ++i) {
+            of << LidarPoint({0, 0}, partial * (opoints[i].getClusterID() < 0 ? 0 : opoints[i].getClusterID() + 1), opoints[i]).LivoxCSV() << "\n";
         }
         of.close();
     });
     ///
 
     /// Caras
-    std::vector<Point *> references;             // Vector de referencias a todos los puntos del objeto
-    std::vector<std::vector<Point>> facepoints;  // Vector de vectores de puntos de cada cara
-    for (size_t i = 0, t = 0; i < clusters.size(); ++i) {
-        facepoints.push_back({clusters[i].size(), Point()});        // Añadimos nuevo array de los puntos de una cara
-        references.resize(references.size() + clusters[i].size());  // Ampliamos tamaño para añadir el nuevo array
-        for (size_t j = 0; j < clusters[i].size(); ++j, ++t) {
-            facepoints[i][j] = opoints[clusters[i][j]];
-            references[t] = &facepoints[i][j];
+    std::vector<std::vector<Point *>> facepoints(clusters.size(), std::vector<Point *>());  // Vector de vectores de referencias puntos de cada cara
+    for (size_t i = 0; i < clusters.size(); ++i) {
+        facepoints[i].reserve(clusters[i].size());
+        for (size_t j = 0; j < clusters[i].size(); ++j) {
+            facepoints[i].push_back(&charObject.getPoints()[clusters[i][j]]);
         }
     }
     std::vector<Face> faces(facepoints.size(), Face());  // Vector de caras
@@ -142,17 +140,21 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
     // Cálculo de la mejor bounding box //
     //////////////////////////////////////
 
-    std::pair<BBox, Vector> bbmin = Geometry::minimumBBoxRotTrans(references);  // Bounding box mínima
+    std::pair<BBox, Vector> bbmin = Geometry::minimumBBoxRotTrans(charObject.getPoints());  // Bounding box mínima
 
     DEBUG_STDOUT("Best bounding box rotation angles: " << bbmin.second);
 
-    std::vector<std::pair<BBox, Vector>> fbbmin = Geometry::minimumBBox(facepoints);
+    std::vector<std::pair<BBox, Vector>> fbbmin = Geometry::minimumBBoxes(facepoints);
 
     for (size_t i = 0; i < fbbmin.size(); ++i) {
         faces[i] = Face(facepoints[i], Geometry::computeNormal(facepoints[i]), fbbmin[i].first, fbbmin[i].second);
 
         DEBUG_STDOUT("Face " << i << " best bounding box rotation angles: " << faces[i].getMinBBoxRotAngles());
     }
+
+    // Guardado de caras y bounding boxes
+    charObject.setBBox(bbmin.first);
+    charObject.setFaces(faces);
 
     // Cronometro
     if (chrono) {
@@ -167,24 +169,37 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
 
     DEBUG_STDOUT("Characterized object with " << facepoints.size() << " faces");
 
-    return {true, {bbmin.first, faces}};
+    return {true, charObject};
 }
 
 bool CharacterizedObject::write(const std::string &filename) {
     std::ofstream outfile(filename);
     if (outfile.is_open()) {
         outfile.write((char *)&bbox, sizeof(BBox));  // Bounding box
-        size_t len = faces.size();
+        size_t len = points.size();
+        // Puntos
+        outfile.write((char *)&len, sizeof(size_t));  // Numero de puntos
+        for (auto &p : points) {
+            outfile.write((char *)&p, sizeof(Point));  // Índice del punto de la cara
+        }
+        // Caras
+        len = faces.size();
         outfile.write((char *)&len, sizeof(size_t));  // Numero de caras
-
         for (auto &f : faces) {
             outfile.write((char *)&f.getNormal(), sizeof(Vector));            // Normal de la cara
             outfile.write((char *)&f.getMinBBox(), sizeof(BBox));             // Bounding box de la cara
             outfile.write((char *)&f.getMinBBoxRotAngles(), sizeof(Vector));  // Ángulo de rotación de la cara
-            len = f.getPoints().size();
+            len = f.getReferences().size();
             outfile.write((char *)&len, sizeof(size_t));  // Numero de puntos de la cara
-            for (auto &p : f.getPoints()) {
-                outfile.write((char *)&p, sizeof(Point));  // Punto de la cara
+            size_t dir;
+            // Indices de los puntos
+            for (auto &p : f.getReferences()) {
+                // A partir del estandar C++0x los elementos de un vector estan contiguos en memoria (menos los tipo bool)
+                // Haciendo uso de aritmetica de punteros le restamos a una dirección de un punto del vector (p) la dirección
+                // inicial (&*points.begin()) obteniendo de esta forma el índice del elemento en tiempo constante sin recurrir
+                // a una búsqueda lineal
+                dir = (size_t)(&*p - &*points.begin());
+                outfile.write((char *)&dir, sizeof(size_t));  // Índice del punto de la cara
             }
         }
 
@@ -198,33 +213,31 @@ bool CharacterizedObject::write(const std::string &filename) {
 
 bool CharacterizedObject::writeLivoxCSV(const std::string &filename) {
     std::ofstream outfile(filename);
-    Timestamp tmst(0, 0);
+    Timestamp tmstp(0, 0);
 
-    uint32_t colors[faces.size()];
-    size_t color_step = 255 / faces.size();
+    unsigned ncolors = faces.size();
 
-    size_t half = faces.size() / 2;
+    uint32_t colors[ncolors + 1];
+    size_t color_step = 255 / ncolors;
+
+    size_t half = ncolors / 2;
 
     // Colores para cada cara
-    if (faces.size() > 0) {
-        for (size_t i = 0; i < half; ++i) {
-            colors[i] = color_step * i;
-            ++i;
-            colors[i] = color_step * (half + i);
-        }
-        size_t last = faces.size() - 1;
-        if (!(last & 1)) {
-            colors[last] = color_step * last;
+    colors[0] = 0;
+    if (ncolors > 0) {
+        for (size_t i = 1, j = half + 1, k = 1; i < ncolors + 1; ++i) {
+            colors[i] = color_step * (i & 1 ? j++ : k++);
         }
     }
 
     // Impresión a archivo
     outfile << LidarPoint::LivoxCSVHeader() << "\n";
-    for (size_t i = 0; i < faces.size(); ++i) {
-        for (auto &p : faces[i].getPoints()) {
-            outfile << LidarPoint(tmst, colors[i], p).LivoxCSV() << "\n";
-        }
+    unsigned color;
+    for (auto &p : points) {
+        color = (p.getClusterID() < 0 ? 0 : p.getClusterID() + 1);
+        outfile << LidarPoint(tmstp, colors[color], p).LivoxCSV() << "\n";
     }
+
     outfile.close();
 
     return !outfile.fail();
@@ -235,30 +248,37 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::load(const std::string
     if (infile.is_open()) {
         BBox bbox;
         infile.read((char *)&bbox, sizeof(BBox));  // Bounding box
-
         size_t nfaces, npoints;
+        // Puntos
+        infile.read((char *)&npoints, sizeof(size_t));  // Numero de puntos
+        std::vector<Point> points(npoints, Point());
+        for (size_t i = 0; i < npoints; ++i) {
+            infile.read((char *)&points[i], sizeof(Point));  // Punto de la cara
+        }
+        // Caras
         infile.read((char *)&nfaces, sizeof(size_t));  // Numero de caras
-
         std::vector<Face> faces(nfaces, Face());
         Vector normal;
         BBox fbbox;
         Vector frotdeg;
-        for (unsigned i = 0; i < nfaces; ++i) {
+        for (size_t i = 0; i < nfaces; ++i) {
             infile.read((char *)&normal, sizeof(Vector));   // Normal de la cara
             infile.read((char *)&fbbox, sizeof(BBox));      // Bounding box de la cara
             infile.read((char *)&frotdeg, sizeof(Vector));  // Ángulo de rotación de la cara
-
+            // Referencias a los puntos de la cara
             infile.read((char *)&npoints, sizeof(size_t));  // Numero de puntos de la cara
-            std::vector<Point> points(npoints, Point());
-            for (unsigned j = 0; j < npoints; ++j) {
-                infile.read((char *)&points[j], sizeof(Point));  // Punto de la cara
+            std::vector<Point *> references(npoints, nullptr);
+            size_t index;
+            for (size_t j = 0; j < npoints; ++j) {
+                infile.read((char *)&index, sizeof(size_t));  // Índice del punto de la cara
+                references[j] = &points[index];
             }
 
-            faces[i] = Face(points, normal, fbbox, frotdeg);
+            faces[i] = Face(references, normal, fbbox, frotdeg);
         }
 
         infile.close();
-        return std::move(std::pair<bool, CharacterizedObject>(!infile.fail(), CharacterizedObject(bbox, faces)));
+        return {!infile.fail(), CharacterizedObject(points, bbox, faces)};
 
     } else {
         return {false, {}};

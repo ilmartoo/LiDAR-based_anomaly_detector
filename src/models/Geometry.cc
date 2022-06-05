@@ -174,7 +174,7 @@ arma::vec4 Geometry::computePlane(const std::vector<Point *> &points) {
     return plane;
 }
 
-arma::mat33 Geometry::rotationMatrix(int xdeg, int ydeg, int zdeg) {
+arma::mat33 Geometry::rotationMatrix(double xdeg, double ydeg, double zdeg) {
     double gamma = xdeg * RAD_PER_DEG;
     double beta = ydeg * RAD_PER_DEG;
     double alpha = zdeg * RAD_PER_DEG;
@@ -214,19 +214,19 @@ arma::mat33 Geometry::rotationMatrix(const Vector &deg) {
              cb * cg}};
 }
 
-std::pair<BBox, Vector> Geometry::minimumBBoxRotTrans(std::vector<Point *> &points) {
+std::pair<BBox, Vector> Geometry::minimumBBoxRotTrans(std::vector<Point> &points) {
     Vector rotmin(0, 0, 0);  // Ángulos de rotación iniciales
     BBox bbmin(points);      // BBox sin rotacion
-    arma::mat33 rotmatrix;
+    arma::mat33 rotmatrix, orirotmatrix;
     Point trans;
 
 #pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
     {
         // Rotaciones amplias en las tres dimensiones
 #pragma omp for collapse(3) schedule(guided)
-        for (int i = 0; i < 90; i += 10) {
-            for (int j = 0; j < 90; j += 10) {
-                for (int k = 0; k < 90; k += 10) {
+        for (int i = 0; i < 90; i += 6) {
+            for (int j = 0; j < 90; j += 6) {
+                for (int k = 0; k < 90; k += 6) {
                     // El primer elemento es el mínimo por defecto
                     if (i == 0 && j == 0 && k == 0) {
                         continue;
@@ -243,9 +243,9 @@ std::pair<BBox, Vector> Geometry::minimumBBoxRotTrans(std::vector<Point *> &poin
         }
         // Rotaciones pequeñas dentro del radio de la mejor rotación grande
 #pragma omp for collapse(3) schedule(guided)
-        for (int i = (int)rotmin.getX() - 10; i < (int)rotmin.getX() + 10; ++i) {
-            for (int j = (int)rotmin.getY(); j < (int)rotmin.getY() + 10; ++j) {
-                for (int k = (int)rotmin.getZ(); k < (int)rotmin.getZ() + 10; ++k) {
+        for (int i = (int)rotmin.getX() - 5; i < (int)rotmin.getX() + 6; ++i) {
+            for (int j = (int)rotmin.getY() - 5; j < (int)rotmin.getY() + 6; ++j) {
+                for (int k = (int)rotmin.getZ() - 5; k < (int)rotmin.getZ() + 6; ++k) {
                     // El primer elemento es el mínimo por defecto
                     if (i == (int)rotmin.getX() && j == (int)rotmin.getY() && k == (int)rotmin.getZ()) {
                         continue;
@@ -260,23 +260,93 @@ std::pair<BBox, Vector> Geometry::minimumBBoxRotTrans(std::vector<Point *> &poin
                 }
             }
         }
-        // Rotamos puntos originales hacia la posición de menor volumen
 #pragma omp single
         {
+            // Matriz de rotación para obtener la posición de menor volumen
             rotmatrix = Geometry::rotationMatrix(rotmin);
-            trans = Point(0, 0, 0) - bbmin.getMin();
+
+            // Translación para llevar el centro de la bounding box al (0, 0, 0)
+            trans = Point(0, 0, 0) - ((bbmin.getDelta() / 2) + bbmin.getMin());
+
+            // Obtener la mejor orientación de la bounding box con < largo, < ancho y < alto en este orden
+            auto bestOri = bestOrientation(bbmin);
+
+            // Rotación con la bounding box en (0, 0, 0) para obtener la mejor orientación
+            orirotmatrix = Geometry::rotationMatrix(bestOri.second);
+
+            // Calculo de la bounding box despues de las rotacion, translacion y rotación hacia la mejor orientación
+            Point halfDim(bestOri.first.getDelta() / 2);
+            bbmin = {halfDim, Point(0, 0, 0) - halfDim};
         }
         // Implicit barrier
 #pragma omp for schedule(guided)
         for (size_t i = 0; i < points.size(); ++i) {
-            *points[i] = points[i]->rotate(rotmatrix) + trans;
+            Point p = (points[i].rotate(rotmatrix) + trans).rotate(orirotmatrix);
+            points[i] = Point(p.getX(), p.getY(), p.getZ(), points[i].getClusterID());
         }
     }
 
+    return {bbmin, rotmin};
+}
+
+std::pair<BBox, Vector> Geometry::minimumBBox(const std::vector<Point> &points) {
+    Vector rotmin(0, 0, 0);  // Ángulos de rotación iniciales
+    BBox bbmin(points);      // BBox sin rotacion
+    arma::mat33 rotmatrix;
+    Point trans;
+
+#pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
+    {
+        // Rotaciones amplias en las tres dimensiones
+#pragma omp for collapse(3) schedule(guided)
+        for (int i = 0; i < 90; i += 6) {
+            for (int j = 0; j < 90; j += 6) {
+                for (int k = 0; k < 90; k += 6) {
+                    // El primer elemento es el mínimo por defecto
+                    if (i == 0 && j == 0 && k == 0) {
+                        continue;
+                    } else {
+                        BBox bb(points, rotationMatrix(i, j, k));
+#pragma omp critical
+                        if (bb < bbmin) {
+                            bbmin = bb;
+                            rotmin = Vector(i, j, k);
+                        }
+                    }
+                }
+            }
+        }
+        // Rotaciones pequeñas dentro del radio de la mejor rotación grande
+#pragma omp for collapse(3) schedule(guided)
+        for (int i = (int)rotmin.getX() - 5; i < (int)rotmin.getX() + 6; ++i) {
+            for (int j = (int)rotmin.getY() - 5; j < (int)rotmin.getY() + 6; ++j) {
+                for (int k = (int)rotmin.getZ() - 5; k < (int)rotmin.getZ() + 6; ++k) {
+                    // El primer elemento es el mínimo por defecto
+                    if (i == (int)rotmin.getX() && j == (int)rotmin.getY() && k == (int)rotmin.getZ()) {
+                        continue;
+                    } else {
+                        BBox bb(points, rotationMatrix(i, j, k));
+#pragma omp critical
+                        if (bb < bbmin) {
+                            bbmin = bb;
+                            rotmin = Vector(i, j, k);
+                        }
+                    }
+                }
+            }
+        }
+        // Bounding box de mejor orientación dentro de las 6 posibles
+#pragma omp single
+        {
+            auto temp = bestOrientation(bbmin);
+            bbmin = temp.first;
+            rotmin = rotmin + temp.second;
+        }
+    }
     return {BBox(bbmin.getDelta()), rotmin};
 }
 
-std::vector<std::pair<BBox, Vector>> Geometry::minimumBBox(const std::vector<std::vector<Point>> &points) {
+std::vector<std::pair<BBox, Vector>> Geometry::minimumBBoxes(const std::vector<std::vector<Point *>> &points) {
     std::vector<std::pair<BBox, Vector>> bboxes = {points.size(), {{}, Vector(0, 0, 0)}};
 
 #pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
@@ -288,16 +358,16 @@ std::vector<std::pair<BBox, Vector>> Geometry::minimumBBox(const std::vector<std
             }
             // Rotaciones amplias en las tres dimensiones
 #pragma omp for collapse(3) schedule(guided)
-            for (int i = 0; i < 90; i += 10) {
-                for (int j = 0; j < 90; j += 10) {
-                    for (int k = 0; k < 90; k += 10) {
+            for (int i = 0; i < 90; i += 6) {
+                for (int j = 0; j < 90; j += 6) {
+                    for (int k = 0; k < 90; k += 6) {
                         // El primer elemento es el mínimo por defecto
                         if (i == 0 && j == 0 && k == 0) {
                             continue;
                         } else {
                             BBox bb(points[v], rotationMatrix(i, j, k));
 #pragma omp critical
-                            if (isBetter(bb, bboxes[v].first)) {
+                            if (bb <= bboxes[v].first) {
                                 bboxes[v].first = bb;
                                 bboxes[v].second = Vector(i, j, k);
                             }
@@ -307,15 +377,15 @@ std::vector<std::pair<BBox, Vector>> Geometry::minimumBBox(const std::vector<std
             }
             // Rotaciones pequeñas dentro del radio de la mejor rotación grande
 #pragma omp for collapse(3) schedule(guided)
-            for (int i = (int)bboxes[v].second.getX() - 10; i < (int)bboxes[v].second.getX() + 10; ++i) {
-                for (int j = (int)bboxes[v].second.getY(); j < (int)bboxes[v].second.getY() + 10; ++j) {
-                    for (int k = (int)bboxes[v].second.getZ(); k < (int)bboxes[v].second.getZ() + 10; ++k) {
+            for (int i = (int)bboxes[v].second.getX() - 5; i < (int)bboxes[v].second.getX() + 6; ++i) {
+                for (int j = (int)bboxes[v].second.getY() - 5; j < (int)bboxes[v].second.getY() + 6; ++j) {
+                    for (int k = (int)bboxes[v].second.getZ() - 5; k < (int)bboxes[v].second.getZ() + 6; ++k) {
                         if (i == (int)bboxes[v].second.getX() && j == (int)bboxes[v].second.getY() && k == (int)bboxes[v].second.getZ()) {
                             continue;
                         } else {
                             BBox bb(points[v], rotationMatrix(i, j, k));
 #pragma omp critical
-                            if (isBetter(bb, bboxes[v].first)) {
+                            if (bb <= bboxes[v].first) {
                                 bboxes[v].first = bb;
                                 bboxes[v].second = Vector(i, j, k);
                             }
@@ -323,9 +393,15 @@ std::vector<std::pair<BBox, Vector>> Geometry::minimumBBox(const std::vector<std
                     }
                 }
             }
+            // Bounding box de mejor orientación dentro de las 6 posibles
+#pragma omp single
+            {
+                auto temp = bestOrientation(bboxes[v].first);
+                bboxes[v].first = temp.first;
+                bboxes[v].second = bboxes[v].second + temp.second;
+            }
         }
     }
-
     return bboxes;
 }
 
@@ -345,8 +421,36 @@ Point Geometry::mean(const std::vector<Point *> &points) {
     return m / points.size();
 }
 
-bool Geometry::isBetter(const BBox &bb1, const BBox &bb2) {
-    return bb1.getDelta().getX() < bb2.getDelta().getX() ||
-           (bb1.getDelta().getX() == bb2.getDelta().getX() && bb1.getDelta().getY() < bb2.getDelta().getY()) ||
-           (bb1.getDelta().getX() == bb2.getDelta().getX() && bb1.getDelta().getY() == bb2.getDelta().getY() && bb1.getDelta().getZ() < bb2.getDelta().getZ());
-};
+std::pair<BBox, Vector> Geometry::bestOrientation(const BBox &bbox) {
+    const Vector &bd = bbox.getDelta();
+    Vector deltas[6] = {bd,                                  // [x,y,z]
+                        {bd.getX(), bd.getZ(), bd.getY()},   // [x,z,y]
+                        {bd.getY(), bd.getX(), bd.getZ()},   // [y,x,z]
+                        {bd.getY(), bd.getZ(), bd.getX()},   // [y,z,x]
+                        {bd.getZ(), bd.getX(), bd.getY()},   // [z,x,y]
+                        {bd.getZ(), bd.getY(), bd.getX()}};  // [z,y,x]
+
+    static const Vector rotations[6] = {{0, 0, 0},    // [x,y,z]
+                                        {90, 0, 0},   // [x,z,y]
+                                        {0, 0, 90},   // [y,x,z]
+                                        {90, 0, 90},  // [y,z,x]
+                                        {0, 90, 90},  // [z,x,y]
+                                        {0, 90, 0}};  // [z,y,x]
+
+    int bestDim = 0;
+    for (int i = 1; i < 6; ++i) {
+        if (betterDimensions(deltas[i], deltas[bestDim])) {
+            bestDim = i;
+        }
+    }
+    return {BBox(deltas[bestDim]), rotations[bestDim]};
+}
+
+bool Geometry::betterDimensions(const Vector &newDim, const Vector &oldDim) {
+    // Ajustamos a milimetros
+    int x = (int)(oldDim.getX() - newDim.getX());
+    int y = (int)(oldDim.getY() - newDim.getY());
+    int z = (int)(oldDim.getZ() - newDim.getZ());
+    // Comprobamos orientación
+    return x > 0 || (x == 0 && (y > 0 || (y == 0 && z > 0)));
+}

@@ -99,7 +99,7 @@ class Geometry {
      * @param zdeg Rotación en Z en grados
      * @return Matriz de rotación
      */
-    static arma::mat33 rotationMatrix(int xdeg, int ydeg, int zdeg);
+    static arma::mat33 rotationMatrix(double xdeg, double ydeg, double zdeg);
     /**
      * Matriz de rotación según unos ángulos dados
      * @param deg Vector con los angulos de rotación en grados en cada coordenada
@@ -114,7 +114,7 @@ class Geometry {
      * @param points Vector de referencias a los puntos
      * @return Bounding box de mínimo volumen y vector de los ángulos de rotación utilizados en grados
      */
-    static std::pair<BBox, Vector> minimumBBoxRotTrans(std::vector<Point *> &points);
+    static std::pair<BBox, Vector> minimumBBoxRotTrans(std::vector<Point> &points);
 
     /**
      * Obtiene la bounding box de mínimo volumen que engloba los puntos
@@ -122,18 +122,21 @@ class Geometry {
      * @return Bounding box de mínimo volumen y vector de los ángulos de rotación utilizados en grados
      */
     static std::pair<BBox, Vector> minimumBBox(const std::vector<Point> &points);
+
     /**
-     * Obtiene las bounding box de mínimo volumen que engloban a cada vector de puntos (caras de un objeto)
-     * @param points Vector de vectores de puntos
+     * Obtiene las bounding box de mínimo volumen que engloban a cada vector de referencias a puntos (caras de un objeto)
+     * @param points Vector de vectores de referencias a puntos
      * @return Vector de bounding boxes de mínimo volumen y vectores de los ángulos de rotación utilizados en grados
      */
-    static std::vector<std::pair<BBox, Vector>> minimumBBox(const std::vector<std::vector<Point>> &points);
+    static std::vector<std::pair<BBox, Vector>> minimumBBoxes(const std::vector<std::vector<Point *>> &points);
 
    private:
     static void computeSVD(const std::vector<Point> &points, arma::mat &U, arma::vec &s, arma::mat &V);
     static void computeSVD(const std::vector<Point *> &points, arma::mat &U, arma::vec &s, arma::mat &V);
-    // Comparación de bounding boxes para adaptar mejor a una cara
-    static bool isBetter(const BBox &bb1, const BBox &bb2);
+    // Obtención de la rotación necesaria adicional para obtener la bbox cúbica de menor largo, ancho y alto, en ese orden
+    static std::pair<BBox, Vector> bestOrientation(const BBox &bbox);
+    // Comparación de bounding boxes para comprobar cual tiene una mejor orientación
+    static bool betterDimensions(const Vector &newDim, const Vector &oldDim);
 };
 
 #endif  // GEOMETRY_CLASS_H

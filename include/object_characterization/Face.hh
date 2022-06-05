@@ -20,10 +20,10 @@
  */
 class Face {
    private:
-    std::vector<Point> points;  ///< Puntos de la cara
-    Vector normal;              ///< Vector normal de la cara
-    BBox minBBox;               ///< Bounding box mínima que engloba a los puntos de la cara
-    Vector minBBoxRotAngles;    ///< Ángulos de rotación en grados que dan como resultado la bounding box mínima
+    std::vector<Point *> references;  ///< Referencias de los puntos de la cara
+    Vector normal;                    ///< Vector normal de la cara
+    BBox minBBox;                     ///< Bounding box mínima que engloba a los puntos de la cara
+    Vector minBBoxRotAngles;          ///< Ángulos de rotación en grados que dan como resultado la bounding box mínima
 
    public:
     /**
@@ -32,13 +32,13 @@ class Face {
     Face() {}
     /**
      * Constructor
-     * @param points Puntos de la cara
+     * @param references Referencias de los puntos de la cara
      * @param normal Normal de la cara
      * @param minBBox Bounding box mínima que engloba a los puntos de la cara
      * @param minBBoxRotAngles Ángulos de rotación en grados que dan como resultado la bounding box mínima
      */
-    Face(const std::vector<Point> &points, const Vector &normal, const BBox &minBBox, const Vector &minBBoxRotAngles)
-        : points(points),
+    Face(const std::vector<Point *> &references, const Vector &normal, const BBox &minBBox, const Vector &minBBoxRotAngles)
+        : references(references),
           normal(normal),
           minBBox(minBBox),
           minBBoxRotAngles(minBBoxRotAngles) {}
@@ -49,10 +49,10 @@ class Face {
 
     ////// Getters
     /**
-     * Devuelve los puntos de la cara
-     * @return Puntos de la cara
+     * Devuelve las referencias de los puntos de la cara
+     * @return Referencias de los puntos de la cara
      */
-    const std::vector<Point> &getPoints() const { return points; }
+    const std::vector<Point *> &getReferences() const { return references; }
     /**
      * Devuelve la normal de la cara
      * @return Normal de la cara

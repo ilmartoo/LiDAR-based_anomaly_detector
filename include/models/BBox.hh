@@ -216,6 +216,30 @@ class BBox {
      * @return true si el volumen de la bounding box es menor
      */
     bool operator<(const BBox &bb) const { return this->volume() < bb.volume(); }
+    /**
+     * Comprueba si se es igual a una bounding box
+     * @param bb Bounding box a comparar
+     * @return true si el volumen de la bounding box es igual
+     */
+    bool operator==(const BBox &bb) const { return this->volume() == bb.volume(); }
+    /**
+     * Comprueba si se es mayor que una bounding box
+     * @param bb Bounding box a comparar
+     * @return true si el volumen de la bounding box es mayor
+     */
+    bool operator>(const BBox &bb) const { return this->volume() > bb.volume(); }
+    /**
+     * Comprueba si se es menor o igual que una bounding box
+     * @param bb Bounding box a comparar
+     * @return true si el volumen de la bounding box es menor o igual
+     */
+    bool operator<=(const BBox &bb) const { return this->volume() <= bb.volume(); }
+        /**
+     * Comprueba si se es mayor o igual que una bounding box
+     * @param bb Bounding box a comparar
+     * @return true si el volumen de la bounding box es mayor o igual
+     */
+    bool operator>=(const BBox &bb) const { return this->volume() >= bb.volume(); }
 };
 
 #endif  // BBOX_CLASS_H

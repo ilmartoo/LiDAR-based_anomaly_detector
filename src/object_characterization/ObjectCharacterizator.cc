@@ -30,135 +30,139 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
     static std::chrono::system_clock::time_point start, last_point, end;
     static uint32_t p_count;
 
-    if (p.getReflectivity() >= minReflectivity) {
-        switch (state) {
-            case defBackground: {
-                // Primer punto del marco temporal
-                if (!background.getStartTime().first) {
-                    DEBUG_STDOUT("First background point timestamp: " << p.getTimestamp().string());
+    switch (state) {
+        case defBackground: {
+            // Primer punto del marco temporal
+            if (!background.getStartTime().first) {
+                DEBUG_STDOUT("First background point timestamp: " << p.getTimestamp().string());
 
-                    if (chrono) {
-                        start = std::chrono::high_resolution_clock::now();
-                    }
-
-                    p_count = 0;
-                    background.setStartTime(p.getTimestamp());
+                if (chrono) {
+                    start = std::chrono::high_resolution_clock::now();
                 }
 
-                // Punto dentro del marco temporal
-                if (background.getStartTime().second + backFrame > p.getTimestamp()) {
-                    DEBUG_POINT_STDOUT("Point added to the background: " << p.string());
+                p_count = 0;
+                background.setStartTime(p.getTimestamp());
+            }
 
-                    ++p_count;
+            // Punto dentro del marco temporal
+            if (background.getStartTime().second + backFrame > p.getTimestamp()) {
+                ++p_count;
+
+                if (p.getReflectivity() >= minReflectivity) {
                     background.insert(p);
+
+                    DEBUG_POINT_STDOUT("Point added to the background: " << p.string());
+                } else {
+                    DEBUG_POINT_STDOUT("Punto con reflectividad insuficiente: " << p.string());
+                }
+            }
+
+            // Punto fuera del marco temporal
+            else {
+                state = defStopped;
+
+                if (chrono) {
+                    last_point = std::chrono::high_resolution_clock::now();
                 }
 
-                // Punto fuera del marco temporal
-                else {
-                    state = defStopped;
+                background.buildOctree();
 
-                    if (chrono) {
-                        last_point = std::chrono::high_resolution_clock::now();
-                    }
+                if (chrono) {
+                    end = std::chrono::high_resolution_clock::now();
 
-                    background.buildOctree();
+                    double sc_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(last_point - start).count()) / 1.e9;
+                    double ot_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - last_point).count()) / 1.e9;
 
-                    if (chrono) {
-                        end = std::chrono::high_resolution_clock::now();
-
-                        double sc_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(last_point - start).count()) / 1.e9;
-                        double ot_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - last_point).count()) / 1.e9;
-
-                        CLI_STDOUT("Background scanning lasted " << std::setprecision(6) << (sc_duration + ot_duration) << std::setprecision(2) << "s (scanning: " << sc_duration << "s, map generation: " << ot_duration << "s)");
-                    }
-
-                    DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string());
-
-                    CLI_STDOUT("Scanned background contains " << p_count << " unique points");
-
-                    scanner->pause();
-                }
-            } break;
-
-            // Punto del objeto
-            case defObject: {
-                // Primer punto del marco temporal
-                if (!object.getStartTime().first) {
-                    if (chrono) {
-                        start = std::chrono::high_resolution_clock::now();
-                    }
-
-                    p_count = 0;
-                    object.setStartTime(p.getTimestamp());
-
-                    DEBUG_STDOUT("First point timestamp: " << p.getTimestamp().string());
+                    CLI_STDOUT("Background scanning lasted " << std::setprecision(6) << (sc_duration + ot_duration) << std::setprecision(2) << "s (scanning: " << sc_duration << "s, map generation: " << ot_duration << "s)");
                 }
 
-                // Punto dentro del marco temporal
-                if (object.getStartTime().second + objFrame > p.getTimestamp()) {
-                    ++p_count;
+                DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string());
+
+                CLI_STDOUT("Scanned background contains " << p_count << " unique points");
+
+                scanner->pause();
+            }
+        } break;
+
+        // Punto del objeto
+        case defObject: {
+            // Primer punto del marco temporal
+            if (!object.getStartTime().first) {
+                if (chrono) {
+                    start = std::chrono::high_resolution_clock::now();
+                }
+
+                p_count = 0;
+                object.setStartTime(p.getTimestamp());
+
+                DEBUG_STDOUT("First point timestamp: " << p.getTimestamp().string());
+            }
+
+            // Punto dentro del marco temporal
+            if (object.getStartTime().second + objFrame > p.getTimestamp()) {
+                ++p_count;
+
+                if (p.getReflectivity() >= minReflectivity) {
+                    object.insert(p);
 
                     DEBUG_POINT_STDOUT("Point added to the object: " << p.string());
+                } else {
+                    DEBUG_POINT_STDOUT("Punto con reflectividad insuficiente: " << p.string());
+                }
+            }
 
-                    ++p_count;
-                    object.insert(p);
+            // Punto fuera del marco temporal
+            else {
+                state = defStopped;
+
+                if (chrono) {
+                    end = std::chrono::high_resolution_clock::now();
+
+                    double total_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
+
+                    CLI_STDOUT("Object scanning lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << "s");
                 }
 
-                // Punto fuera del marco temporal
-                else {
-                    state = defStopped;
+                DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string());
 
-                    if (chrono) {
-                        end = std::chrono::high_resolution_clock::now();
+                scanner->pause();
+            }
+        } break;
 
-                        double total_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1.e9;
+        // Descarte de puntos intencionado
+        case defDiscard: {
+            // Primer punto del marco temporal
+            if (!discardStartTime.first) {
+                DEBUG_STDOUT("First discarded point timestamp: " << p.getTimestamp().string());
 
-                        CLI_STDOUT("Object scanning lasted " << std::setprecision(6) << total_duration << std::setprecision(2) << "s");
-                    }
+                p_count = 0;
+                discardStartTime = {true, p.getTimestamp()};
+            }
 
-                    DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string());
+            // Punto dentro del marco temporal
+            if (discardStartTime.second + discardTime > p.getTimestamp()) {
+                ++p_count;
 
-                    scanner->pause();
-                }
-            } break;
-
-            // Descarte de puntos intencionado
-            case defDiscard: {
-                // Primer punto del marco temporal
-                if (!discardStartTime.first) {
-                    DEBUG_STDOUT("First discarded point timestamp: " << p.getTimestamp().string());
-
-                    p_count = 0;
-                    discardStartTime = {true, p.getTimestamp()};
-                }
-
-                // Punto dentro del marco temporal
-                if (discardStartTime.second + discardTime > p.getTimestamp()) {
-                    DEBUG_POINT_STDOUT("Point discarded: " << p.string());
-
-                    ++p_count;
-                }
-
-                // Punto fuera del marco temporal
-                else {
-                    state = defStopped;
-
-                    CLI_STDOUT("A total of " << p_count << " points where discarded during " << discardTime / 1000000 << "ms");
-
-                    DEBUG_STDOUT("Last discarded point timestamp: " << p.getTimestamp().string() << ".");
-
-                    scanner->pause();
-                }
-            } break;
-
-            // Punto descartado
-            case defStopped:
-            default: {
                 DEBUG_POINT_STDOUT("Point discarded: " << p.string());
-            } break;
-        }
-    } else {
-        DEBUG_POINT_STDOUT("Punto con reflectividad insuficiente: " << p.string());
+            }
+
+            // Punto fuera del marco temporal
+            else {
+                state = defStopped;
+
+                CLI_STDOUT("A total of " << p_count << " points where discarded during " << discardTime / 1000000 << "ms");
+
+                DEBUG_STDOUT("Last discarded point timestamp: " << p.getTimestamp().string() << ".");
+
+                scanner->pause();
+            }
+        } break;
+
+        // Punto descartado
+        case defStopped:
+        default: {
+            DEBUG_POINT_STDOUT("Point discarded: " << p.string());
+        } break;
     }
 }
 
@@ -208,7 +212,7 @@ std::pair<bool, CharacterizedObject> ObjectCharacterizator::defineObject() {
             break;
         case kScanError:
             CLI_STDERR("An error ocurred while scanning: Scan will end");
-            return {false, {}}; // Error de escaneo
+            return {false, {}};  // Error de escaneo
             break;
         case kScanEof:
             CLI_STDERR("End Of File reached: Scan will end and file will be reset");

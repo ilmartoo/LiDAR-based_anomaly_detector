@@ -173,12 +173,13 @@ std::pair<size_t, std::vector<size_t>> DBScan::centroidNormalNeighbours(size_t c
     size_t neighbours = 0;
     std::vector<Point *> neighbourPoints = map.searchNeighbors(points[centroid], maxDistance, Kernel_t::sphere);
 
+    size_t i;
     for (Point *&np : neighbourPoints) {
         // A partir del estandar C++0x los elementos de un vector estan contiguos en memoria (menos los tipo bool)
         // Haciendo uso de aritmetica de punteros le restamos a una dirección de un punto del vector (np) la dirección
         // inicial (&*points.begin()) obteniendo de esta forma el índice del elemento en tiempo constante sin recurrir
         // a una búsqueda lineal
-        size_t i = (size_t)(np - &*points.begin());
+        i = (size_t)(np - &*points.begin());
 
         if (normals[i] != Vector(0, 0, 0) &&
             normals[centroid].vectorialAngle(normals[i]) <= normalDispersion &&

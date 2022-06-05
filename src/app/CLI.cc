@@ -335,14 +335,14 @@ void CLI::cli() {
 
                         size_t npoints = 0;
                         for (auto &f : co.getFaces()) {
-                            npoints += f.getPoints().size();
+                            npoints += f.getReferences().size();
                         }
 
                         CLI_STDOUT("Object " << command[1] << " characteristics:");
                         CLI_STDOUT("  Total faces:      " << co.getFaces().size());
                         CLI_STDOUT("  Total points:     " << npoints);
-                        CLI_STDOUT("  Width  / z_delta: " << co.getBBox().getDeltaZ());
-                        CLI_STDOUT("  Height / y_delta: " << co.getBBox().getDeltaY());
+                        CLI_STDOUT("  Height / z_delta: " << co.getBBox().getDeltaZ());
+                        CLI_STDOUT("  Width  / y_delta: " << co.getBBox().getDeltaY());
                         CLI_STDOUT("  Depth  / x_delta: " << co.getBBox().getDeltaX());
                         CLI_STDOUT("  Normal vectors:");
                         for (auto &f : co.getFaces()) {
@@ -386,7 +386,7 @@ void CLI::cli() {
 
                         size_t npoints = 0;
                         for (auto &f : m.getFaces()) {
-                            npoints += f.getPoints().size();
+                            npoints += f.getReferences().size();
                         }
 
                         CLI_STDOUT("Model " << command[1] << " characteristics:");
