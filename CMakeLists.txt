@@ -1,26 +1,6 @@
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 # ------------------------------ #
-#          PROJECT SETUP         #
-# ------------------------------ #
-
-#
-# Project name
-#
-set(ANOMALY_PROJECT_NAME anomaly_detector)
-project(${ANOMALY_PROJECT_NAME})
-#
-# Options
-#
-option(DEBUG_POINTS "Debuggin option to print scanned points" OFF) # Default: Do not print scanned points
-option(BUILD_TESTS "Enables unit tests" OFF)                       # Default: Do not create unit tests
-set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG") 						   # Release compiler flags
-#
-# C++ standard
-#
-set(CMAKE_CXX_STANDARD 17)
-
-# ------------------------------ #
 #             CONFIG             #
 # ------------------------------ #
 
@@ -35,6 +15,25 @@ set(LIVOX_SDK_DIR ${LIB_FOLDER}/Livox-SDK-2.3.0/sdk_core)
 set(READ_LVX_DIR ${LIB_FOLDER}/read_lvx-master)
 set(ARMADILLO_DIR ${LIB_FOLDER}/armadillo-11.0.0)
 set(CATCH2_DIR ${LIB_FOLDER})
+
+# ------------------------------ #
+#          PROJECT SETUP         #
+# ------------------------------ #
+
+#
+# Project name
+#
+set(ANOMALY_PROJECT_NAME anomaly_detector)
+project(${ANOMALY_PROJECT_NAME})
+#
+# Options
+#
+option(DEBUG_POINTS  "Debuggin option to print scanned points" OFF)  # Default: Do not print scanned points
+option(CODE_COVERAGE "Enables coverage tests" OFF)                   # Default: Do not create coverage tests
+#
+# C++ standard
+#
+set(CMAKE_CXX_STANDARD 17)
 
 # ------------------------------ #
 #            LIBRARIES           #
@@ -86,24 +85,35 @@ link_directories(${ARMADILLO_DIR})
 # ------------------------------ #
 
 #
-# Compilation setup
-#
-set(CMAKE_CXX_FLAGS "-Wall -g3")            # Compiler flags
-string(TOLOWER ${CMAKE_BUILD_TYPE} build_type)
-if(NOT build_type STREQUAL "debug" AND NOT build_type STREQUAL "release")
-	message(FATAL_ERROR "Unknown build type")
-endif()
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2") # Release compiler flags
-set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG") 						  # Debug compiler flags
-if(DEBUG_SCANNED_POINTS)
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_POINTS") # Debug extra compiler flags
-endif()
-#
 # Application source code
 #
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS
     src/*.cc
 )
+#
+# Compilation & linking setup
+#
+string(TOUPPER "${CMAKE_BUILD_TYPE}" BUILD_TYPE)
+set(CMAKE_CXX_FLAGS "-Wall -g3")
+if(BUILD_TYPE STREQUAL "RELEASE")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -DNDEBUG")
+endif()
+if(BUILD_TYPE STREQUAL "DEBUG")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG")
+endif()
+if(BUILD_TYPE STREQUAL "COVERAGE")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNDEBUG")
+endif()
+if((BUILD_TYPE STREQUAL "DEBUG") OR (BUILD_TYPE STREQUAL "COVERAGE"))
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+endif()
+if((BUILD_TYPE STREQUAL "COVERAGE") OR CODE_COVERAGE)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage --coverage")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+	link_libraries(
+		gcov
+	)
+endif()
 #
 # Include directories
 #
@@ -113,10 +123,7 @@ include_directories(
 	${READ_LVX_DIR}/
 	${ARMADILLO_DIR}/include
 )
-find_package(OpenMP)
-if(NOT OpenMP_CXX_FOUND)
-	message(FATAL_ERROR "OpenMP not found")
-endif()
+find_package(OpenMP REQUIRED)
 link_libraries(
 	${LIVOX_SDK_LIB}_static
 	${READ_LVX_LIB}
@@ -130,9 +137,11 @@ link_libraries(
 #
 # Application executable
 #
-add_executable(${ANOMALY_PROJECT_NAME}
-	${sources}
-)
+if(NOT (BUILD_TYPE STREQUAL "COVERAGE"))
+	add_executable(${ANOMALY_PROJECT_NAME}
+		${sources}
+	)
+endif()
 
 # ------------------------------ #
 #           UNIT TESTS           #
@@ -141,7 +150,7 @@ add_executable(${ANOMALY_PROJECT_NAME}
 #
 # Enables testing
 #
-if(BUILD_TESTS)
+if((BUILD_TYPE STREQUAL "COVERAGE") OR CODE_COVERAGE)
 	include(CTest)
 	enable_testing()
 	#
@@ -156,29 +165,58 @@ if(BUILD_TESTS)
 	#
 	# Unit tests source code
 	#
-	file(GLOB_RECURSE unit_test_sources CONFIGURE_DEPENDS
-		test/*.cc
+	file(GLOB_RECURSE test_sources CONFIGURE_DEPENDS
+		test/catch_main.cc
+		test/catch_utils.hh
+		test/*/*.cc
 		src/*/*.cc
 	)
 	#
-	# Unit tests executable
+	# Linkers
 	#
-	set(ANOMALY_TESTS_NAME anomaly_tests)
-	add_executable(${ANOMALY_TESTS_NAME}
-		${unit_test_sources}
-	)
-	target_include_directories(${ANOMALY_TESTS_NAME}
+	include_directories(
 		PUBLIC
 			test/
 			include/
 	)
-	target_link_libraries(${ANOMALY_TESTS_NAME}
+	link_libraries(
 		${CATCH2_LIB}
 	)
+	#
+	# Ejecutables
+	#
+	set(COVERAGE_TARGET coverage_tests)
+	add_executable(${COVERAGE_TARGET}
+		${test_sources}
+	)
+	#
+	# Tests
+	#
 	add_test(
 		NAME
-			${ANOMALY_TESTS_NAME}
+			${COVERAGE_TARGET}
         COMMAND
-			${ANOMALY_TESTS_NAME}
+			${COVERAGE_TARGET}
 	)
+	#
+	# Ejecución de tests y generación de coverage report
+	#
+	add_custom_command( TARGET
+							${COVERAGE_TARGET}
+						COMMENT 
+							"Run coverage tests"
+						POST_BUILD 
+						COMMAND 
+							rm -f ./**/*.gcda && ctest ARGS -VV --progress --output-on-failure -j 4 || cat < /dev/null
+						WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+	)
+	add_custom_command( TARGET
+							${COVERAGE_TARGET}
+						COMMENT 
+							"Run coverage tests"
+						POST_BUILD 
+						COMMAND 
+							lcov --capture --directory ${CMAKE_BINARY_DIR} --output-file lcov.info && genhtml lcov.info --output-directory coverage_report  || cat < /dev/null
+						WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+	)					
 endif()
