@@ -1,9 +1,9 @@
 /**
- * @file ObjectCharacterizator.cc
+ * @file ObjectCharacterizer.cc
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 25/03/2022
  *
- * @brief Implementación del objeto ObjectCharacterizator
+ * @brief Implementación del objeto ObjectCharacterizer
  *
  */
 
@@ -17,7 +17,7 @@
 #include <utility>
 #include <omp.h>
 
-#include "object_characterization/ObjectCharacterizator.hh"
+#include "object_characterization/ObjectCharacterizer.hh"
 #include "object_characterization/CharacterizedObject.hh"
 #include "models/LidarPoint.hh"
 #include "models/Point.hh"
@@ -26,7 +26,7 @@
 
 #include "logging/debug.hh"
 
-void ObjectCharacterizator::newPoint(const LidarPoint &p) {
+void ObjectCharacterizer::newPoint(const LidarPoint &p) {
     static std::chrono::system_clock::time_point start, last_point, end;
     static uint32_t p_count;
 
@@ -166,7 +166,7 @@ void ObjectCharacterizator::newPoint(const LidarPoint &p) {
     }
 }
 
-bool ObjectCharacterizator::init() {
+bool ObjectCharacterizer::init() {
     DEBUG_STDOUT("Initializing characterizator");
 
     if (!scanner->init()) {
@@ -177,7 +177,7 @@ bool ObjectCharacterizator::init() {
     return true;
 };
 
-void ObjectCharacterizator::stop() {
+void ObjectCharacterizer::stop() {
     DEBUG_STDOUT("Ending characterization");
 
     scanner->stop();
@@ -185,7 +185,7 @@ void ObjectCharacterizator::stop() {
     DEBUG_STDOUT("Ended characterization");
 }
 
-void ObjectCharacterizator::defineBackground() {
+void ObjectCharacterizer::defineBackground() {
     background = {};
 
     state = defBackground;
@@ -202,7 +202,7 @@ void ObjectCharacterizator::defineBackground() {
     }
 }
 
-std::pair<bool, CharacterizedObject> ObjectCharacterizator::defineObject() {
+std::pair<bool, CharacterizedObject> ObjectCharacterizer::defineObject() {
     object = {};
 
     state = defObject;
@@ -226,7 +226,7 @@ std::pair<bool, CharacterizedObject> ObjectCharacterizator::defineObject() {
 
     // Object points filtering
     std::vector<Point> filtered;
-#pragma omp parallel for num_threads(PARALELIZATION_NUM_THREADS) schedule(guided)
+#pragma omp parallel for schedule(OMP_SCHEDULE_TYPE, OMP_CHUNK_SIZE)
     for (size_t i = 0; i < object.getPoints().size(); ++i) {
         if (!isBackground(object.getPoints()[i])) {
 #pragma omp critical
@@ -249,7 +249,7 @@ std::pair<bool, CharacterizedObject> ObjectCharacterizator::defineObject() {
     return CharacterizedObject::parse(filtered, chrono);
 }
 
-void ObjectCharacterizator::wait(uint32_t miliseconds) {
+void ObjectCharacterizer::wait(uint32_t miliseconds) {
     discardTime = static_cast<uint64_t>(miliseconds) * 1000000;
     discardStartTime.first = false;
 
@@ -267,4 +267,4 @@ void ObjectCharacterizator::wait(uint32_t miliseconds) {
     }
 }
 
-bool ObjectCharacterizator::isBackground(const Point &p) const { return background.getMap().searchNeighbors(p, backDistance, Kernel_t::sphere).size() > 0; }
+bool ObjectCharacterizer::isBackground(const Point &p) const { return background.getMap().searchNeighbors(p, backDistance, Kernel_t::sphere).size() > 0; }

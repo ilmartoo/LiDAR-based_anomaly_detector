@@ -1,14 +1,14 @@
 /**
- * @file ObjectCharacterizator.hh
+ * @file ObjectCharacterizer.hh
  * @author Martín Suárez (martin.suarez.garcia@rai.usc.es)
  * @date 25/03/2022
  *
- * @brief Definición del objeto ObjectCharacterizator
+ * @brief Definición del objeto ObjectCharacterizer
  *
  */
 
-#ifndef OBJECTCARACTERIZATOR_CLASS_H
-#define OBJECTCARACTERIZATOR_CLASS_H
+#ifndef OBJECTCARACTERIZER_CLASS_H
+#define OBJECTCARACTERIZER_CLASS_H
 
 #include <vector>
 #include <thread>
@@ -23,7 +23,7 @@
 /**
  * Estados en los que se puede encontrar el caracterizador de objetos
  */
-enum CharacterizatorState {
+enum CharacterizerState {
     defBackground,  ///< Definiendo el fondo
     defObject,      ///< Definiendo objetos
     defDiscard,     ///< Descarte de puntos intencionado
@@ -33,7 +33,7 @@ enum CharacterizatorState {
 /**
  * @brief Gestor de la caracterización de objetos
  */
-class ObjectCharacterizator {
+class ObjectCharacterizer {
    private:
     IScanner *scanner;  ///< Escaner de puntos
 
@@ -43,7 +43,7 @@ class ObjectCharacterizator {
     float minReflectivity;  ///< Reflectividad mínima que necesitan los puntos para no ser descartados
     float backDistance;     ///< Distancia mínima a la que tiene que estar un punto para no pertenecer al fondo
 
-    enum CharacterizatorState state;  ///< Estado en el que se encuentra el caracterizador de objetos
+    enum CharacterizerState state;  ///< Estado en el que se encuentra el caracterizador de objetos
     OctreeMap background;             ///< Mapa de puntos que forman el fondo
     OctreeMap object;                 ///< Vector de puntos que forman el objeto
 
@@ -52,7 +52,7 @@ class ObjectCharacterizator {
 
    public:
     /**
-     * Constructor del objeto ObjectCharacterizator
+     * Constructor del objeto ObjectCharacterizer
      * @param scanner Escaner de puntos a utilizar por el caracterizador
      * @param objFrame Tiempo en ms que durará un frame
      * @param backFrame Tiempo en ms en los que se escaneará en fondo
@@ -60,7 +60,7 @@ class ObjectCharacterizator {
      * @param backDistance Distancia al fondo en metros
      * @param chrono Activador del cronometraje de tiempos
      */
-    ObjectCharacterizator(IScanner *scanner, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance, bool chrono)
+    ObjectCharacterizer(IScanner *scanner, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance, bool chrono)
         : scanner(scanner),
           chrono(chrono),
           objFrame(static_cast<uint64_t>(objFrame) * 1000000),
@@ -75,7 +75,7 @@ class ObjectCharacterizator {
     /**
      * Destructor
      */
-    ~ObjectCharacterizator() {}
+    ~ObjectCharacterizer() {}
 
     /**
      * Callback a donde se recebirán los puntos escaneados
@@ -178,4 +178,4 @@ class ObjectCharacterizator {
     bool isBackground(const Point &p) const;
 };
 
-#endif  // OBJECTCARACTERIZATOR_CLASS_H
+#endif  // OBJECTCARACTERIZER_CLASS_H

@@ -17,31 +17,24 @@
 #include "scanner/ScannerCSV.hh"
 #include "scanner/ScannerLVX.hh"
 #include "scanner/ScannerLidar.hh"
-#include "object_characterization/ObjectCharacterizator.hh"
+#include "object_characterization/ObjectCharacterizer.hh"
 #include "anomaly_detection/AnomalyDetector.hh"
 #include "app/ObjectManager.hh"
 
 #include "logging/debug.hh"
+#include "app/config.h"
 
 #define CLI_STDOUT(msg) do { std::cout << cyan("" << msg << "") << std::endl; } while(0)
 #define CLI_STDOUT_NO_NL(msg) do { std::cout << cyan("" << msg << ""); } while(0)
 #define CLI_STDERR(msg) do { std::cerr << red("" << msg << "") << std::endl; } while(0)
 #define CLI_STDERR_NO_NL(msg) do { std::cerr << red("" << msg << ""); } while(0)
 
-/** Tipos de mediciones de tiempo a tomar */
-enum ChronoMode {
-    kNoChrono = 0,                   ///< Ejecución sin medida de tiempo
-    kChronoCharacterization = 0b01,  ///< Ejecución con medida de tiempo en la caracterización de objetos
-    kChronoAnomalyDetection = 0b10,  ///< Ejecución con medida de tiempo en la detección de anomalías
-    kChronoAll = 0b11,               ///< Ejecución con medida de tiempo en todo el programa
-};
-
 /**
- * @brief Director de la ejecución de la aplicación e interfaz de comunicación entre usuario y el resto de módulos
+ * @brief Director de la ejecución del programa e interfaz de comunicación entre usuario y el resto de módulos
  */
 class CLI {
    private:
-    ObjectCharacterizator *oc;  ///< Caracterizador de objetos
+    ObjectCharacterizer *oc;  ///< Caracterizador de objetos
     ObjectManager *om;          ///< Gestor de objetos y modelos
     AnomalyDetector *ad;        ///< Detector de anomalías
 
@@ -76,7 +69,7 @@ class CLI {
             return;
         }
 
-        oc = new ObjectCharacterizator(scanner, objFrame, backFrame, minReflectivity, backDistance, chronoMode & kChronoCharacterization);
+        oc = new ObjectCharacterizer(scanner, objFrame, backFrame, minReflectivity, backDistance, chronoMode & kChronoCharacterization);
         om = new ObjectManager();
         ad = new AnomalyDetector(chronoMode & kChronoAnomalyDetection);
 
@@ -93,14 +86,14 @@ class CLI {
      */
     CLI(const char *broadcastCode, ChronoMode chronoMode, uint32_t objFrame, uint32_t backFrame, float minReflectivity, float backDistance) {
         IScanner *scanner = ScannerLidar::create(broadcastCode);
-        oc = new ObjectCharacterizator(scanner, objFrame, backFrame, minReflectivity, backDistance, chronoMode & kChronoCharacterization);
+        oc = new ObjectCharacterizer(scanner, objFrame, backFrame, minReflectivity, backDistance, chronoMode & kChronoCharacterization);
         om = new ObjectManager();
         ad = new AnomalyDetector(chronoMode & kChronoAnomalyDetection);
 
         execution();
     }
     /**
-     * Destructor de la app
+     * Destructor de la CLI
      */
     ~CLI() {
         if (ad != nullptr) {

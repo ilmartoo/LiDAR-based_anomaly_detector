@@ -55,9 +55,9 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
     size_t tcomp = deltaFaces < 0 ? mod.getFaces().size() : obj.getFaces().size();  // Máximo de iteraciones posibles en la comparación de caras
     size_t objFaceIndex, modFaceIndex;
     double minDeltaVolume;
-#pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
+#pragma omp parallel
     {
-#pragma omp for collapse(2) schedule(guided)
+#pragma omp for collapse(2) schedule(OMP_SCHEDULE_TYPE, OMP_CHUNK_SIZE)
         for (size_t i = 0; i < obj.getFaces().size(); ++i) {
             for (size_t j = 0; j < mod.getFaces().size(); ++j) {
                 deltaVolumes[i][j] = std::fabs(mod.getFaces()[j].getMinBBox().volume() - obj.getFaces()[i].getMinBBox().volume());
@@ -73,7 +73,7 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
             }
             // Implicit barrier
             // Recorremos los elementos restantes de la matriz en busca del mínimo
-#pragma omp for collapse(2) schedule(guided)
+#pragma omp for collapse(2) schedule(OMP_SCHEDULE_TYPE, OMP_CHUNK_SIZE)
             for (size_t oi = 0; oi < obj.getFaces().size(); ++oi) {
                 for (size_t mi = 0; mi < mod.getFaces().size(); ++mi) {
                     // El primer elemento es el mínimo por defecto
