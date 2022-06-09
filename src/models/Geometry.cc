@@ -120,7 +120,7 @@ Vector Geometry::computeNormal(const std::vector<Point *> &points) {
 std::vector<Vector> Geometry::computeNormals(std::vector<Point> &points, const Octree &map, double distance) {
     std::vector<Vector> normals(points.size(), Vector(0, 0, 0));
 
-#pragma omp parallel for num_threads(PARALELIZATION_NUM_THREADS) schedule(guided)
+#pragma omp parallel for schedule(OMP_SCHEDULE_TYPE, OMP_CHUNK_SIZE)
     for (size_t i = 0; i < points.size(); ++i) {
         std::vector<Point *> neighbours = map.searchNeighbors(points[i], distance, Kernel_t::sphere);
 
@@ -220,10 +220,10 @@ std::pair<BBox, Vector> Geometry::minimumBBoxRotTrans(std::vector<Point> &points
     arma::mat33 rotmatrix, orirotmatrix;
     Point trans;
 
-#pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
+#pragma omp parallel
     {
         // Rotaciones amplias en las tres dimensiones
-#pragma omp for collapse(3) schedule(guided)
+#pragma omp for collapse(3) schedule(OMP_SCHEDULE_TYPE, OMP_CHUNK_SIZE)
         for (int i = 0; i < 90; i += 6) {
             for (int j = 0; j < 90; j += 6) {
                 for (int k = 0; k < 90; k += 6) {
@@ -242,7 +242,7 @@ std::pair<BBox, Vector> Geometry::minimumBBoxRotTrans(std::vector<Point> &points
             }
         }
         // Rotaciones pequeñas dentro del radio de la mejor rotación grande
-#pragma omp for collapse(3) schedule(guided)
+#pragma omp for collapse(3) schedule(OMP_SCHEDULE_TYPE, OMP_CHUNK_SIZE)
         for (int i = (int)rotmin.getX() - 5; i < (int)rotmin.getX() + 6; ++i) {
             for (int j = (int)rotmin.getY() - 5; j < (int)rotmin.getY() + 6; ++j) {
                 for (int k = (int)rotmin.getZ() - 5; k < (int)rotmin.getZ() + 6; ++k) {
@@ -279,7 +279,7 @@ std::pair<BBox, Vector> Geometry::minimumBBoxRotTrans(std::vector<Point> &points
             bbmin = {halfDim, Point(0, 0, 0) - halfDim};
         }
         // Implicit barrier
-#pragma omp for schedule(guided)
+#pragma omp for schedule(OMP_SCHEDULE_TYPE, OMP_CHUNK_SIZE)
         for (size_t i = 0; i < points.size(); ++i) {
             Point p = (points[i].rotate(rotmatrix) + trans).rotate(orirotmatrix);
             points[i] = Point(p.getX(), p.getY(), p.getZ(), points[i].getClusterID());
@@ -295,10 +295,10 @@ std::pair<BBox, Vector> Geometry::minimumBBox(const std::vector<Point> &points) 
     arma::mat33 rotmatrix;
     Point trans;
 
-#pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
+#pragma omp parallel
     {
         // Rotaciones amplias en las tres dimensiones
-#pragma omp for collapse(3) schedule(guided)
+#pragma omp for collapse(3) schedule(OMP_SCHEDULE_TYPE, OMP_CHUNK_SIZE)
         for (int i = 0; i < 90; i += 6) {
             for (int j = 0; j < 90; j += 6) {
                 for (int k = 0; k < 90; k += 6) {
@@ -317,7 +317,7 @@ std::pair<BBox, Vector> Geometry::minimumBBox(const std::vector<Point> &points) 
             }
         }
         // Rotaciones pequeñas dentro del radio de la mejor rotación grande
-#pragma omp for collapse(3) schedule(guided)
+#pragma omp for collapse(3) schedule(OMP_SCHEDULE_TYPE, OMP_CHUNK_SIZE)
         for (int i = (int)rotmin.getX() - 5; i < (int)rotmin.getX() + 6; ++i) {
             for (int j = (int)rotmin.getY() - 5; j < (int)rotmin.getY() + 6; ++j) {
                 for (int k = (int)rotmin.getZ() - 5; k < (int)rotmin.getZ() + 6; ++k) {
@@ -349,7 +349,7 @@ std::pair<BBox, Vector> Geometry::minimumBBox(const std::vector<Point> &points) 
 std::vector<std::pair<BBox, Vector>> Geometry::minimumBBoxes(const std::vector<std::vector<Point *>> &points) {
     std::vector<std::pair<BBox, Vector>> bboxes = {points.size(), {{}, Vector(0, 0, 0)}};
 
-#pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
+#pragma omp parallel
     {
         for (size_t v = 0; v < points.size(); ++v) {
 #pragma omp single
@@ -357,7 +357,7 @@ std::vector<std::pair<BBox, Vector>> Geometry::minimumBBoxes(const std::vector<s
                 bboxes[v].first = BBox(points[v]);
             }
             // Rotaciones amplias en las tres dimensiones
-#pragma omp for collapse(3) schedule(guided)
+#pragma omp for collapse(3) schedule(OMP_SCHEDULE_TYPE, OMP_CHUNK_SIZE)
             for (int i = 0; i < 90; i += 6) {
                 for (int j = 0; j < 90; j += 6) {
                     for (int k = 0; k < 90; k += 6) {
@@ -376,7 +376,7 @@ std::vector<std::pair<BBox, Vector>> Geometry::minimumBBoxes(const std::vector<s
                 }
             }
             // Rotaciones pequeñas dentro del radio de la mejor rotación grande
-#pragma omp for collapse(3) schedule(guided)
+#pragma omp for collapse(3) schedule(OMP_SCHEDULE_TYPE, OMP_CHUNK_SIZE)
             for (int i = (int)bboxes[v].second.getX() - 5; i < (int)bboxes[v].second.getX() + 6; ++i) {
                 for (int j = (int)bboxes[v].second.getY() - 5; j < (int)bboxes[v].second.getY() + 6; ++j) {
                     for (int k = (int)bboxes[v].second.getZ() - 5; k < (int)bboxes[v].second.getZ() + 6; ++k) {

@@ -269,11 +269,19 @@ void CLI::cli() {
                             CLI_STDOUT("New object frame set at " << command[1] << " ms");
 
                         } else if (command[0] == "backthreshold") {
-                            oc->setBackDistance(std::stof(command[1]));
+                            double bd = std::stof(command[1]);
+                            if (bd < 0) {
+                                throw std::exception();
+                            }
+                            oc->setBackDistance(bd);
                             CLI_STDOUT("New background distance threshold set at " << command[1] << " m");
 
                         } else if (command[0] == "reflthreshold") {
-                            oc->setMinReflectivity(std::stof(command[1]));
+                            double mr = std::stof(command[1]);
+                            if (mr < 0) {
+                                throw std::exception();
+                            }
+                            oc->setMinReflectivity(mr);
                             CLI_STDOUT("New minimun reflectivity set at " << command[1] << " points");
 
                         } else {

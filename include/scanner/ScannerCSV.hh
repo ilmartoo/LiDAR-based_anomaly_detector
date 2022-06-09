@@ -74,11 +74,6 @@ class ScannerCSV : public IFileScanner {
     bool setCallback(const std::function<void(const LidarPoint &p)> func);
 
     /**
-     * Espera pasiva a la finalización del escaneo del archivo de puntos
-     */
-    void wait();
-
-    /**
      * Finaliza el escaner
      */
     void stop();

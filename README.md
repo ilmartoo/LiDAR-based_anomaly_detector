@@ -127,7 +127,7 @@ This will build and install the `anomaly_tests` executable into the `build/` fol
 
 The program provides some parametes if you wish to lauch the application with the options specified by you:
 
-```
+```text
 anomaly_detector <-b lidar_code | -f filename> [-t obj_frame_t] [-c chrono_mode] [-g back_frame_t] [-r reflectivity_threshold] [-d distance_threshold]
 anomaly_detector <-h | --help>
 ```
@@ -140,7 +140,7 @@ Parameter explanation:
 
 - `-t`: Miliseconds to use as frame duration time. **Defaults to `1500ms`.**
 
-- `-c`                Type of chronometer to set up and measure time from. **Defaults to `notime`.**
+- `-c`: Type of chronometer to set up and measure time from. **Defaults to `notime`.**
   - `notime`: No chrono set
   - `char`: Characterizator chrono set
   - `anom`: Anomaly detector chrono set
@@ -152,14 +152,16 @@ Parameter explanation:
 
 - `-d`: Minimum distance from the background in meters a point must have not to be discarded. **Defaults to `0.01m`.**
 
-- `-h,--help`: Print the program help text.
+- `-j`: Number of threads to execute the parallel regions with. **Defaults to `4 threads`.**
 
+- `-h,--help`: Print the program help text.
 
 **Any undefined options passed will be ignored.**
 
 ### Command Line Interface
 
 The CLI has a variety of commands you can run:
+
 - `help [command]`: Prints the help text of a command or all of them if not specified.
 
 - `exit`: Exits the program.
