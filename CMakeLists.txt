@@ -213,7 +213,7 @@ if((BUILD_TYPE STREQUAL "COVERAGE") OR CODE_COVERAGE)
 	add_custom_command( TARGET
 							${COVERAGE_TARGET}
 						COMMENT 
-							"Run coverage tests"
+							"Create coverage report"
 						POST_BUILD 
 						COMMAND 
 							lcov --capture --directory ${CMAKE_BINARY_DIR} --output-file lcov.info && genhtml lcov.info --output-directory coverage_report  || cat < /dev/null

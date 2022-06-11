@@ -70,9 +70,9 @@ int main(int argc, char *argv[]) {
     struct InputParams pi = {argv[0]};                // Generate struct
     pi.parse(argc, const_cast<const char **>(argv));  // Parse input
 
-    omp_set_num_threads(pi.num_threads); // OMP threads
-
     if (pi.is_ok) {
+        omp_set_num_threads(pi.num_threads);  // OMP threads
+
         if (pi.is_lidar) {
             CLI(pi.lidar_code.c_str(), pi.chrono_mode, pi.obj_frame_t, pi.back_frame_t, pi.min_reflectivity, pi.back_distance);
         } else {
@@ -112,7 +112,7 @@ void InputParams::parse(int argc, const char **argv) {
             option = DEFAULT_BROADCAST_CODE;
         }
         // Valor inválido
-        else if (option.length() > kBroadcastCodeSize || !is_alphanumeric(option)) {
+        else if (option.length() >= kBroadcastCodeSize || !is_alphanumeric(option)) {
             missusage();
             return;  // Salimos
         }
@@ -318,8 +318,8 @@ void InputParams::parse(int argc, const char **argv) {
             // Valor válido
             try {
                 num_threads = std::stoi(option);
-                
-                if(num_threads < 1) {
+
+                if (num_threads < 1) {
                     throw std::exception();
                 }
 

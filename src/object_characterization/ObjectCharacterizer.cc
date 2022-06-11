@@ -73,7 +73,7 @@ void ObjectCharacterizer::newPoint(const LidarPoint &p) {
                     double sc_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(last_point - start).count()) / 1.e9;
                     double ot_duration = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - last_point).count()) / 1.e9;
 
-                    CLI_STDOUT("Background scanning lasted " << std::setprecision(6) << (sc_duration + ot_duration) << std::setprecision(2) << "s (scanning: " << sc_duration << "s, map generation: " << ot_duration << "s)");
+                    CLI_STDOUT("Background scanning lasted " << std::setprecision(6) << (sc_duration + ot_duration) << "s (scanning: " << sc_duration << "s, map generation: " << ot_duration << std::setprecision(2) << "s)");
                 }
 
                 DEBUG_STDOUT("First out-of-frame point timestamp: " << p.getTimestamp().string());
