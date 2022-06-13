@@ -10,21 +10,15 @@
 #include <iostream>
 #include <string>
 #include <stdlib.h>
+#include <omp.h>
 
 #include "livox_def.h"
 
 #include "app/CLI.hh"
 #include "app/InputParser.hh"
+#include "app/config.h"
 
 #include "logging/debug.hh"
-
-/* Defaults */
-#define DEFAULT_BROADCAST_CODE      "3WEDH7600101621"  // Broadcast code of the Livox Horizon scanner
-#define DEFAULT_TIMER_MODE          kNoChrono          // Default timer mode
-#define DEFAULT_OBJECT_FRAME_T      1500               // Default frame time (ms)
-#define DEFAULT_BACKGROUND_FRAME_T  5000               // Default background time (ms)
-#define DEFAULT_MIN_RELECTIVITY     0.0f               // Default point reflectivity threshold
-#define DEFAULT_BACKGROUND_DISTANCE 0.01f              // Default backgound distance (m) threshold
 
 /* InputParams struct */
 struct InputParams {
@@ -36,7 +30,8 @@ struct InputParams {
           obj_frame_t(DEFAULT_OBJECT_FRAME_T),
           back_frame_t(DEFAULT_BACKGROUND_FRAME_T),
           min_reflectivity(DEFAULT_MIN_RELECTIVITY),
-          back_distance(DEFAULT_BACKGROUND_DISTANCE){};
+          back_distance(DEFAULT_BACKGROUND_DISTANCE),
+          num_threads(DEFAULT_NUM_THREADS){};
 
     void help() const;               // Command line help
     void usage() const;              // Command line usage
@@ -56,6 +51,7 @@ struct InputParams {
     uint32_t back_frame_t;   // Tiempo en el cual los puntos formarán parte del background
     float min_reflectivity;  // Reflectividad mínima que necesitan los puntos para no ser descartados
     float back_distance;     // Distancia mínima a la que tiene que estar un punto para no pertenecer al background
+    int num_threads;         // Número de hilos a ejecutar las secciones paralelas
 };
 
 /* Utilities */
@@ -75,6 +71,8 @@ int main(int argc, char *argv[]) {
     pi.parse(argc, const_cast<const char **>(argv));  // Parse input
 
     if (pi.is_ok) {
+        omp_set_num_threads(pi.num_threads);  // OMP threads
+
         if (pi.is_lidar) {
             CLI(pi.lidar_code.c_str(), pi.chrono_mode, pi.obj_frame_t, pi.back_frame_t, pi.min_reflectivity, pi.back_distance);
         } else {
@@ -114,7 +112,7 @@ void InputParams::parse(int argc, const char **argv) {
             option = DEFAULT_BROADCAST_CODE;
         }
         // Valor inválido
-        else if (option.length() > kBroadcastCodeSize || !is_alphanumeric(option)) {
+        else if (option.length() >= kBroadcastCodeSize || !is_alphanumeric(option)) {
             missusage();
             return;  // Salimos
         }
@@ -259,6 +257,11 @@ void InputParams::parse(int argc, const char **argv) {
             try {
                 min_reflectivity = std::stof(option);
 
+                if (min_reflectivity < 0) {
+                    missusage();
+                    return;  // Salimos
+                }
+
                 DEBUG_STDOUT("Value of <-r> is " << option);
             }
             // Valor inválido
@@ -285,7 +288,42 @@ void InputParams::parse(int argc, const char **argv) {
             try {
                 back_distance = std::stof(option);
 
+                if (back_distance < 0) {
+                    missusage();
+                    return;  // Salimos
+                }
+
                 DEBUG_STDOUT("Value of <-d> is " << option);
+            }
+            // Valor inválido
+            catch (std::exception &e) {
+                missusage();
+                return;  // Salimos
+            }
+        }
+    }
+
+    /* Hilos de ejecución */
+    if (parser.hasParam("-j")) {
+        DEBUG_STDOUT("Param <-j> detected");
+
+        const std::string &option = parser.getParam("-j");
+        // No se ha proporcionado valor
+        if (option.empty()) {
+            missusage();
+            return;  // Salimos
+        }
+        // Obtención del valor
+        else {
+            // Valor válido
+            try {
+                num_threads = std::stoi(option);
+
+                if (num_threads < 1) {
+                    throw std::exception();
+                }
+
+                DEBUG_STDOUT("Value of <-j> is " << option);
             }
             // Valor inválido
             catch (std::exception &e) {
@@ -300,7 +338,7 @@ void InputParams::parse(int argc, const char **argv) {
 void InputParams::usage() const {
     std::cout << std::endl
               << "Usage:" << std::endl
-              << exec_name << " <-b lidar_code | -f filename> [-t obj_frame_t] [-c chrono_mode] [-g back_frame_t] [-r reflectivity_threshold] [-d distance_threshold]" << std::endl
+              << exec_name << " <-b lidar_code | -f filename> [-t obj_frame_t] [-c chrono_mode] [-g back_frame_t] [-r reflectivity_threshold] [-d distance_threshold] [-j threads]" << std::endl
               << exec_name << " <-h | --help>" << std::endl
               << std::endl;
 }
@@ -319,6 +357,7 @@ void InputParams::help() const {
               << "\t -g                Miliseconds during which scanned points will be part of the background. Defaults to " << DEFAULT_BACKGROUND_FRAME_T << "ms" << std::endl
               << "\t -r                Minimum reflectivity value points may have not to be discarded. Defaults to " << DEFAULT_MIN_RELECTIVITY << std::endl
               << "\t -d                Minimum distance from the background in meters a point must have not to be discarded. Defaults to " << DEFAULT_BACKGROUND_DISTANCE << "m" << std::endl
+              << "\t -j                Number of threads to execute the parallel regions with. Defaults to " << DEFAULT_NUM_THREADS << " threads" << std::endl
               << "\t -h,--help         Print the program help text" << std::endl
               << std::endl
               << "Undefined options will be ignored." << std::endl

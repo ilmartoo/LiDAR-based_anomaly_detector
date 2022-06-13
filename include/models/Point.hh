@@ -48,15 +48,17 @@ class Point {
      * @param x Posición en x del punto
      * @param y Posición en y del punto
      * @param z Posición en z del punto
+     * @param cID Cluster ID
      */
-    Point(double x, double y, double z) : x(x), y(y), z(z), cID(cUnclassified) {}
+    Point(double x, double y, double z, int cID = cUnclassified) : x(x), y(y), z(z), cID(cID) {}
     /**
      * Constructor
      * @param x Posición en x del punto
      * @param y Posición en y del punto
      * @param z Posición en z del punto
+     * @param cID Cluster ID
      */
-    Point(int x, int y, int z) : x((double)x), y((double)y), z((double)z), cID(cUnclassified) {}
+    Point(int x, int y, int z, int cID = cUnclassified) : x((double)x), y((double)y), z((double)z), cID(cID) {}
 
     ////// Operaciones tridimensionales
     /**

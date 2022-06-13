@@ -40,27 +40,27 @@ bool ScannerCSV::init() {
 ScanCode ScannerCSV::scan() {
     DEBUG_STDOUT("Starting point scanning");
 
-    if (!infile.is_open()) {
-        infile.open(filename, std::ios::in);
-    }
-    // Vuelve al principio del archivo
-    else if (infile.eof()) {
-        infile.seekg(std::ios::beg);
-    }
+    if (!scanning) {
+        if (!infile.is_open()) {
+            infile.open(filename, std::ios::in);
+        }
+        // Vuelve al principio del archivo
+        else if (infile.eof()) {
+            infile.seekg(std::ios::beg);
+        }
 
-    if (!infile.fail()) {
-        if (!scanning) {
+        if (!infile.fail()) {
             scanning = true;
             return readData();
-
-        } else {
-            DEBUG_STDERR("Scanner already in use");
+        }
+        // Fallo de apertura
+        else {
+            DEBUG_STDERR("Error while opening csv file");
             return ScanCode::kScanError;
         }
-    }
-    // Fallo de apertura
-    else {
-        DEBUG_STDERR("Error while opening csv file");
+
+    } else {
+        DEBUG_STDERR("Scanner already in use");
         return ScanCode::kScanError;
     }
 }
@@ -94,12 +94,6 @@ ScanCode ScannerCSV::readData() {
     std::getline(this->infile, line);  // Linea de cabecera
 
     for (int commas, i; scanning && std::getline(infile, line);) {
-        // Fallo en la lectura
-        if (infile.fail()) {
-            DEBUG_STDOUT("Error while reading file");
-            return ScanCode::kScanError;
-        }
-
         commas = 0;  // Contador de comas
         i = 0;       // Indice del string
 
@@ -140,7 +134,7 @@ ScanCode ScannerCSV::readData() {
         // Llamada al callback
         if (this->callback) {
             try {
-                this->callback({Timestamp(data[0]),  static_cast<uint32_t>(std::stol(data[1])), std::stod(data[2]), std::stod(data[3]), std::stod(data[4])});
+                this->callback({Timestamp(data[0]), static_cast<uint32_t>(std::stol(data[1])), std::stod(data[2]), std::stod(data[3]), std::stod(data[4])});
 
             } catch (std::exception &e) {
                 return ScanCode::kScanError;

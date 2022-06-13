@@ -25,8 +25,9 @@
  */
 class CharacterizedObject {
    private:
-    BBox bbox;                ///< Bounding box que mejor se adapta al objeto
-    std::vector<Face> faces;  ///< Caras del objeto
+    std::vector<Point> points;  ///< Puntos del objeto
+    BBox bbox;                  ///< Bounding box que mejor se adapta al objeto
+    std::vector<Face> faces;    ///< Caras del objeto
 
    public:
     /**
@@ -77,8 +78,18 @@ class CharacterizedObject {
 
     ////// Getters
     /**
-     * Devuelve los puntos de las caras
-     * @return Vector de puntos de las caras
+     * Devuelve los puntos del objeto
+     * @return Vector de puntos del objeto
+     */
+    const std::vector<Point>& getPoints() const { return points; }
+    /**
+     * Devuelve los puntos del objeto
+     * @return Vector de puntos del objeto
+     */
+    std::vector<Point>& getPoints() { return points; }
+    /**
+     * Devuelve las caras del objeto
+     * @return Caras del objeto
      */
     const std::vector<Face>& getFaces() const { return faces; }
     /**
@@ -86,14 +97,32 @@ class CharacterizedObject {
      * @return Bounding box del objeto
      */
     const BBox& getBBox() const { return bbox; }
+    
+    ////// Setters
+    /**
+     * Establece los puntos del objeto
+     * @param points Vector de puntos del objeto
+     */
+    void setPoints(const std::vector<Point>& points) { this->points = points; }
+    /**
+     * Establece las caras del objeto
+     * @param faces Caras del objeto
+     */
+    void setFaces(const std::vector<Face>& faces) { this->faces = faces; }
+    /**
+     * Establece la bounding box del objeto
+     * @param bbox Bounding box del objeto
+     */
+    void setBBox(const BBox& bbox) { this->bbox = bbox; }
 
    private:
     /**
      * Constructor
+     * @param points Puntos del objeto
      * @param bbox Bounding box
      * @param faces Vector de caras
      */
-    CharacterizedObject(const BBox& bbox, const std::vector<Face>& faces) : bbox(bbox), faces(faces) {}
+    CharacterizedObject(const std::vector<Point>& points, const BBox& bbox, const std::vector<Face>& faces) : points(points), bbox(bbox), faces(faces) {}
 };
 
 typedef CharacterizedObject Model;  ///< Definición de los modelos

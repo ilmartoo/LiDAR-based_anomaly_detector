@@ -269,11 +269,19 @@ void CLI::cli() {
                             CLI_STDOUT("New object frame set at " << command[1] << " ms");
 
                         } else if (command[0] == "backthreshold") {
-                            oc->setBackDistance(std::stof(command[1]));
+                            double bd = std::stof(command[1]);
+                            if (bd < 0) {
+                                throw std::exception();
+                            }
+                            oc->setBackDistance(bd);
                             CLI_STDOUT("New background distance threshold set at " << command[1] << " m");
 
                         } else if (command[0] == "reflthreshold") {
-                            oc->setMinReflectivity(std::stof(command[1]));
+                            double mr = std::stof(command[1]);
+                            if (mr < 0) {
+                                throw std::exception();
+                            }
+                            oc->setMinReflectivity(mr);
                             CLI_STDOUT("New minimun reflectivity set at " << command[1] << " points");
 
                         } else {
@@ -333,16 +341,11 @@ void CLI::cli() {
                     if (om->existsObject(command[1])) {
                         const CharacterizedObject &co = om->getObjects().at(command[1]);
 
-                        size_t npoints = 0;
-                        for (auto &f : co.getFaces()) {
-                            npoints += f.getPoints().size();
-                        }
-
                         CLI_STDOUT("Object " << command[1] << " characteristics:");
                         CLI_STDOUT("  Total faces:      " << co.getFaces().size());
-                        CLI_STDOUT("  Total points:     " << npoints);
-                        CLI_STDOUT("  Width  / z_delta: " << co.getBBox().getDeltaZ());
-                        CLI_STDOUT("  Height / y_delta: " << co.getBBox().getDeltaY());
+                        CLI_STDOUT("  Total points:     " << co.getPoints().size());
+                        CLI_STDOUT("  Height / z_delta: " << co.getBBox().getDeltaZ());
+                        CLI_STDOUT("  Width  / y_delta: " << co.getBBox().getDeltaY());
                         CLI_STDOUT("  Depth  / x_delta: " << co.getBBox().getDeltaX());
                         CLI_STDOUT("  Normal vectors:");
                         for (auto &f : co.getFaces()) {
@@ -383,15 +386,10 @@ void CLI::cli() {
                 } else if (command.numParams() == 2 && command[0] == "describe") {
                     if (om->existsModel(command[1])) {
                         const Model &m = om->getModels().at(command[1]);
-
-                        size_t npoints = 0;
-                        for (auto &f : m.getFaces()) {
-                            npoints += f.getPoints().size();
-                        }
-
+                        
                         CLI_STDOUT("Model " << command[1] << " characteristics:");
                         CLI_STDOUT("  Total faces:      " << m.getFaces().size());
-                        CLI_STDOUT("  Total points:     " << npoints);
+                        CLI_STDOUT("  Total points:     " << m.getPoints().size());
                         CLI_STDOUT("  Width  / z_delta: " << m.getBBox().getDeltaZ());
                         CLI_STDOUT("  Height / y_delta: " << m.getBBox().getDeltaY());
                         CLI_STDOUT("  Depth  / x_delta: " << m.getBBox().getDeltaX());
@@ -526,7 +524,16 @@ void CLI::cli() {
                             }
                             // Conclusion
                             CLI_STDOUT("\n // CONCLUSION //");
-                            CLI_STDOUT(bold(" The given model and object are " << (ar.similar ? "similar" : "different") << ""));
+                            if (ar.deltaFaces > 0) {
+                                CLI_STDOUT(" The given object has a total of " << ar.deltaFaces << " missing faces");
+                            } else if (ar.deltaFaces < 0) {
+                                CLI_STDOUT(" The given objet presents a total of " << -ar.deltaFaces << " more faces");
+                            }
+                            if (ar.similar) {
+                                CLI_STDOUT(bold(" In summary, the given object is SIMILAR to the model selected"));
+                            } else {
+                                CLI_STDOUT(bold(" In summary, the given object is DIFFERENT to the model selected, presenting a total of " << ar.totalAnomalies << " ANOMALIES"));
+                            }
                             CLI_STDOUT("----------------------------------------------------------------");
 
                         } else {

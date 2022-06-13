@@ -49,25 +49,25 @@ bool ScannerLVX::init() {
 ScanCode ScannerLVX::scan() {
     DEBUG_STDOUT("Starting point scanning");
 
-    // Reabre el archivo si no está abierto
-    if (frameOffset == 0 && packetOffset == 0 && lvx_file.GetFileState() == livox_ros::kLvxFileAtEnd) {
-        lvx_file.CloseLvxFile();
-        lvx_file.Open(filename.c_str(), std::ios::in);
-    }
+    if (!scanning) {
+        // Reabre el archivo si no está abierto
+        if (frameOffset == 0 && packetOffset == 0 && lvx_file.GetFileState() == livox_ros::kLvxFileAtEnd) {
+            lvx_file.CloseLvxFile();
+            lvx_file.Open(filename.c_str(), std::ios::in);
+        }
 
-    if (lvx_file.GetFileState() == livox_ros::kLvxFileOk) {
-        if (!scanning) {
+        if (lvx_file.GetFileState() == livox_ros::kLvxFileOk) {
             scanning = true;
             return readData();
-
-        } else {
-            DEBUG_STDERR("Scanner already in use");
+        }
+        // Fallo de apertura
+        else {
+            DEBUG_STDERR("Error while opening lvx file");
             return ScanCode::kScanError;
         }
-    }
-    // Fallo de apertura
-    else {
-        DEBUG_STDERR("Error while opening lvx file");
+
+    } else {
+        DEBUG_STDERR("Scanner already in use");
         return ScanCode::kScanError;
     }
 }

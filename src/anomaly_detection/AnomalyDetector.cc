@@ -26,6 +26,7 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
 
     bool similar = obj.getFaces().size() > 0 && obj.getFaces().size() == mod.getFaces().size();
     long deltaFaces = mod.getFaces().size() - obj.getFaces().size();
+    long totalAnomalies = deltaFaces < 0 ? -deltaFaces : deltaFaces;
 
     /////////////////////////
     // Comparación general //
@@ -40,13 +41,19 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
                                      : false,
                                  generalDelta);
 
-    similar = similar ? generalComparison.similar : similar;
+    if (similar) {
+        similar = generalComparison.similar;
+    }
+    if (!generalComparison.similar) {
+        ++totalAnomalies;
+    }
 
     //////////////////////////
     // Comparación de caras //
     //////////////////////////
 
-    std::vector<FaceComparison> faceComparisons;
+    std::vector<FaceComparison>
+        faceComparisons;
 
     double deltaVolumes[obj.getFaces().size()][mod.getFaces().size()];  // Matriz de deltas de volumenes
     std::vector<bool> objFaceUsage(obj.getFaces().size(), false);       // Caras del objeto ya usadas
@@ -55,9 +62,9 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
     size_t tcomp = deltaFaces < 0 ? mod.getFaces().size() : obj.getFaces().size();  // Máximo de iteraciones posibles en la comparación de caras
     size_t objFaceIndex, modFaceIndex;
     double minDeltaVolume;
-#pragma omp parallel num_threads(PARALELIZATION_NUM_THREADS)
+#pragma omp parallel
     {
-#pragma omp for collapse(2) schedule(guided)
+#pragma omp for collapse(2) schedule(OMP_SCHEDULE_TYPE, OMP_CHUNK_SIZE)
         for (size_t i = 0; i < obj.getFaces().size(); ++i) {
             for (size_t j = 0; j < mod.getFaces().size(); ++j) {
                 deltaVolumes[i][j] = std::fabs(mod.getFaces()[j].getMinBBox().volume() - obj.getFaces()[i].getMinBBox().volume());
@@ -73,7 +80,7 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
             }
             // Implicit barrier
             // Recorremos los elementos restantes de la matriz en busca del mínimo
-#pragma omp for collapse(2) schedule(guided)
+#pragma omp for collapse(2) schedule(OMP_SCHEDULE_TYPE, OMP_CHUNK_SIZE)
             for (size_t oi = 0; oi < obj.getFaces().size(); ++oi) {
                 for (size_t mi = 0; mi < mod.getFaces().size(); ++mi) {
                     // El primer elemento es el mínimo por defecto
@@ -108,7 +115,12 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
                                                          objFaceIndex,
                                                          faceDelta));
 
-                similar = similar ? faceComparisons.back().similar : similar;
+                if (similar) {
+                    similar = faceComparisons.back().similar;
+                }
+                if (!faceComparisons.back().similar) {
+                    ++totalAnomalies;
+                }
             }
             // Implicit barrier
         }
@@ -131,5 +143,5 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
         CLI_STDOUT("Anomaly detection lasted " << std::setprecision(6) << duration << std::setprecision(2) << " s");
     }
 
-    return AnomalyReport(similar, generalComparison, deltaFaces, faceComparisons, unmatched);
+    return AnomalyReport(similar, generalComparison, deltaFaces, totalAnomalies, faceComparisons, unmatched);
 }
