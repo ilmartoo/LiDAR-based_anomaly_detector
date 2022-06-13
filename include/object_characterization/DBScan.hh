@@ -23,33 +23,28 @@ class DBScan {
    public:
    /**
     * Ejecuta el algoritmo de DBScan estableciendo los clusterIDs correspondientes cada punto del vector de puntos
-    * @param maxDistance Maxima distancia de separación entre dos puntos para pertenecer al mismo cluster
-    * @param minPoints Número mínimo de puntos para una agrupación ser considerada cluster
     * @param points Vector de puntos sobre los cuales se realizará la distinción de clusteres
     * @return Vector de clusteres representados en forma de vectores de indices de los puntos pertenecientes al cluster
     */
-    static std::vector<std::vector<size_t>> clusters(double maxDistance, unsigned int minPoints, std::vector<Point> &points);
+    static std::vector<std::vector<size_t>> clusters(std::vector<Point> &points);
 
     /**
     * Ejecuta el algoritmo de DBScan estableciendo los clusterIDs correspondientes cada punto del vector de puntos según sus normales
-    * @param maxDistance Maxima distancia de separación entre dos puntos para pertenecer a la misma cara
-    * @param minPoints Número mínimo de puntos para una agrupación ser considerada una cara
     * @param points Vector de puntos sobre los cuales se realizará la distinción de caras
-    * @param normalDispersion Dispersión máxima entre normales para considerarse la misma cara
     * @return Vector de caras representadas en forma de vectores de indices de los puntos pertenecientes a la cara
     */
-    static std::vector<std::vector<size_t>> normals(double maxDistance, unsigned int minPoints, std::vector<Point> &points, double normalDispersion, double meanNormalDispersion);
+    static std::vector<std::vector<size_t>> normals(std::vector<Point> &points);
 
    private:
 	// Expande un cluster a partir de un centroide y el ID especificado junto con las variables limitantes especificadas
-    static std::pair<bool, std::vector<size_t>> expandCluster(Point &centroid, int clusterID, double maxDistance, unsigned int minPoints, std::vector<Point> &points, const Octree &map);
+    static std::pair<bool, std::vector<size_t>> expandCluster(Point &centroid, int clusterID, std::vector<Point> &points, const Octree &map);
     // Calcula el indice de los puntos pertenecientes al cluster según un centroide dado
-    static std::pair<size_t, std::vector<size_t>> centroidNeighbours(const Point &centroid, double maxDistance, const std::vector<Point> &points, const Octree &map);
+    static std::pair<size_t, std::vector<size_t>> centroidNeighbours(const Point &centroid, const std::vector<Point> &points, const Octree &map);
 
     // Expande una cara a partir de un centroide y el ID especificado junto con las variables limitantes especificadas
-    static std::pair<bool, std::vector<size_t>> expandNormalCluster(size_t centroid, int clusterID, double maxDistance, unsigned int minPoints, std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion, double meanNormalDispersion);
+    static std::pair<bool, std::vector<size_t>> expandNormalCluster(size_t centroid, int clusterID, std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map);
     // Calcula el indice de los puntos pertenecientes a la cara según una normal dada
-    static std::pair<size_t, std::vector<size_t>> centroidNormalNeighbours(size_t centroid, const Vector &meanNormal, double maxDistance, const std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion, double meanNormalDispersion);
+    static std::pair<size_t, std::vector<size_t>> centroidNormalNeighbours(size_t centroid, const Vector &meanNormal, const std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map);
 };
 
 #endif  // DBSCAN_CLASS_H

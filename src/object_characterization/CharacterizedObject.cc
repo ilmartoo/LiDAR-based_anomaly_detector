@@ -55,7 +55,7 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
     // Clusterización de puntos //
     //////////////////////////////
 
-    std::vector<std::vector<size_t>> clusters = DBScan::clusters(CLUSTER_POINT_PROXIMITY, MIN_CLUSTER_POINTS, points);  // Clusterización
+    std::vector<std::vector<size_t>> clusters = DBScan::clusters(points);  // Clusterización
 
     // Salida si no se han detectado clústeres de puntos
     if (clusters.size() == 0) {
@@ -99,7 +99,7 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
         opoints[i].setClusterID(cUnclassified);
     }
 
-    clusters = DBScan::normals(FACE_POINT_PROXIMITY, MIN_FACE_POINTS, opoints, MAX_NORMAL_VECT_ANGLE_OC, MAX_MEAN_VECT_ANGLE);  // Detección de las caras
+    clusters = DBScan::normals(opoints);  // Detección de las caras
 
     // Salida si no se han detectado caras del objeto
     if (clusters.size() == 0) {
@@ -130,7 +130,7 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
             facepoints[i].push_back(&charObject.getPoints()[clusters[i][j]]);
         }
     }
-    std::vector<Face> faces(facepoints.size(), Face());  // Vector de caras
+    std::vector<Face> faces(clusters.size(), Face());  // Vector de caras
 
     if (chrono) {
         end_face_detection = std::chrono::high_resolution_clock::now();
@@ -147,7 +147,7 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::parse(std::vector<Poin
     std::vector<std::pair<BBox, Vector>> fbbmin = Geometry::minimumBBoxes(facepoints);
 
     for (size_t i = 0; i < fbbmin.size(); ++i) {
-        faces[i] = Face(facepoints[i], Geometry::computeNormal(facepoints[i]), fbbmin[i].first, fbbmin[i].second);
+        faces[i] = Face(clusters[i], Geometry::computeNormal(facepoints[i]), fbbmin[i].first, fbbmin[i].second);
 
         DEBUG_STDOUT("Face " << i << " best bounding box rotation angles: " << faces[i].getMinBBoxRotAngles());
     }
@@ -189,17 +189,11 @@ bool CharacterizedObject::write(const std::string &filename) {
             outfile.write((char *)&f.getNormal(), sizeof(Vector));            // Normal de la cara
             outfile.write((char *)&f.getMinBBox(), sizeof(BBox));             // Bounding box de la cara
             outfile.write((char *)&f.getMinBBoxRotAngles(), sizeof(Vector));  // Ángulo de rotación de la cara
-            len = f.getReferences().size();
+            len = f.getIndices().size();
             outfile.write((char *)&len, sizeof(size_t));  // Numero de puntos de la cara
-            size_t dir;
             // Indices de los puntos
-            for (auto &p : f.getReferences()) {
-                // A partir del estandar C++0x los elementos de un vector estan contiguos en memoria (menos los tipo bool)
-                // Haciendo uso de aritmetica de punteros le restamos a una dirección de un punto del vector (p) la dirección
-                // inicial (&*points.begin()) obteniendo de esta forma el índice del elemento en tiempo constante sin recurrir
-                // a una búsqueda lineal
-                dir = (size_t)(&*p - &*points.begin());
-                outfile.write((char *)&dir, sizeof(size_t));  // Índice del punto de la cara
+            for (auto &idx : f.getIndices()) {
+                outfile.write((char *)&idx, sizeof(size_t));  // Índice del punto de la cara
             }
         }
 
@@ -267,14 +261,14 @@ std::pair<bool, CharacterizedObject> CharacterizedObject::load(const std::string
             infile.read((char *)&frotdeg, sizeof(Vector));  // Ángulo de rotación de la cara
             // Referencias a los puntos de la cara
             infile.read((char *)&npoints, sizeof(size_t));  // Numero de puntos de la cara
-            std::vector<Point *> references(npoints, nullptr);
+            std::vector<size_t> indices(npoints, 0);
             size_t index;
             for (size_t j = 0; j < npoints; ++j) {
                 infile.read((char *)&index, sizeof(size_t));  // Índice del punto de la cara
-                references[j] = &points[index];
+                indices[j] = index;
             }
 
-            faces[i] = Face(references, normal, fbbox, frotdeg);
+            faces[i] = Face(indices, normal, fbbox, frotdeg);
         }
 
         infile.close();

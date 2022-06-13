@@ -26,6 +26,7 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
 
     bool similar = obj.getFaces().size() > 0 && obj.getFaces().size() == mod.getFaces().size();
     long deltaFaces = mod.getFaces().size() - obj.getFaces().size();
+    long totalAnomalies = deltaFaces < 0 ? -deltaFaces : deltaFaces;
 
     /////////////////////////
     // Comparación general //
@@ -40,13 +41,19 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
                                      : false,
                                  generalDelta);
 
-    similar = similar ? generalComparison.similar : similar;
+    if (similar) {
+        similar = generalComparison.similar;
+    }
+    if (!generalComparison.similar) {
+        ++totalAnomalies;
+    }
 
     //////////////////////////
     // Comparación de caras //
     //////////////////////////
 
-    std::vector<FaceComparison> faceComparisons;
+    std::vector<FaceComparison>
+        faceComparisons;
 
     double deltaVolumes[obj.getFaces().size()][mod.getFaces().size()];  // Matriz de deltas de volumenes
     std::vector<bool> objFaceUsage(obj.getFaces().size(), false);       // Caras del objeto ya usadas
@@ -108,7 +115,12 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
                                                          objFaceIndex,
                                                          faceDelta));
 
-                similar = similar ? faceComparisons.back().similar : similar;
+                if (similar) {
+                    similar = faceComparisons.back().similar;
+                }
+                if (!faceComparisons.back().similar) {
+                    ++totalAnomalies;
+                }
             }
             // Implicit barrier
         }
@@ -131,5 +143,5 @@ AnomalyReport AnomalyDetector::compare(const CharacterizedObject& obj, const Mod
         CLI_STDOUT("Anomaly detection lasted " << std::setprecision(6) << duration << std::setprecision(2) << " s");
     }
 
-    return AnomalyReport(similar, generalComparison, deltaFaces, faceComparisons, unmatched);
+    return AnomalyReport(similar, generalComparison, deltaFaces, totalAnomalies, faceComparisons, unmatched);
 }

@@ -16,14 +16,16 @@
 #include "object_characterization/DBScan.hh"
 #include "models/Geometry.hh"
 
-std::vector<std::vector<size_t>> DBScan::clusters(double maxDistance, unsigned int minPoints, std::vector<Point> &points) {
-    int clusterID = 1;
+#include "app/config.h"
+
+std::vector<std::vector<size_t>> DBScan::clusters(std::vector<Point> &points) {
+    int clusterID = 0;
     std::vector<std::vector<size_t>> clusters;
     Octree clustermap(points);
 
     for (auto &p : points) {
         if (p.getClusterID() == cUnclassified) {
-            std::pair<bool, std::vector<size_t>> expansion = expandCluster(p, clusterID, maxDistance, minPoints, points, clustermap);
+            std::pair<bool, std::vector<size_t>> expansion = expandCluster(p, clusterID, points, clustermap);
             if (expansion.first) {
                 clusters.push_back(expansion.second);
                 ++clusterID;
@@ -34,11 +36,11 @@ std::vector<std::vector<size_t>> DBScan::clusters(double maxDistance, unsigned i
     return clusters;
 }
 
-std::pair<bool, std::vector<size_t>> DBScan::expandCluster(Point &centroid, int clusterID, double maxDistance, unsigned int minPoints, std::vector<Point> &points, const Octree &map) {
-    auto clusterSeeds = centroidNeighbours(centroid, maxDistance, points, map);
+std::pair<bool, std::vector<size_t>> DBScan::expandCluster(Point &centroid, int clusterID, std::vector<Point> &points, const Octree &map) {
+    auto clusterSeeds = centroidNeighbours(centroid, points, map);
 
     // Centroide no contiene la cantidad mínima de puntos
-    if (clusterSeeds.second.size() < minPoints) {
+    if (clusterSeeds.second.size() < MIN_CLUSTER_POINTS) {
         centroid.setClusterID(cNoise);
         return {false, {}};
     }
@@ -59,10 +61,10 @@ std::pair<bool, std::vector<size_t>> DBScan::expandCluster(Point &centroid, int 
 
         // Expandimos a través de los puntos vecinos al centroide
         for (size_t i = 0, seedsSize = clusterSeeds.second.size(); i < seedsSize; ++i) {
-            auto clusterNeighbours = centroidNeighbours(points[clusterSeeds.second[i]], maxDistance, points, map);
+            auto clusterNeighbours = centroidNeighbours(points[clusterSeeds.second[i]], points, map);
 
             // Comprobación de que no es un punto frontera
-            if (clusterNeighbours.first >= minPoints) {
+            if (clusterNeighbours.first >= MIN_CLUSTER_POINTS) {
                 for (auto &i : clusterNeighbours.second) {
                     if (points[i].getClusterID() == cUnclassified) {
                         clusterSeeds.second.push_back(i);
@@ -79,10 +81,10 @@ std::pair<bool, std::vector<size_t>> DBScan::expandCluster(Point &centroid, int 
     }
 }
 
-std::pair<size_t, std::vector<size_t>> DBScan::centroidNeighbours(const Point &centroid, double maxDistance, const std::vector<Point> &points, const Octree &map) {
+std::pair<size_t, std::vector<size_t>> DBScan::centroidNeighbours(const Point &centroid, const std::vector<Point> &points, const Octree &map) {
     std::vector<size_t> clusterIndex;
 
-    std::vector<Point *> neighbourPoints = map.searchNeighbors(centroid, maxDistance, Kernel_t::sphere);
+    std::vector<Point *> neighbourPoints = map.searchNeighbors(centroid, CLUSTER_POINT_PROXIMITY, Kernel_t::sphere);
 
     for (Point *&np : neighbourPoints) {
         if (np->getClusterID() < 0) {
@@ -97,16 +99,16 @@ std::pair<size_t, std::vector<size_t>> DBScan::centroidNeighbours(const Point &c
     return {neighbourPoints.size(), clusterIndex};
 }
 
-std::vector<std::vector<size_t>> DBScan::normals(double maxDistance, unsigned int minPoints, std::vector<Point> &points, double normalDispersion, double meanNormalDispersion) {
-    int clusterID = 1;
+std::vector<std::vector<size_t>> DBScan::normals(std::vector<Point> &points) {
+    int clusterID = 0;
     std::vector<std::vector<size_t>> faces;
 
     Octree clustermap(points);
-    std::vector<Vector> normals = Geometry::computeNormals(points, clustermap, maxDistance);  // Cálculo de las normales
+    std::vector<Vector> normals = Geometry::computeNormals(points, clustermap, NORMAL_CALC_POINT_PROXIMITY);  // Cálculo de las normales
 
     for (size_t i = 0; i < points.size(); ++i) {
         if (points[i].getClusterID() == cUnclassified && normals[i] != Vector(0, 0, 0)) {
-            std::pair<bool, std::vector<size_t>> expansion = expandNormalCluster(i, clusterID, maxDistance, minPoints, points, normals, clustermap, normalDispersion, meanNormalDispersion);
+            std::pair<bool, std::vector<size_t>> expansion = expandNormalCluster(i, clusterID, points, normals, clustermap);
             if (expansion.first) {
                 faces.push_back(expansion.second);
                 ++clusterID;
@@ -117,11 +119,11 @@ std::vector<std::vector<size_t>> DBScan::normals(double maxDistance, unsigned in
     return faces;
 }
 
-std::pair<bool, std::vector<size_t>> DBScan::expandNormalCluster(size_t centroid, int clusterID, double maxDistance, unsigned int minPoints, std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion, double meanNormalDispersion) {
-    auto clusterSeeds = centroidNormalNeighbours(centroid, normals[centroid], maxDistance, points, normals, map, normalDispersion, meanNormalDispersion);
+std::pair<bool, std::vector<size_t>> DBScan::expandNormalCluster(size_t centroid, int clusterID, std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map) {
+    auto clusterSeeds = centroidNormalNeighbours(centroid, normals[centroid], points, normals, map);
 
     // Centroide no contiene la cantidad mínima de puntos
-    if (clusterSeeds.second.size() < minPoints) {
+    if (clusterSeeds.second.size() < MIN_FACE_POINTS) {
         points[centroid].setClusterID(cNoise);
         return {false, {}};
     }
@@ -147,10 +149,10 @@ std::pair<bool, std::vector<size_t>> DBScan::expandNormalCluster(size_t centroid
         // Expandimos a través de los puntos vecinos al centroide
         for (size_t i = 0, seedsSize = clusterSeeds.second.size(); i < seedsSize; ++i) {
             Vector meanNormal = Geometry::mean(clusterNormals);
-            auto clusterNeighbours = centroidNormalNeighbours(clusterSeeds.second[i], meanNormal, maxDistance, points, normals, map, normalDispersion, meanNormalDispersion);
+            auto clusterNeighbours = centroidNormalNeighbours(clusterSeeds.second[i], meanNormal, points, normals, map);
 
             // Comprobación de que no es un punto frontera
-            if (clusterNeighbours.first >= minPoints) {
+            if (clusterNeighbours.first >= MIN_FACE_POINTS) {
                 for (auto &i : clusterNeighbours.second) {
                     if (points[i].getClusterID() == cUnclassified) {
                         clusterSeeds.second.push_back(i);
@@ -159,7 +161,7 @@ std::pair<bool, std::vector<size_t>> DBScan::expandNormalCluster(size_t centroid
                     points[i].setClusterID(clusterID);
 
                     clusterNormals.push_back(normals[i]);  // Añadimos referencia para el calculo de la normal media
-                    clusterPoints.push_back(i);         // Añadimos punto al vector de indices totales
+                    clusterPoints.push_back(i);            // Añadimos punto al vector de indices totales
                 }
             }
         }
@@ -168,10 +170,10 @@ std::pair<bool, std::vector<size_t>> DBScan::expandNormalCluster(size_t centroid
     }
 }
 
-std::pair<size_t, std::vector<size_t>> DBScan::centroidNormalNeighbours(size_t centroid, const Vector &meanNormal, double maxDistance, const std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map, double normalDispersion, double meanNormalDispersion) {
+std::pair<size_t, std::vector<size_t>> DBScan::centroidNormalNeighbours(size_t centroid, const Vector &meanNormal, const std::vector<Point> &points, const std::vector<Vector> &normals, const Octree &map) {
     std::vector<size_t> clusterIndex;
     size_t neighbours = 0;
-    std::vector<Point *> neighbourPoints = map.searchNeighbors(points[centroid], maxDistance, Kernel_t::sphere);
+    std::vector<Point *> neighbourPoints = map.searchNeighbors(points[centroid], FACE_POINT_PROXIMITY, Kernel_t::sphere);
 
     size_t i;
     for (Point *&np : neighbourPoints) {
@@ -182,8 +184,10 @@ std::pair<size_t, std::vector<size_t>> DBScan::centroidNormalNeighbours(size_t c
         i = (size_t)(np - &*points.begin());
 
         if (normals[i] != Vector(0, 0, 0) &&
-            normals[centroid].vectorialAngle(normals[i]) <= normalDispersion &&
-            meanNormal.vectorialAngle(normals[i]) <= meanNormalDispersion) {
+            ((
+                 normals[centroid].vectorialAngle(normals[i]) <= MAX_NORMAL_VECT_ANGLE &&
+                 meanNormal.vectorialAngle(normals[i]) <= MAX_MEAN_VECT_ANGLE) ||
+             meanNormal.vectorialAngle(normals[i]) <= MAX_MEAN_VECT_ANGLE_SINGLE)) {
             ++neighbours;
             if (np->getClusterID() < 0) {
                 clusterIndex.push_back(i);
