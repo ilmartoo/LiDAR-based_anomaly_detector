@@ -1,0 +1,45 @@
+help
+help help
+help help fill
+chono 
+chrono fill
+chrono set
+chrono set define
+chrono set all
+chrono unset define
+chrono unset all
+chrono unset all fill
+info 
+info fill
+define 
+define fill
+define background
+define background fill
+discard 
+discard -1
+discard 17000
+define object
+define object oc
+define object oc fill
+set 
+set fill
+set backframe
+set backframe 10
+set backframe -1
+set backthreshold -1
+object 
+object fill
+object describe
+object describe oc
+object load ol test/test_object1
+object save oc tmp/tmp_object
+model new
+model new oc mc
+list 
+list fill
+list objects
+analyze 
+analyze fill
+analyze fill fill
+analyze oc mc
+exit
