@@ -48,9 +48,10 @@ class ScannerMock : public IScanner {
                 func(e);
             }
         }
+        return kScanOk;
     }
     void pause() {}
-    bool setCallback(std::function<void(const LidarPoint &p)> func) { this->func = func; }
+    bool setCallback(std::function<void(const LidarPoint &p)> func) { return (bool)(this->func = func); }
     void stop() {}
 };
 
@@ -82,9 +83,10 @@ class ScannerMockBad : public IScanner {
                 func(e);
             }
         }
+        return kScanOk;
     }
     void pause() {}
-    bool setCallback(std::function<void(const LidarPoint &p)> func) { this->func = func; }
+    bool setCallback(std::function<void(const LidarPoint &p)> func) { return (bool)(this->func = func); }
     void stop() {}
 };
 
@@ -103,14 +105,15 @@ class ScannerMockWait : public IScanner {
     bool init() { return true; }
     ScanCode scan() {
         if (func) {
-            for (int i = 0; i < v.size() && scanning; ++i) {
+            for (size_t i = 0; i < v.size() && scanning; ++i) {
                 func(v[i]);
                 ++discarded;
             }
         }
+        return kScanOk;
     }
     void pause() {}
-    bool setCallback(std::function<void(const LidarPoint &p)> func) { this->func = func; }
+    bool setCallback(std::function<void(const LidarPoint &p)> func) { return (bool)(this->func = func); }
     void stop() {}
 };
 /**********/

@@ -208,7 +208,7 @@ if((BUILD_TYPE STREQUAL "COVERAGE") OR CODE_COVERAGE)
 						POST_BUILD 
 						COMMAND 
 							# rm -f ./**/*.gcda && ctest ARGS -VV --progress --output-on-failure -j 4 || cat < /dev/null
-							./coverage_tests || cat < /dev/null
+							./coverage_tests -s || cat < /dev/null
 						WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 	)
 	# add_custom_command( TARGET
