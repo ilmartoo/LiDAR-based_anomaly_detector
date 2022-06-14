@@ -32,6 +32,7 @@ object fill
 object describe
 object describe oc
 object load ol test/test_object1
+object load ol2 fill/fill.file
 object save oc tmp/tmp_object
 model new
 model new oc mc

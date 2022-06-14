@@ -207,16 +207,17 @@ if((BUILD_TYPE STREQUAL "COVERAGE") OR CODE_COVERAGE)
 							"Run coverage tests"
 						POST_BUILD 
 						COMMAND 
-							rm -f ./**/*.gcda && ctest ARGS -VV --progress --output-on-failure -j 4 || cat < /dev/null
+							# rm -f ./**/*.gcda && ctest ARGS -VV --progress --output-on-failure -j 4 || cat < /dev/null
+							./coverage_tests || cat < /dev/null
 						WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 	)
-	add_custom_command( TARGET
-							${COVERAGE_TARGET}
-						COMMENT 
-							"Create coverage report"
-						POST_BUILD 
-						COMMAND 
-							lcov --capture --directory ${CMAKE_BINARY_DIR} --output-file lcov.info && genhtml lcov.info --output-directory coverage_report  || cat < /dev/null
-						WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-	)					
+	# add_custom_command( TARGET
+	# 						${COVERAGE_TARGET}
+	# 					COMMENT 
+	# 						"Create coverage report"
+	# 					POST_BUILD 
+	# 					COMMAND 
+	# 						lcov --capture --directory ${CMAKE_BINARY_DIR} --output-file lcov.info && genhtml lcov.info --output-directory coverage_report  || cat < /dev/null
+	# 					WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+	# )					
 endif()
