@@ -226,11 +226,11 @@ void CLI::cli() {
 
             // DEFINE
             case kDefine: {
-                if (command[0] == "background") {
+                if (command[0] == "background" && command.numParams() == 1) {
                     CLI_STDOUT("Starting background definition");
                     oc->defineBackground();
 
-                } else if (command[0] == "object") {
+                } else if (command[0] == "object" && command.numParams() <= 2) {
                     CLI_STDOUT("Starting object definition");
                     std::pair<bool, CharacterizedObject> obj = oc->defineObject();
 
@@ -261,12 +261,14 @@ void CLI::cli() {
                 if (command.numParams() == 2) {
                     try {
                         if (command[0] == "backframe") {
-                            oc->setBackFrame(static_cast<uint32_t>(std::stoi(command[1])));
-                            CLI_STDOUT("New background frame set at " << command[1] << " ms");
+                            uint32_t bf = static_cast<uint32_t>(std::stoi(command[1]));
+                            oc->setBackFrame(bf);
+                            CLI_STDOUT("New background frame set at " << bf << " ms");
 
                         } else if (command[0] == "objframe") {
-                            oc->setObjFrame(static_cast<uint32_t>(std::stoi(command[1])));
-                            CLI_STDOUT("New object frame set at " << command[1] << " ms");
+                            uint32_t of = static_cast<uint32_t>(std::stoi(command[1]));
+                            oc->setObjFrame(of);
+                            CLI_STDOUT("New object frame set at " << of << " ms");
 
                         } else if (command[0] == "backthreshold") {
                             double bd = std::stof(command[1]);
@@ -274,7 +276,7 @@ void CLI::cli() {
                                 throw std::exception();
                             }
                             oc->setBackDistance(bd);
-                            CLI_STDOUT("New background distance threshold set at " << command[1] << " m");
+                            CLI_STDOUT("New background distance threshold set at " << std::setprecision(6) << bd << std::setprecision(2) << " m");
 
                         } else if (command[0] == "reflthreshold") {
                             double mr = std::stof(command[1]);
@@ -282,7 +284,7 @@ void CLI::cli() {
                                 throw std::exception();
                             }
                             oc->setMinReflectivity(mr);
-                            CLI_STDOUT("New minimun reflectivity set at " << command[1] << " points");
+                            CLI_STDOUT("New minimun reflectivity set at " << std::setprecision(6) << mr << std::setprecision(2) << " points");
 
                         } else {
                             unknownCommand("set");

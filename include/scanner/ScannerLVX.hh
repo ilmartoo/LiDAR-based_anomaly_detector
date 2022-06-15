@@ -82,7 +82,7 @@ class ScannerLVX : public IFileScanner {
      */
     void stop();
 
-   private:
+   protected:
     /**
      * Constructor del objeto ScannerLVX
      * @param filename Archivo contenedor de datos

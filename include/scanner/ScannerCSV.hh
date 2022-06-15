@@ -78,7 +78,7 @@ class ScannerCSV : public IFileScanner {
      */
     void stop();
 
-   private:
+   protected:
     /**
      * Constructor del objeto ScannerCSV
      * @param filename Archivo contenedor de datos

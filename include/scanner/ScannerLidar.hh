@@ -111,7 +111,7 @@ class ScannerLidar : public IScanner {
      */
     void stop();
 
-   private:
+   protected:
     /**
      * Constructor del objeto ScannerLidar
      * @param broadcast_code Codigo de broadcast del sensor

@@ -12,108 +12,168 @@
 
 #include "scanner/IScanner.hh"
 #include "scanner/IFileScanner.hh"
+#include "scanner/ScannerLidar.hh"
 #include "scanner/ScannerLVX.hh"
 #include "scanner/ScannerCSV.hh"
 
 #include "models/LidarPoint.hh"
 
+/* MOCKUPS */
+class ScannerLidarMock : public ScannerLidar {
+   public:
+    ScannerLidarMock(const char c[kBroadcastCodeSize]) : ScannerLidar(c) {}
+};
+class ScannerCSVMock : public ScannerCSV {
+   public:
+    ScannerCSVMock(const std::string &file) : ScannerCSV(file) {}
+};
+class ScannerLVXMock : public ScannerLVX {
+   public:
+    ScannerLVXMock(const std::string &file) : ScannerLVX(file) {}
+};
+/***********/
+
 class CallbackFixture {
    public:
-    static const unsigned LIMIT = 100;
-    unsigned count;
-    LidarPoint pts[LIMIT];
-    IScanner *inst;
+    ScannerLidarMock slm;
+    ScannerCSVMock svm;
+    ScannerLVXMock sxm;
 
-    CallbackFixture() : count(0), pts(), inst(nullptr) {}
+    ScannerLidar &sl;
+    ScannerCSV &sv;
+    ScannerLVX &sx;
 
-    void callback100(const LidarPoint &p) {
-        if (++count >= LIMIT) {
-            return;
-        }
-    }
+    ScanCode scd;
 
-    void callbackEOF(const LidarPoint &p) {
-        ++count;
-    }
+    CallbackFixture() : slm("3WEDH7600101621"),
+                        svm("test/scanner/testdata.csv"),
+                        sxm("test/scanner/testdata.lvx"),
+                        sl(slm),
+                        sv(svm),
+                        sx(sxm) {}
 
-    void callbackScan(const LidarPoint &p) {
-        inst->scan();
+    void callbackScan(const LidarPoint &p, IScanner *inst) {
+        scd = inst->scan();
         inst->pause();
     }
+    void callbackEOF(const LidarPoint &p) {}
+    void callbackStop(const LidarPoint &p, IScanner *inst) { inst->pause(); }
 };
 
-TEST_CASE_METHOD(CallbackFixture, "scanner csv", "[scanner]") {
-    inst = ScannerCSV::create("../../test/scanner/test_data.csv");
-    inst = IScanner::getInstance();
-
-    uint32_t rresult = 45;
-    Timestamp tresult("342307696760");
-    LidarPoint presult(tresult, rresult, 2042, 1559, -2);
-
-    inst->setCallback(([this](const LidarPoint &p) { this->callback100(p); }));
-    inst->init();
-    inst->scan();
-    inst->stop();
-    
-    CHECK_MESSAGE((presult == pts[73] && rresult == pts[73].getReflectivity() && tresult == pts[73].getTimestamp()), "Scaner do not scan correctly");
+TEST_CASE_METHOD(CallbackFixture, "1.1", "[ScannerLidar]") {
+    CHECK(sl.init());
 }
 
-TEST_CASE_METHOD(CallbackFixture, "scanner csv read to end", "[scanner]") {
-    inst = ScannerCSV::create("../../test/scanner/test_data.csv");
-
-    inst->setCallback(([this](const LidarPoint &p) { this->callbackEOF(p); }));
-    inst->init();
-    ScanCode scan1result = inst->scan();
-    inst->setCallback(([this](const LidarPoint &p) { this->callback100(p); }));
-    ScanCode scan2result = inst->scan();
-
-    CHECK_MESSAGE((scan1result == kScanEof && scan2result == kScanOk), "Scaner do not scan correctly");
+TEST_CASE_METHOD(CallbackFixture, "1.2", "[ScannerLidar]") {
+    sl.init();
+    CHECK(!sl.init());
 }
 
-TEST_CASE_METHOD(CallbackFixture, "scanner csv no file", "[scanner]") {
-    inst = ScannerCSV::create("");
-
-    inst->setCallback(([this](const LidarPoint &p) { this->callback100(p); }));
-    bool initresult = inst->init();
-    ScanCode scanresult = inst->scan();
-
-    CHECK_MESSAGE((!initresult && scanresult == kScanError), "Scanner works with inexistent file");
+// NECESARIO LIDAR CONECTADO
+TEST_CASE_METHOD(CallbackFixture, "1.3", "[ScannerLidar]") {
+    sl.init();
+    sl.setCallback([this](const LidarPoint &p) { this->callbackStop(p, &sl); });
+    CHECK(sl.scan() == kScanOk);
 }
 
-TEST_CASE_METHOD(CallbackFixture, "scanner lvx", "[scanner]") {
-    inst = ScannerCSV::create("../../test/scanner/test_data.csv");
-    inst = IScanner::getInstance();
-
-    uint32_t rresult = 45;
-    Timestamp tresult("342307696760");
-    LidarPoint presult(tresult, rresult, 2042, 1559, -2);
-
-    inst->setCallback(([this](const LidarPoint &p) { this->callback100(p); }));
-    inst->init();
-    inst->scan();
-    inst->stop();
-
-    CHECK_MESSAGE((presult == pts[73] && rresult == pts[73].getReflectivity() && tresult == pts[73].getTimestamp()), "Scaner do not scan correctly");
+// NECESARIO LIDAR CONECTADO
+TEST_CASE_METHOD(CallbackFixture, "1.4", "[ScannerLidar]") {
+    sl.init();
+    sl.setCallback([this](const LidarPoint &p) { this->callbackScan(p, &sl); });
+    sl.scan();
+    CHECK(scd == kScanError);
 }
 
-TEST_CASE_METHOD(CallbackFixture, "scanner lvx read to end", "[scanner]") {
-    inst = ScannerCSV::create("../../test/scanner/test_data.csv");
-
-    inst->setCallback(([this](const LidarPoint &p) { this->callbackEOF(p); }));
-    inst->init();
-    ScanCode scan1result = inst->scan();
-    inst->setCallback(([this](const LidarPoint &p) { this->callback100(p); }));
-    ScanCode scan2result = inst->scan();
-
-    CHECK_MESSAGE((scan1result == kScanEof && scan2result == kScanOk), "Scaner do not scan correctly");
+// NECESARIO LIDAR CONECTADO
+TEST_CASE_METHOD(CallbackFixture, "1.5", "[ScannerLidar]") {
+    sl.init();
+    sl.setCallback([this](const LidarPoint &p) { this->callbackStop(p, &sl); });
+    sl.scan();
+    CHECK(!sl.isScanning());
 }
 
-TEST_CASE_METHOD(CallbackFixture, "scanner lvx no file", "[scanner]") {
-    inst = ScannerCSV::create("");
+TEST_CASE_METHOD(CallbackFixture, "1.6", "[ScannerLidar]") {
+    sl.init();
+    sl.stop();
+    CHECK(sl.init());
+}
 
-    inst->setCallback(([this](const LidarPoint &p) { this->callback100(p); }));
-    bool initresult = inst->init();
-    ScanCode scanresult = inst->scan();
+TEST_CASE_METHOD(CallbackFixture, "1.7", "[ScannerCSV]") {
+    CHECK(sv.init());
+}
 
-    CHECK_MESSAGE((!initresult && scanresult == kScanError), "Scanner works with inexistent file");
+TEST_CASE_METHOD(CallbackFixture, "1.8", "[ScannerCSV]") {
+    static ScannerCSVMock sm("");
+    CHECK(!sm.init());
+}
+
+TEST_CASE_METHOD(CallbackFixture, "1.9", "[ScannerCSV]") {
+    static ScannerCSVMock sm("");
+    CHECK(sm.scan() == kScanError);
+}
+
+TEST_CASE_METHOD(CallbackFixture, "1.10", "[ScannerCSV]") {
+    sv.scan();
+    sv.setCallback([this](const LidarPoint &p) { this->callbackStop(p, &sv); });
+    CHECK(sv.scan() == kScanOk);
+}
+
+TEST_CASE_METHOD(CallbackFixture, "1.11", "[ScannerCSV]") {
+    sv.setCallback([this](const LidarPoint &p) { this->callbackScan(p, &sv); });
+    sv.scan();
+    CHECK(scd == kScanError);
+}
+
+TEST_CASE_METHOD(CallbackFixture, "1.12", "[ScannerCSV]") {
+    sv.setCallback([this](const LidarPoint &p) { this->callbackStop(p, &sv); });
+    sv.scan();
+    CHECK(!sv.isScanning());
+}
+
+TEST_CASE_METHOD(CallbackFixture, "1.13", "[ScannerCSV]") {
+    sv.init();
+    sv.stop();
+    CHECK(sv.init());
+}
+
+TEST_CASE_METHOD(CallbackFixture, "1.14", "[ScannerLVX]") {
+    CHECK(sx.init());
+}
+
+TEST_CASE_METHOD(CallbackFixture, "1.15", "[ScannerLVX]") {
+    ScannerLVXMock sm("");
+    CHECK(!sm.init());
+}
+
+TEST_CASE_METHOD(CallbackFixture, "1.16", "[ScannerLVX]") {
+    ScannerLVXMock sm("");
+    sm.init();
+    CHECK(sm.scan() == kScanError);
+}
+
+TEST_CASE_METHOD(CallbackFixture, "1.17", "[ScannerLVX]") {
+    sx.init();
+    sx.scan();
+    sx.setCallback([this](const LidarPoint &p) { this->callbackStop(p, &sx); });
+    CHECK(sx.scan() == kScanOk);
+}
+
+TEST_CASE_METHOD(CallbackFixture, "1.18", "[ScannerLVX]") {
+    sx.init();
+    sx.setCallback([this](const LidarPoint &p) { this->callbackScan(p, &sx); });
+    sx.scan();
+    CHECK(scd == kScanError);
+}
+
+TEST_CASE_METHOD(CallbackFixture, "1.19", "[ScannerLVX]") {
+    sx.init();
+    sx.setCallback([this](const LidarPoint &p) { this->callbackStop(p, &sx); });
+    sx.scan();
+    CHECK(!sx.isScanning());
+}
+
+TEST_CASE_METHOD(CallbackFixture, "1.20", "[ScannerLVX]") {
+    sx.init();
+    sx.stop();
+    CHECK(sx.init());
 }
