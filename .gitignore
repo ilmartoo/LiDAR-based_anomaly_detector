@@ -3,10 +3,6 @@ build/
 tmp/
 doxygen/
 lib/
-.vscode/
-
-# vscode files
-*.code-workspace
 
 # Prerequisites
 *.d
