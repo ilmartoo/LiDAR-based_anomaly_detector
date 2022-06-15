@@ -43,14 +43,18 @@ class ScannerMock : public IScanner {
 
     bool init() { return true; }
     ScanCode scan() {
-        if (func) {
-            for (auto &e : v) {
-                func(e);
+        if (!scanning) {
+            scanning = true;
+            if (func) {
+                for (size_t i = 0; i < v.size() && scanning; ++i) {
+                    func(v[i]);
+                }
             }
+            scanning = false;
         }
         return kScanOk;
     }
-    void pause() {}
+    void pause() { scanning = false; }
     bool setCallback(std::function<void(const LidarPoint &p)> func) { return (bool)(this->func = func); }
     void stop() {}
 };
@@ -78,14 +82,18 @@ class ScannerMockBad : public IScanner {
 
     bool init() { return false; }
     ScanCode scan() {
-        if (func) {
-            for (auto &e : v) {
-                func(e);
+        if (!scanning) {
+            scanning = true;
+            if (func) {
+                for (size_t i = 0; i < v.size() && scanning; ++i) {
+                    func(v[i]);
+                }
             }
+            scanning = false;
         }
         return kScanOk;
     }
-    void pause() {}
+    void pause() { scanning = false; }
     bool setCallback(std::function<void(const LidarPoint &p)> func) { return (bool)(this->func = func); }
     void stop() {}
 };
@@ -100,19 +108,24 @@ class ScannerMockWait : public IScanner {
         v.push_back({{0, 0}, 0, 0, 0, 0});
         v.push_back({{1, 0}, 0, 0, 0, 0});
         v.push_back({{2, 0}, 0, 0, 0, 0});
+        v.push_back({{3, 0}, 0, 0, 0, 0});
     }
 
     bool init() { return true; }
     ScanCode scan() {
-        if (func) {
-            for (size_t i = 0; i < v.size() && scanning; ++i) {
-                func(v[i]);
-                ++discarded;
+        if(!scanning) {
+            scanning = true;
+            if (func) {
+                for (size_t i = 0; i < v.size() && scanning; ++i) {
+                    func(v[i]);
+                    ++discarded;
+                }
             }
+            scanning = false;
         }
         return kScanOk;
     }
-    void pause() {}
+    void pause() { scanning = false; }
     bool setCallback(std::function<void(const LidarPoint &p)> func) { return (bool)(this->func = func); }
     void stop() {}
 };
@@ -128,7 +141,8 @@ class CharacterizationFixture {
     ObjectCharacterizer ocb;
     ObjectCharacterizer ocw;
 
-	std::vector<Point> cubo;
+    std::vector<Point> cubo;
+    std::vector<Point> plano;
 
     CharacterizationFixture() : sg(),
                                 sb(),
@@ -137,20 +151,21 @@ class CharacterizationFixture {
                                 ocw(&sw, 10, 10, 0, 10, false) {
         sg.setCallback([this](const LidarPoint &p) { this->ocg.newPoint(p); });
         sb.setCallback([this](const LidarPoint &p) { this->ocb.newPoint(p); });
-        sb.setCallback([this](const LidarPoint &p) { this->ocw.newPoint(p); });
+        sw.setCallback([this](const LidarPoint &p) { this->ocw.newPoint(p); });
 
-		cubo.reserve(400 * 6 + 1);
-        for (int i = 0; i < 20; ++i) {
-            for (int j = 0; j < 20; ++j) {
+        for (int i = 0; i <= 50; ++i) {
+            for (int j = 0; j <= 50; ++j) {
                 cubo.push_back({0, i, j});
-                cubo.push_back({100, i, j});
+                cubo.push_back({50, i, j});
                 cubo.push_back({i, 0, j});
-                cubo.push_back({i, 100, j});
+                cubo.push_back({i, 50, j});
                 cubo.push_back({i, j, 0});
-                cubo.push_back({i, j, 100});
+                cubo.push_back({i, j, 50});
+                plano.push_back({i, j, 0});
             }
         }
         cubo.push_back({-100, -100, -100});
+        plano.push_back({-100, -100, -100});
     }
 };
 
@@ -175,12 +190,12 @@ TEST_CASE_METHOD(CharacterizationFixture, "3.4, 3.5", "[ObjectCharacterizer]") {
 TEST_CASE_METHOD(CharacterizationFixture, "3.6", "[ObjectCharacterizer]") {
     ocw.wait(1500);
 
-    CHECK(sw.discarded == 2);
+    CHECK(sw.discarded == 3);
 }
 
 TEST_CASE_METHOD(CharacterizationFixture, "3.7, 3.8", "[DBScan]") {
     // 3.7
     CHECK(DBScan::clusters(cubo).size() == 1);
     // 3.8
-    CHECK(DBScan::normals(cubo).size() >= 6);
+    CHECK(DBScan::normals(plano).size() == 1);
 }

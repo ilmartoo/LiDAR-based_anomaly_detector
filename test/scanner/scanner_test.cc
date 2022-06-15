@@ -35,7 +35,6 @@ class ScannerLVXMock : public ScannerLVX {
 
 class CallbackFixture {
    public:
-    IScanner *sc;
     ScannerLidarMock slm;
     ScannerCSVMock svm;
     ScannerLVXMock sxm;
@@ -46,20 +45,19 @@ class CallbackFixture {
 
     ScanCode scd;
 
-    CallbackFixture() : sc(nullptr),
-                        slm("3WEDH7600101621"),
-                        svm("../../test/scanner/testdata.csv"),
-                        sxm("../../test/scanner/testdata.lvx"),
+    CallbackFixture() : slm("3WEDH7600101621"),
+                        svm("test/scanner/testdata.csv"),
+                        sxm("test/scanner/testdata.lvx"),
                         sl(slm),
                         sv(svm),
                         sx(sxm) {}
 
-    void callbackScan(const LidarPoint &p) {
-        scd = sc->scan();
-        sc->pause();
+    void callbackScan(const LidarPoint &p, IScanner *inst) {
+        scd = inst->scan();
+        inst->pause();
     }
     void callbackEOF(const LidarPoint &p) {}
-    void callbackStop(const LidarPoint &p) { sc->pause(); }
+    void callbackStop(const LidarPoint &p, IScanner *inst) { inst->pause(); }
 };
 
 TEST_CASE_METHOD(CallbackFixture, "1.1", "[ScannerLidar]") {
@@ -71,23 +69,25 @@ TEST_CASE_METHOD(CallbackFixture, "1.2", "[ScannerLidar]") {
     CHECK(!sl.init());
 }
 
-// TEST_CASE_METHOD(CallbackFixture, "1.3", "[ScannerLidar]") {
-//     sc = &sl;
-//     sl.init();
-//     sl.setCallback([this](const LidarPoint &p) { this->callbackStop(p); });
-//     CHECK(sl.scan() == kScanOk);
-// }
+// NECESARIO LIDAR CONECTADO
+TEST_CASE_METHOD(CallbackFixture, "1.3", "[ScannerLidar]") {
+    sl.init();
+    sl.setCallback([this](const LidarPoint &p) { this->callbackStop(p, &sl); });
+    CHECK(sl.scan() == kScanOk);
+}
 
-// TEST_CASE_METHOD(CallbackFixture, "1.4", "[ScannerLidar]") {
-//     sc = &sl;
-//     sl.init();
-//     sl.setCallback([this](const LidarPoint &p) { this->callbackScan(p); });
-//     sl.scan();
-//     CHECK(scd == kScanError);
-// }
+// NECESARIO LIDAR CONECTADO
+TEST_CASE_METHOD(CallbackFixture, "1.4", "[ScannerLidar]") {
+    sl.init();
+    sl.setCallback([this](const LidarPoint &p) { this->callbackScan(p, &sl); });
+    sl.scan();
+    CHECK(scd == kScanError);
+}
 
+// NECESARIO LIDAR CONECTADO
 TEST_CASE_METHOD(CallbackFixture, "1.5", "[ScannerLidar]") {
-    sl.setCallback([this](const LidarPoint &p) { this->callbackStop(p); });
+    sl.init();
+    sl.setCallback([this](const LidarPoint &p) { this->callbackStop(p, &sl); });
     sl.scan();
     CHECK(!sl.isScanning());
 }
@@ -103,29 +103,29 @@ TEST_CASE_METHOD(CallbackFixture, "1.7", "[ScannerCSV]") {
 }
 
 TEST_CASE_METHOD(CallbackFixture, "1.8", "[ScannerCSV]") {
-    ScannerCSVMock sm("");
+    static ScannerCSVMock sm("");
     CHECK(!sm.init());
 }
 
 TEST_CASE_METHOD(CallbackFixture, "1.9", "[ScannerCSV]") {
-    ScannerCSVMock sm("");
+    static ScannerCSVMock sm("");
     CHECK(sm.scan() == kScanError);
 }
 
 TEST_CASE_METHOD(CallbackFixture, "1.10", "[ScannerCSV]") {
     sv.scan();
-    sv.setCallback([this](const LidarPoint &p) { this->callbackStop(p); });
+    sv.setCallback([this](const LidarPoint &p) { this->callbackStop(p, &sv); });
     CHECK(sv.scan() == kScanOk);
 }
 
 TEST_CASE_METHOD(CallbackFixture, "1.11", "[ScannerCSV]") {
-    sv.setCallback([this](const LidarPoint &p) { this->callbackScan(p); });
+    sv.setCallback([this](const LidarPoint &p) { this->callbackScan(p, &sv); });
     sv.scan();
     CHECK(scd == kScanError);
 }
 
 TEST_CASE_METHOD(CallbackFixture, "1.12", "[ScannerCSV]") {
-    sv.setCallback([this](const LidarPoint &p) { this->callbackStop(p); });
+    sv.setCallback([this](const LidarPoint &p) { this->callbackStop(p, &sv); });
     sv.scan();
     CHECK(!sv.isScanning());
 }
@@ -147,23 +147,27 @@ TEST_CASE_METHOD(CallbackFixture, "1.15", "[ScannerLVX]") {
 
 TEST_CASE_METHOD(CallbackFixture, "1.16", "[ScannerLVX]") {
     ScannerLVXMock sm("");
+    sm.init();
     CHECK(sm.scan() == kScanError);
 }
 
 TEST_CASE_METHOD(CallbackFixture, "1.17", "[ScannerLVX]") {
+    sx.init();
     sx.scan();
-    sx.setCallback([this](const LidarPoint &p) { this->callbackStop(p); });
+    sx.setCallback([this](const LidarPoint &p) { this->callbackStop(p, &sx); });
     CHECK(sx.scan() == kScanOk);
 }
 
 TEST_CASE_METHOD(CallbackFixture, "1.18", "[ScannerLVX]") {
-    sx.setCallback([this](const LidarPoint &p) { this->callbackScan(p); });
+    sx.init();
+    sx.setCallback([this](const LidarPoint &p) { this->callbackScan(p, &sx); });
     sx.scan();
     CHECK(scd == kScanError);
 }
 
 TEST_CASE_METHOD(CallbackFixture, "1.19", "[ScannerLVX]") {
-    sx.setCallback([this](const LidarPoint &p) { this->callbackStop(p); });
+    sx.init();
+    sx.setCallback([this](const LidarPoint &p) { this->callbackStop(p, &sx); });
     sx.scan();
     CHECK(!sx.isScanning());
 }

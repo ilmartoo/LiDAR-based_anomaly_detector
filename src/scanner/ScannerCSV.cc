@@ -46,6 +46,7 @@ ScanCode ScannerCSV::scan() {
         }
         // Vuelve al principio del archivo
         else if (infile.eof()) {
+            infile.clear();
             infile.seekg(std::ios::beg);
         }
 
