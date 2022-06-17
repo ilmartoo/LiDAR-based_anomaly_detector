@@ -1,6 +1,6 @@
 # Lidar-based Anomaly Detector
 
-Using LiDAR data to detect any anomalies an object of a kind may have in comparison to a predefined model.
+Using LiDAR data to characterize objects using LiDAR-based point clouds and detect any anomalies objects of a kind may have in comparison to a predefined model.
 
 ---
 
@@ -44,7 +44,8 @@ wget https://sourceforge.net/projects/arma/files/armadillo-11.0.0.tar.xz && tar 
 > One of `OpenBLAS` or `LAPACK` libraries are required for `armadillo` to have the needed functionalities. You may install them with your favourite package manager:
 > 
 > ```bash
-> sudo apt install libopenblas-dev liblapack-dev
+> sudo apt install libopenblas-dev
+> sudo apt install liblapack-dev
 > ```
 
 You are done! The `CMakeLists.txt` file will compile and link them to the project for you automaticaly.
@@ -86,25 +87,25 @@ You are done! The `CMakeLists.txt` file will compile and link them to the projec
 To build de project execute:
 
 ```bash
-cmake . -B build/ -D CMAKE_BUILD_TYPE=Release
-cmake --build build
+cmake . -B build/Release -D CMAKE_BUILD_TYPE=Release
+cmake --build build/Release
 ```
 
 To build the project with debug output set the `CMAKE_BUILD_TYPE` option to `Debug`:
 
 ```bash
-cmake . -B build/ -D CMAKE_BUILD_TYPE=Debug
-cmake --build build
+cmake . -B build/Debug -D CMAKE_BUILD_TYPE=Debug
+cmake --build build/Debug
 ```
 
 If you also would like to have debug info of every scanned point add the `DEBUG_SCANNED_POINTS=ON` option:
 
 ```bash
-cmake . -B build/ -D CMAKE_BUILD_TYPE=Debug -D DEBUG_SCANNED_POINTS=ON
-cmake --build build
+cmake . -B build/Debug -D CMAKE_BUILD_TYPE=Debug -D DEBUG_SCANNED_POINTS=ON
+cmake --build build/Debug
 ```
 
-Any of this scripts will create the executable and install it into `build/`.
+> Any of this scripts will create the executable and install it into `build/<Config>`.
 
 ---
 
@@ -113,11 +114,20 @@ Any of this scripts will create the executable and install it into `build/`.
 To build the unit tests for the project:
 
 ```bash
-cmake . -B build/ -D CMAKE_BUILD_TYPE=Release -D BUILD_TESTS=ON
-cmake --build build
+cmake . -B build/Coverage -D CMAKE_BUILD_TYPE=Coverage -D BUILD_TESTS=ON
+cmake --build build/Coverage
 ```
 
-This will build and install the `anomaly_tests` executable into the `build/` folder.
+> This will build and install the `converage_tests` executable into the `build/Coverage` folder.
+
+or 
+
+```bash
+cmake . -B build/<Config> -D CMAKE_BUILD_TYPE=<Config> -D CODE_COVERAGE=ON
+cmake --build build/<Config>
+```
+
+> This will build and install the `converage_tests` executable into the `build/<Config>` folder.
 
 ---
 
